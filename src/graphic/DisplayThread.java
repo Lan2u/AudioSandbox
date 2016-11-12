@@ -1,5 +1,6 @@
 package graphic;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
@@ -7,10 +8,9 @@ import java.awt.image.BufferedImage;
  * As always https://docs.oracle.com/javase/ used for reference
  */
 public class DisplayThread extends Thread{
-    
 
     private DrawPanel display;
-    private int[] samples;
+    private int[] samples = null;
     private int sampleRate;
     private int channels;
 
@@ -21,33 +21,53 @@ public class DisplayThread extends Thread{
 
     @Override
     public void run(){
-        // Images to display (graph segments)
-        BufferedImage[] frames = AudioDataGraphGenerator.generateGraphImages(samples,display.getWidth(),display.getHeight(),channels);
-        System.out.println("Frames to display " + frames.length);
-
-        long updateRate = calculateUpdateRate(); // The number of nano seconds between each frame
-        System.out.println("nano seconds per frame " + updateRate);
-
-        long startTime; // The time at the start of the frame drawing (nano seconds)
-        long deltaT; // The time taken to draw the frame (nano seconds)
-        long timeTaken = 0L;
-        int frame = 0;
-
-        // Update section, should update to display the wave in real time
-        long DisplayStart;
-        System.out.println("Display Start " + (DisplayStart=System.nanoTime()));
-        while (frame < frames.length) {
-            startTime = System.nanoTime();
-            if (timeTaken >= updateRate) {
-                display.setCurrentFrame(frames[frame]);
-                timeTaken = 0;
-                frame++;
+        
+        if (samples == null || samples.length ==0) {
+            System.out.println("Null samples to display, samples to display never set or sample length = 0");
+        }else{
+            
+            
+            // Blank Buffered Image
+            // Data starts being displayed at the left pushing all the rest of the data right
+            // FIXME use of constants here is for testing need to replace
+            BufferedImage image = new BufferedImage(1000,800, BufferedImage.TYPE_INT_RGB);
+            
+            int[] yValues = AudioDataGraphGenerator.ScaleValues(samples,image.getHeight());
+            
+            Color colour = Color.cyan;
+            
+            final int GENERATION_COLUMN_X = 0; // The x value that the values are generated out before moving along the image
+            
+            long uT = System.nanoTime();
+            int CENTER_HEIGHT = display.getHeight()/2;
+            
+            for (int i = 0; i < yValues.length; i++) {
+                
+                /* Starts one column in from the right and moves that column to the right (thereby overwriting the existing
+                    column. Moves through the image all the way to the generation point moving the columns to the right) this
+                    leaves the starting column (GENERATION_POINT_X) and the column next to it (GENERATION_POINT_X + 1) being
+                    the same.*/
+                for (int y = 0; y < image.getHeight(); y++) {
+                    for (int x = image.getWidth() - 1; x > 0; x--){
+                        int pixel = image.getRGB(x-1,y);
+                        image.setRGB(x,y,pixel);
+                    }
+                }
+                // Set the starting column (GENERATION_POINT_X) to the new data value
+                int y = CENTER_HEIGHT - yValues[i] -1;
+                    if (yValues[i] == 0){
+                  //      System.out.println(GENERATION_COLUMN_X + "," + CENTER_HEIGHT);
+                        image.setRGB(GENERATION_COLUMN_X, CENTER_HEIGHT, colour.getRGB());
+                    }else {
+                        image.setRGB(GENERATION_COLUMN_X, y, colour.getRGB());
+                    }
+               // System.out.println(y);
+                display.setCurrentFrame(image);
+                
             }
-            deltaT = System.nanoTime() - startTime;
-            timeTaken = timeTaken + deltaT;
+            System.out.println();
+            System.out.println("deltaT " + (System.nanoTime()-uT));
         }
-        System.out.println("Display End " + System.nanoTime());
-        System.out.println("Display Time " + (System.nanoTime()-DisplayStart));
     }
 
     private long calculateUpdateRate() {

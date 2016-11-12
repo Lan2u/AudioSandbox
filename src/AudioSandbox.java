@@ -11,7 +11,7 @@ import java.io.IOException;
 
     
 public class AudioSandbox {
-    private static final String FILE_PATH = "resources/high_risk.wav";
+    private static final String FILE_PATH = "resources/audiocheck.net_sweep_10Hz_20000Hz_-3dBFS_4s.wav";
 
     public static void main(String[] args) throws IOException {
         WaveFile waveFile = new WaveFile(new File(FILE_PATH));
@@ -26,7 +26,7 @@ public class AudioSandbox {
         // Re-ran at 400, didn't display correctly
         // Ran again at 400 displayed correctly
         
-        int WIDTH = 400;
+        int WIDTH = 1000;
         int HEIGHT = 800;
         UserInterface gui = new UserInterface(WIDTH,HEIGHT);
         gui.setSize(WIDTH,HEIGHT);
