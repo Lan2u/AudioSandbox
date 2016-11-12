@@ -8,3 +8,7 @@ Messing around with audio files and audio data.
 - To output the audio data in a nice-ish way that is easy to use for other things
 - Create visual equalizers using the data output from above
 - Create equalizers that actually edit the sound
+
+<h2>Currently</h2>
+- Reads in audio data from a wave file seperating out information from the header and stores this
+- Normalises the data to double values as a ratio of the highest (loudest) peak and then uses this to display the data visually
