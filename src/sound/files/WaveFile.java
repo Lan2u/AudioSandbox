@@ -1,5 +1,7 @@
 package sound.files;
 
+import jdk.nashorn.internal.runtime.regexp.joni.Warnings;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,10 +13,43 @@ public class WaveFile implements AudioFile{
     private AudioHeader header;
     private AudioData data;
     private double length; // Length of file in seconds
-
+    
+    /** Create a new WaveFile object which represents a wavefile type audio file
+     * @param file The wave file
+     * @throws IOException if I/O exception occurs
+     * @see FileInputStream#read(byte[])
+     */
     public WaveFile(File file) throws IOException { // Creates the wave-file loading the header infromation and data into memory
         header = new AudioHeader();
         FileInputStream in = new FileInputStream(file);
+        readHeaderData(in);
+        readAllAudioData(in);
+        calcLength();
+    }
+    
+    /** Read the audio data in in one big chunk
+     * @param in The input file stream from the audio file
+     * @throws IOException If there is an exception on in.read(byte[])
+     * @see FileInputStream#read(byte[])
+     */
+    private void readAllAudioData(FileInputStream in) throws IOException{
+        byte[] inputChunk = new byte[HEADER_BYTE_READ_EACH_TIME];
+        
+        int bytesRead = 0;
+        bytesRead +=in.read(inputChunk); // Skip over the string at the start of the data subchunk that contains "data"
+        // Beginning of data sub-chunk
+        bytesRead +=in.read(inputChunk);
+        
+        data = new AudioData(getInt(inputChunk));
+        data.readData(in);
+    }
+    
+    /** Read the header in from the audio file and use it to set the audio header object values
+     * @param in The input file stream from the audio file
+     * @throws IOException If there is an exception on in.read(byte[])
+     * @see FileInputStream#read(byte[])
+     */
+    private void readHeaderData(FileInputStream in) throws IOException {
         byte[] headerInputChunk = new byte[HEADER_BYTE_READ_EACH_TIME];
         in.read(headerInputChunk);
         header.setFileHeader(new String(headerInputChunk));
@@ -39,14 +74,11 @@ public class WaveFile implements AudioFile{
             //TODO add support for extra parameters
             System.out.println("Extra header space detected");
         }
-        in.read(headerInputChunk); // Skip over the string at the start of the data subchunk that contains "data"
-        // Beginning of data sub-chunk
-        in.read(headerInputChunk);
-        data = new AudioData(getInt(headerInputChunk));
-        data.readData(in);
-        calcLength();
     }
-
+    
+    /**
+     * Calculate the length in seconds of the audio file
+     */
     private void calcLength(){
         length = data.getDataSize() / (header.getSampleRate() * header.getBytesPerSample());
         length = length/header.getNumberOfChannels();
@@ -72,7 +104,7 @@ public class WaveFile implements AudioFile{
         return String.format("Header:%n%s%nLength (s) : %s%nData:%n%s",header.toString(),length,data.toString());
     }
     
-    public int getNextSample() {
+    private int getNextSample() {
         int bytes = header.getBytesPerSample();
         byte[] sample = data.nextChunk(bytes);
         return getAmplitude(sample);
@@ -107,11 +139,14 @@ public class WaveFile implements AudioFile{
     public int getChannels() {
         return header.getNumberOfChannels();
     }
-
-    // TODO getSeconds (number of seconds)
-    // TODO Use this to get a certain number of seconds of the file and move the read position up to that point (so it can be called contniuously until end of file)
+    
+    /**
+     * Get an array of samples of all the samples within the specified time
+     * @param seconds The number of seconds of audio data to get
+     * @return The audio data (array of samples)
+     */
     @Override
-    public int[] getSamples(double seconds){ // Get an array of samples of all the samples within the specified time
+    public int[] getSamples(double seconds){
         double secondsLeft = length - (data.getPosition()/getSampleRate());
         int samplesToRead;
         if (seconds < secondsLeft){
@@ -144,7 +179,8 @@ public class WaveFile implements AudioFile{
     }
 
     /*
-    How to normalise the values
-    (All amplitude values / Math.mod(Max_amplilitude)) * Maximum display range
+        How to normalise the values
+       (All amplitude values / Math.mod(Max_amplilitude)) * Maximum display range
+        Alec's suggestion
      */
 }
