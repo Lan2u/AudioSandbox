@@ -46,7 +46,8 @@ public class DisplayThread extends Thread{
                     the same.*/
                 
                 // TODO Shifting the entire image is expensive need to just move the area that is actually coloured
-                // Try using an int[][] array storing only relevant points like in the snake (
+                // TODO Try using an int[][] array storing only relevant points like in the snake
+                // TODO Add a center line (different colour / red)
                 for (int y1 = 0; y1 < image.getHeight(); y1++) {
                     for (int x = image.getWidth() - 1; x > 0; x--) {
                         int pixel = image.getRGB(x - 1, y1);
