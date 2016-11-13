@@ -14,6 +14,7 @@ public class AudioSandbox {
     private static final String FILE_PATH = "resources/audiocheck.net_sweep_10Hz_20000Hz_-3dBFS_4s.wav";
 
     public static void main(String[] args) throws IOException {
+        
         WaveFile waveFile = new WaveFile(new File(FILE_PATH));
         System.out.println(waveFile.toString());
         
