@@ -1,7 +1,8 @@
 package graphic;
 
-import java.awt.*;
+import javax.xml.crypto.Data;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 /**
  * Created by Paul Lancaster on 08/11/16
@@ -27,18 +28,19 @@ public class DisplayThread extends Thread{
             // Blank Buffered Image
             // Data starts being displayed at the left pushing all the rest of the data right
             // FIXME use of constants here is for testing need to replace
-            BufferedImage image = new BufferedImage(1000,800, BufferedImage.TYPE_INT_RGB);
-            
-            int[] yValues = AudioDataGraphGenerator.ScaleValues(samples,image.getHeight()/2 - 60);
-            
-            Color colour = Color.cyan;
+            int HEIGHT = 800;
+            int WIDTH = 1000;
+
+            // FIXME why is this height -60?
+            int[] yValues = AudioDataGraphGenerator.ScaleValues(samples,HEIGHT/2 - 60);
             
             final int GENERATION_COLUMN_X = 0; // The x value that the values are generated out before moving along the image
             
             long uT = System.nanoTime();
-            int CENTER_HEIGHT = display.getHeight()/2;
             
             // TODO Efficiency (in terms of doing the same stuff but much faster) needs to be greatly increased
+            ArrayList<DataPoint> dataPoints = new ArrayList<>();
+
             for (int yValue : yValues) {
                 /* Starts one column in from the right and moves that column to the right (thereby overwriting the existing
                     column. Moves through the image all the way to the generation point moving the columns to the right) this
@@ -48,37 +50,38 @@ public class DisplayThread extends Thread{
                 // TODO Shifting the entire image is expensive need to just move the area that is actually coloured
                 // TODO Try using an int[][] array storing only relevant points like in the snake
                 // TODO Add a center line (different colour / red)
-                for (int y1 = 0; y1 < image.getHeight(); y1++) {
-                    for (int x = image.getWidth() - 1; x > 0; x--) {
-                        int pixel = image.getRGB(x - 1, y1);
-                        image.setRGB(x, y1, pixel);
+
+                for (int i = 0; i < dataPoints.size(); i++){
+                    dataPoints.get(i).moveRight(1);
+                    if (dataPoints.get(i).x >= WIDTH){
+                        dataPoints.remove(dataPoints.get(i));
                     }
                 }
-                
-                // Clear starting column
-                for (int y2 = 0; y2 < image.getHeight();y2++){
-                    image.setRGB(GENERATION_COLUMN_X,y2,Color.BLACK.getRGB());
-                }
-                
-                // Set the starting column (GENERATION_POINT_X) to the new data value
-                int y = CENTER_HEIGHT - yValue;
-                if (y <= 0){
-                    y = 0;
-                }else if(y >= image.getHeight() -1){
-                    y = image.getHeight() -1;
-                }
-                if (yValue == 0) {
-                    //      System.out.println(GENERATION_COLUMN_X + "," + CENTER_HEIGHT);
-                    image.setRGB(GENERATION_COLUMN_X, CENTER_HEIGHT, colour.getRGB());
-                } else {
-                    image.setRGB(GENERATION_COLUMN_X, y, colour.getRGB());
-                }
-                // System.out.println(y);
+
+                DataPoint newPoint = new DataPoint(); // New point to add
+                newPoint.setX(GENERATION_COLUMN_X);
+                newPoint.setY(yValue);
+                dataPoints.add(newPoint);
+
+                BufferedImage image = genDisplayImage(WIDTH,HEIGHT,dataPoints);
                 display.setCurrentFrame(image);
             }
             System.out.println();
             System.out.println("deltaT " + (System.nanoTime()-uT));
         }
+    }
+
+    private BufferedImage genDisplayImage(int WIDTH, int HEIGHT, ArrayList<DataPoint> dataPoints) {
+        int CENTER_HEIGHT = display.getHeight()/2;
+        BufferedImage image = new BufferedImage(WIDTH,HEIGHT, BufferedImage.TYPE_INT_RGB);
+        for(DataPoint dataPoint: dataPoints){
+            try {
+                image.setRGB(dataPoint.getIntX(), dataPoint.getIntY()+ CENTER_HEIGHT, dataPoint.getColour().getRGB());
+            }catch (ArrayIndexOutOfBoundsException e){
+                e.printStackTrace();
+            }
+        }
+        return image;
     }
 
     private long calculateUpdateRate() {
