@@ -10,7 +10,7 @@ import java.io.IOException;
 
     
 public class AudioSandbox {
-    private static final String FILE_PATH = "resources/high_risk.wav";
+    private static final String FILE_PATH = "resources/audiocheck.net_sweep_10Hz_20000Hz_-3dBFS_4s.wav";
 
     public static void main(String[] args) throws IOException {
         
@@ -31,7 +31,7 @@ public class AudioSandbox {
         UserInterface gui = new UserInterface(WIDTH,HEIGHT);
         gui.setSize(WIDTH,HEIGHT);
         
-        gui.startDisplaying(waveFile, 2);
+        gui.startDisplaying(waveFile, 5);
     }
     
     /** Get the amplitude data representation of the wave file

@@ -63,7 +63,7 @@ public class DisplayThread extends Thread{
                 DataPoint newPoint = new DataPoint(); // New point to add
                 newPoint.setX(GENERATION_COLUMN_X);
                 newPoint.setY(yValues[i]);
-                if ((i % 2) == 0){
+                if ((i % channels) == 0){
                     newPoint.setColour(Color.RED);
                 }else{
                     newPoint.setColour(Color.GREEN);
