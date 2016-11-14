@@ -1,5 +1,6 @@
 package graphic;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
@@ -7,10 +8,9 @@ import java.awt.image.BufferedImage;
  * As always https://docs.oracle.com/javase/ used for reference
  */
 public class DisplayThread extends Thread{
-    
 
     private DrawPanel display;
-    private int[] samples;
+    private int[] samples = null;
     private int sampleRate;
     private int channels;
 
@@ -21,33 +21,65 @@ public class DisplayThread extends Thread{
 
     @Override
     public void run(){
-        // Images to display (graph segments)
-        BufferedImage[] frames = AudioDataGraphGenerator.generateGraphImages(samples,display.getWidth(),display.getHeight(),channels);
-        System.out.println("Frames to display " + frames.length);
-
-        long updateRate = calculateUpdateRate(); // The number of nano seconds between each frame
-        System.out.println("nano seconds per frame " + updateRate);
-
-        long startTime; // The time at the start of the frame drawing (nano seconds)
-        long deltaT; // The time taken to draw the frame (nano seconds)
-        long timeTaken = 0L;
-        int frame = 0;
-
-        // Update section, should update to display the wave in real time
-        long DisplayStart;
-        System.out.println("Display Start " + (DisplayStart=System.nanoTime()));
-        while (frame < frames.length) {
-            startTime = System.nanoTime();
-            if (timeTaken >= updateRate) {
-                display.setCurrentFrame(frames[frame]);
-                timeTaken = 0;
-                frame++;
+        if (samples == null || samples.length ==0) {
+            System.out.println("Null samples to display, samples to display never set or sample length = 0");
+        }else{
+            // Blank Buffered Image
+            // Data starts being displayed at the left pushing all the rest of the data right
+            // FIXME use of constants here is for testing need to replace
+            BufferedImage image = new BufferedImage(1000,800, BufferedImage.TYPE_INT_RGB);
+            
+            int[] yValues = AudioDataGraphGenerator.ScaleValues(samples,image.getHeight()/2 - 60);
+            
+            Color colour = Color.cyan;
+            
+            final int GENERATION_COLUMN_X = 0; // The x value that the values are generated out before moving along the image
+            
+            long uT = System.nanoTime();
+            int CENTER_HEIGHT = display.getHeight()/2;
+            
+            // TODO Efficiency (in terms of doing the same stuff but much faster) needs to be greatly
+            for (int yValue : yValues) {
+                /* Starts one column in from the right and moves that column to the right (thereby overwriting the existing
+                    column. Moves through the image all the way to the generation point moving the columns to the right) this
+                    leaves the starting column (GENERATION_POINT_X) and the column next to it (GENERATION_POINT_X + 1) being
+                    the same.*/
+                
+                // TODO Shifting the entire image is expensive need to just move the area that is actually coloured
+                // TODO Try using an int[][] array storing only relevant points like in the snake
+                // TODO Add a center line (different colour / red)
+                for (int y1 = 0; y1 < image.getHeight(); y1++) {
+                    for (int x = image.getWidth() - 1; x > 0; x--) {
+                        int pixel = image.getRGB(x - 1, y1);
+                        image.setRGB(x, y1, pixel);
+                    }
+                }
+                
+                // Clear starting column
+                for (int y2 = 0; y2 < image.getHeight();y2++){
+                    image.setRGB(GENERATION_COLUMN_X,y2,Color.BLACK.getRGB());
+                }
+                
+                // Set the starting column (GENERATION_POINT_X) to the new data value
+                int y = CENTER_HEIGHT - yValue;
+                if (y <= 0){
+                    y = 0;
+                }else if(y >= image.getHeight() -1){
+                    y = image.getHeight() -1;
+                }
+                System.out.println(yValue);
+                if (yValue == 0) {
+                    //      System.out.println(GENERATION_COLUMN_X + "," + CENTER_HEIGHT);
+                    image.setRGB(GENERATION_COLUMN_X, CENTER_HEIGHT, colour.getRGB());
+                } else {
+                    image.setRGB(GENERATION_COLUMN_X, y, colour.getRGB());
+                }
+                // System.out.println(y);
+                display.setCurrentFrame(image);
             }
-            deltaT = System.nanoTime() - startTime;
-            timeTaken = timeTaken + deltaT;
+            System.out.println();
+            System.out.println("deltaT " + (System.nanoTime()-uT));
         }
-        System.out.println("Display End " + System.nanoTime());
-        System.out.println("Display Time " + (System.nanoTime()-DisplayStart));
     }
 
     private long calculateUpdateRate() {

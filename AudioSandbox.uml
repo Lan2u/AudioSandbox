@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>AudioSandbox</OriginalElement>
+  <nodes>
+    <node x="917.0" y="160.0">sound.files.AudioHeader</node>
+    <node x="111.51499999999999" y="0.0">graphic.DrawPanel</node>
+    <node x="155.85499999999996" y="690.0">graphic.UserInterface</node>
+    <node x="0.0" y="1135.0">graphic.AudioDataGraphGenerator</node>
+    <node x="607.0" y="219.5">sound.files.AudioData</node>
+    <node x="459.0" y="981.0">AudioSandbox</node>
+    <node x="546.5" y="560.0">sound.files.WaveFile</node>
+    <node x="314.0" y="260.5">sound.files.AudioFile</node>
+    <node x="0.0" y="240.0">graphic.DisplayThread</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="graphic.UserInterface" target="graphic.DisplayThread">
+      <point x="-73.0" y="-55.5" />
+      <point x="192.35499999999996" y="535.0" />
+      <point x="141.0" y="535.0" />
+      <point x="0.0" y="95.0" />
+    </edge>
+    <edge source="AudioSandbox" target="graphic.UserInterface">
+      <point x="-49.75" y="-54.5" />
+      <point x="508.75" y="956.0" />
+      <point x="265.35499999999996" y="956.0" />
+      <point x="0.0" y="55.5" />
+    </edge>
+    <edge source="sound.files.WaveFile" target="sound.files.AudioData">
+      <point x="-111.19999999999999" y="-185.5" />
+      <point x="713.3" y="535.0" />
+      <point x="679.5" y="535.0" />
+      <point x="-72.5" y="115.5" />
+    </edge>
+    <edge source="AudioSandbox" target="sound.files.WaveFile">
+      <point x="49.75" y="-54.5" />
+      <point x="608.25" y="956.0" />
+      <point x="824.5" y="956.0" />
+      <point x="0.0" y="185.5" />
+    </edge>
+    <edge source="sound.files.WaveFile" target="sound.files.AudioHeader">
+      <point x="222.39999999999998" y="-185.5" />
+      <point x="1046.9" y="535.0" />
+      <point x="1243.25" y="535.0" />
+      <point x="108.75" y="175.0" />
+    </edge>
+    <edge source="sound.files.WaveFile" target="sound.files.AudioFile">
+      <point x="-222.39999999999998" y="-185.5" />
+      <point x="602.1" y="535.0" />
+      <point x="450.5" y="535.0" />
+      <point x="0.0" y="74.5" />
+    </edge>
+    <edge source="graphic.UserInterface" target="graphic.DrawPanel">
+      <point x="0.0" y="-55.5" />
+      <point x="265.35499999999996" y="535.0" />
+      <point x="292.5" y="535.0" />
+      <point x="292.5" y="135.0" />
+      <point x="239.015" y="135.0" />
+      <point x="0.0" y="55.0" />
+    </edge>
+    <edge source="graphic.DisplayThread" target="graphic.DrawPanel">
+      <point x="0.0" y="-95.0" />
+      <point x="141.0" y="135.0" />
+      <point x="154.015" y="135.0" />
+      <point x="-85.0" y="55.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.8676588897827835" x="548.4306907742235" y="1071.35234121465" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Constructors</Category>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+    <Category>Inner Classes</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
