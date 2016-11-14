@@ -38,7 +38,7 @@ public class DisplayThread extends Thread{
             long uT = System.nanoTime();
             int CENTER_HEIGHT = display.getHeight()/2;
             
-            // TODO Efficiency (in terms of doing the same stuff but much faster) needs to be greatly
+            // TODO Efficiency (in terms of doing the same stuff but much faster) needs to be greatly increased
             for (int yValue : yValues) {
                 /* Starts one column in from the right and moves that column to the right (thereby overwriting the existing
                     column. Moves through the image all the way to the generation point moving the columns to the right) this
@@ -67,7 +67,6 @@ public class DisplayThread extends Thread{
                 }else if(y >= image.getHeight() -1){
                     y = image.getHeight() -1;
                 }
-                System.out.println(yValue);
                 if (yValue == 0) {
                     //      System.out.println(GENERATION_COLUMN_X + "," + CENTER_HEIGHT);
                     image.setRGB(GENERATION_COLUMN_X, CENTER_HEIGHT, colour.getRGB());

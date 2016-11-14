@@ -1,4 +1,3 @@
-import graphic.DisplayThread;
 import graphic.UserInterface;
 import sound.files.WaveFile;
 
