@@ -35,13 +35,14 @@ public class DisplayThread extends Thread{
             // FIXME why is this height -60?
             int[] yValues = AudioDataGraphGenerator.ScaleValues(samples,HEIGHT/2 - 60);
             
+            AudioDataTransformation.modulate(yValues, 200);
+            
             final int GENERATION_COLUMN_X = 0; // The x value that the values are generated out before moving along the image
             
             long uT = System.nanoTime();
             
             // TODO Efficiency (in terms of doing the same stuff but much faster) needs to be greatly increased
             ArrayList<DataPoint> dataPoints = new ArrayList<>();
-
             // TODO currently takes 141 seconds to display (depending on computer power) a 2 second audio file
             for (int i = 0; i < yValues.length; i++){
                 /* Starts one column in from the right and moves that column to the right (thereby overwriting the existing
@@ -59,7 +60,7 @@ public class DisplayThread extends Thread{
                         dataPoints.remove(dataPoints.get(j));
                     }
                 }
-
+                
                 DataPoint newPoint = new DataPoint(); // New point to add
                 newPoint.setX(GENERATION_COLUMN_X);
                 newPoint.setY(yValues[i]);
