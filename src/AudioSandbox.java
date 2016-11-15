@@ -1,8 +1,11 @@
+import graphic.AudioDataGraphGenerator;
+import graphic.AudioDataTransformation;
 import graphic.UserInterface;
 import sound.files.WaveFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 
 /**
  * Created by Paul Lancaster on 30/10/2016
@@ -13,6 +16,8 @@ public class AudioSandbox {
     private static final String FILE_PATH = "resources/audiocheck.net_sweep_10Hz_20000Hz_-3dBFS_4s.wav";
 
     public static void main(String[] args) throws IOException {
+        PrintStream out = new PrintStream("log.txt");
+        System.setOut(out);
         
         WaveFile waveFile = new WaveFile(new File(FILE_PATH));
         System.out.println(waveFile.toString());
@@ -28,10 +33,29 @@ public class AudioSandbox {
         
         int WIDTH = 1000;
         int HEIGHT = 800;
-        UserInterface gui = new UserInterface(WIDTH,HEIGHT);
-        gui.setSize(WIDTH,HEIGHT);
         
-        gui.startDisplaying(waveFile, 5);
+        int[] samples= waveFile.getSamples(1);
+        double[] doubleSamples = getDoubles(samples);
+        double[] fftArray = AudioDataTransformation.performFastFourierTransform(doubleSamples);
+        
+        for (double d: fftArray){
+            System.out.println(d);
+        }
+        
+        // Turning the interface off while testing FFT
+        //UserInterface gui = new UserInterface(WIDTH,HEIGHT);
+        //gui.setSize(WIDTH,HEIGHT);
+        
+        //gui.startDisplaying(waveFile, 5);
+        out.close();
+    }
+    
+    private static double[] getDoubles(int[] samples) {
+        double[] doubles = new double[samples.length];
+        for (int i = 0; i < doubles.length; i++) {
+            doubles[i] = samples[i];
+        }
+        return doubles;
     }
     
     /** Get the amplitude data representation of the wave file

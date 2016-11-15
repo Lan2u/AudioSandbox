@@ -45,7 +45,8 @@ public class AudioDataTransformation {
         
     }
     
-    public static void performFastFourierTransform(){
-        
+    public static double[] performFastFourierTransform(double[] array){
+        jfftw.real.Plan plan = new jfftw.real.Plan(array.length);
+        return plan.transform(array);
     }
 }
