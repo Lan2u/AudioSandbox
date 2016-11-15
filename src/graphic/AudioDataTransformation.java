@@ -30,4 +30,22 @@ public class AudioDataTransformation {
             }
         }
     }
+    
+    /*
+    http://stackoverflow.com/questions/2704139/how-to-get-audio-frequency-data-from-a-wave-file
+    
+    https://en.wikipedia.org/wiki/Digital_signal_processing
+    
+    https://en.wikipedia.org/wiki/Fast_Fourier_transform
+    
+    https://en.wikipedia.org/wiki/Quantization_(signal_processing)
+    https://en.wikipedia.org/wiki/Sampling_(signal_processing)
+     */
+    public static void quantize(){
+        
+    }
+    
+    public static void performFastFourierTransform(){
+        
+    }
 }
