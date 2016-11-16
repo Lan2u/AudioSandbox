@@ -1,0 +1,12 @@
+Header:
+File Header: RIFF
+File Format: WAVE
+File Size: 352838
+SampleRate: 44100
+Bytes Per Sample: 2.0
+Channels: 1
+
+Length (s) : 4.0
+Data:
+Data length 352802 Bytes
+Samples to read 44100

@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="AudioSandbox:jar">
+    <output-path>$PROJECT_DIR$/out/Artifacts/</output-path>
+    <root id="archive" name="AudioSandbox_jar.jar">
+      <element id="archive" name="AudioSandbox.jar">
+        <element id="module-output" name="AudioSandbox" />
+      </element>
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+      </element>
+    </root>
+  </artifact>
+</component>
