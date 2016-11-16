@@ -9,6 +9,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="jfftw" level="project" />
+    <orderEntry type="library" name="JTransforms-3.1-sources" level="project" />
+    <orderEntry type="library" name="JTransforms-3.1-with-dependencies" level="application" />
   </component>
 </module>

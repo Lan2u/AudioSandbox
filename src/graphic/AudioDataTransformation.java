@@ -1,5 +1,11 @@
 package graphic;
 
+import org.jtransforms.dct.FloatDCT_1D;
+import org.jtransforms.dht.FloatDHT_1D;
+
+import java.lang.reflect.Method;
+
+
 /**
  * Created by Paul Lancaster on 15/11/2016
  */
@@ -45,8 +51,7 @@ public class AudioDataTransformation {
         
     }
     
-    public static double[] performFastFourierTransform(double[] array){
-        jfftw.real.Plan plan = new jfftw.real.Plan(array.length);
-        return plan.transform(array);
+    public static void performFastFourierTransform(float[] array){
+            
     }
 }

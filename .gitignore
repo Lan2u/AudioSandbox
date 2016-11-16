@@ -57,3 +57,6 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+/test-tones.zip
+\\\
+!/JTransforms-3.1-with-dependencies.jar
