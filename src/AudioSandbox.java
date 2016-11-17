@@ -33,10 +33,13 @@ public class AudioSandbox {
         int HEIGHT = 800;
     
         // Get the average of the 2 channels
-        double[] samples= getDoubles(waveFile.getAllSamples());
+        int SAMPLES_LENGTH = 1024;
+        double[] samples = new double[SAMPLES_LENGTH];
+        for (int i = 0; i < SAMPLES_LENGTH; i++) {
+            samples[i] = waveFile.getSample();
+        }
     
         double[] sampleAvg = getAmplitudeAverage(samples, waveFile.getChannels());
-        
         
         double[] fftOut = new double[sampleAvg.length * 2];
         System.arraycopy(sampleAvg,0,fftOut,0,sampleAvg.length);
@@ -52,17 +55,15 @@ public class AudioSandbox {
             imaginary[k] = fftOut[k*2 + 1];
         }
     
-        System.out.println("Samples");
-        for (int i = 0; i < 100; i++) {
-            System.out.println(samples[i]);
+        double[] magnitudes = new double[real.length];
+        for (int i = 0; i < magnitudes.length; i++) {
+            magnitudes[i] = Math.sqrt(real[i] * real[i] + imaginary[i] * imaginary[i]);
         }
         
-        System.out.println("FFT output");
-        
-        for (int i = 0; i < real.length; i++) {
-            System.out.println(real[i] + " " + imaginary[i] + "i");
+        for (double magnitude: magnitudes){
+            System.out.println(magnitude);
         }
-        
+    
         
         // Turning the interface off while testing FFT
         //UserInterface gui = new UserInterface(WIDTH,HEIGHT);

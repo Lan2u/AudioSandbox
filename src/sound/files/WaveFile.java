@@ -177,6 +177,10 @@ public class WaveFile implements AudioFile{
     public int[] getAllSamples() {
         return getSamples(getLength());
     }
+    
+    public int getSample() {
+        return getAmplitude(data.nextChunk(header.bytesPerSample));
+    }
 
     /*
         How to normalise the values
