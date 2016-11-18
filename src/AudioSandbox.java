@@ -77,6 +77,7 @@ public class AudioSandbox {
     
     // TODO make this actually work (currently just messing around cause I really have no idea what I am doing)
     private static double[] fftOutToFrequency(double[] real, double[] imaginary, int sampleRate) {
+        // TODO try having the imaginary array set to just 0
         double[] magnitudes = new double[real.length];
         for (int i = 0; i < magnitudes.length; i++) {
             magnitudes[i] = Math.sqrt(Math.pow(real[i], 2)+ Math.pow(imaginary[i], 2));
