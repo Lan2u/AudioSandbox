@@ -1,6 +1,8 @@
-package graphic;
+package graphic.display;
 
 import audio.files.WaveFile;
+import graphic.display.drawpanels.DrawPanel;
+import graphic.generation.DisplayThread;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;

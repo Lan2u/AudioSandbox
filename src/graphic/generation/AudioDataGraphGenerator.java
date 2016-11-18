@@ -1,4 +1,4 @@
-package graphic;
+package graphic.generation;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

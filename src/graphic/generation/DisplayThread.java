@@ -1,6 +1,7 @@
-package graphic;
+package graphic.generation;
 
 import audio.transforms.AudioDataTransformation;
+import graphic.DrawPanel;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
