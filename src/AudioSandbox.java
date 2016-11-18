@@ -11,7 +11,7 @@ import java.io.PrintStream;
 
     
 public class AudioSandbox {
-    private static final String FILE_PATH = "resources/audiocheck.net_sweep_10Hz_20000Hz_-3dBFS_4s.wav";
+    private static final String FILE_PATH = "resources/audiocheck.net_sin_1000Hz_-3dBFS_2s.wav";
 
     public static void main(String[] args) throws IOException {
         PrintStream out = new PrintStream("log.txt");
@@ -54,14 +54,16 @@ public class AudioSandbox {
             real[k] = fftOut[k*2];
             imaginary[k] = fftOut[k*2 + 1];
         }
-    
-        double[] magnitudes = new double[real.length];
-        for (int i = 0; i < magnitudes.length; i++) {
-            magnitudes[i] = Math.sqrt(real[i] * real[i] + imaginary[i] * imaginary[i]);
-        }
         
-        for (double magnitude: magnitudes){
-            System.out.println(magnitude);
+        double[] freq = fftOutToFrequency(real, imaginary, waveFile.getSampleRate());
+        for (int i = 0; i < (freq.length/2); i++) {
+            System.out.println(freq[i]);
+        }
+        System.out.println("");
+        System.out.println("HALF WAY THORUGH");
+        System.out.println();
+        for (int i = freq.length/2; i < freq.length; i++){
+            System.out.println(freq[i]);
         }
     
         
@@ -71,6 +73,19 @@ public class AudioSandbox {
         
         //gui.startDisplaying(waveFile, 5);
         out.close();
+    }
+    
+    // TODO make this actually work (currently just messing around cause I really have no idea what I am doing)
+    private static double[] fftOutToFrequency(double[] real, double[] imaginary, int sampleRate) {
+        double[] magnitudes = new double[real.length];
+        for (int i = 0; i < magnitudes.length; i++) {
+            magnitudes[i] = Math.sqrt(Math.pow(real[i], 2)+ Math.pow(imaginary[i], 2));
+        
+        }
+        for (int i = 1; i < magnitudes.length; i++) {
+            magnitudes[i] = sampleRate * 2 * Math.sin(magnitudes[i] / magnitudes[0]);
+        }
+        return magnitudes;
     }
     
     private static double[] getAmplitudeAverage(double[] samples, int numberOfChannels) {
