@@ -31,36 +31,54 @@ public class AudioSandbox {
         
         int WIDTH = 1000;
         int HEIGHT = 800;
-    
-        // Get the average of the 2 channels
+
         int SAMPLES_LENGTH = 1024;
+        int SAMPLE_RATE = waveFile.getSampleRate();
+
         double[] samples = new double[SAMPLES_LENGTH];
+        double max = Integer.MIN_VALUE;
         for (int i = 0; i < SAMPLES_LENGTH; i++) {
             samples[i] = waveFile.getSample();
+            if (samples[i] > max){
+                max = samples[i];
+            }
         }
-    
-        double[] sampleAvg = getAmplitudeAverage(samples, waveFile.getChannels());
-        
-        double[] fftOut = new double[sampleAvg.length * 2];
-        System.arraycopy(sampleAvg,0,fftOut,0,sampleAvg.length);
-        
-        DoubleFFT_1D fft = new DoubleFFT_1D(sampleAvg.length);
+
+        double[] floatSamples = new double[samples.length];
+        for (int i = 0; i < floatSamples.length; i++) {
+            floatSamples[i]  = (samples[i]/max);
+        }
+
+        for (double s: floatSamples){
+            System.out.println(s);
+        }
+        System.out.println("");
+        System.out.println("SAMPLES OVER");
+        System.out.println("");
+
+        floatSamples = averageFilterSamples(floatSamples);
+
+
+        double[] fftOut = new double[floatSamples.length * 2];
+        System.arraycopy(floatSamples,0,fftOut,0,floatSamples.length);
+        DoubleFFT_1D fft = new DoubleFFT_1D(floatSamples.length);
         fft.realForwardFull(fftOut);
-        
-        double[] real = new double[sampleAvg.length+1];
-        double[] imaginary = new double[sampleAvg.length+1];
+
+
+        double[] real = new double[floatSamples.length+1];
+        double[] imaginary = new double[floatSamples.length+1];
         
         for (int k = 0; k < (fftOut.length/2); k++) {
             real[k] = fftOut[k*2];
             imaginary[k] = fftOut[k*2 + 1];
         }
         
-        double[] freq = fftOutToFrequency(real, imaginary, waveFile.getSampleRate());
+        double[] freq = fftOutToFrequency(real, imaginary, SAMPLE_RATE);
         for (int i = 0; i < (freq.length/2); i++) {
             System.out.println(freq[i]);
         }
         System.out.println("");
-        System.out.println("HALF WAY THORUGH");
+        System.out.println("HALF WAY THOROUGH");
         System.out.println();
         for (int i = freq.length/2; i < freq.length; i++){
             System.out.println(freq[i]);
@@ -74,13 +92,34 @@ public class AudioSandbox {
         //gui.startDisplaying(waveFile, 5);
         out.close();
     }
-    
+
+
+
+    // Low-Pass filtering : Average out the frequency this will smooth out large peaks or troughs in the data
+    // http://blog.bjornroche.com/2012/07/frequency-detection-using-fft-aka-pitch.html
+    private static double[] averageFilterSamples(double[] floatSamples) {
+        double[] filterOutput = new double[floatSamples.length];
+        lastSample = floatSamples[0];
+        filterOutput[0] = lastSample;
+        for (int i = 1; i < floatSamples.length; i++) {
+            filterOutput[i] = stepAverageFilter(floatSamples[i]);
+        }
+        return filterOutput;
+    }
+    private static double lastSample;
+    private static double stepAverageFilter(double sample){
+        double output = ((sample + lastSample)/2.0);
+        lastSample = output;
+        return output;
+    }
+
     // TODO make this actually work (currently just messing around cause I really have no idea what I am doing)
     private static double[] fftOutToFrequency(double[] real, double[] imaginary, int sampleRate) {
         // TODO try having the imaginary array set to just 0
         double[] magnitudes = new double[real.length];
         for (int i = 0; i < magnitudes.length; i++) {
-            magnitudes[i] = Math.sqrt(Math.pow(real[i], 2)+ Math.pow(imaginary[i], 2));
+
+
         
         }
         for (int i = 1; i < magnitudes.length; i++) {
