@@ -1,4 +1,4 @@
-package sound.files;
+package audio.files;
 
 import java.io.FileInputStream;
 import java.io.IOException;

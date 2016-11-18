@@ -1,14 +1,9 @@
 package graphic;
 
-import sound.files.WaveFile;
+import audio.files.WaveFile;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Created by Paul Lancaster on 01/11/2016

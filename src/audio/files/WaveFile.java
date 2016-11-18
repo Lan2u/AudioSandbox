@@ -1,6 +1,4 @@
-package sound.files;
-
-import jdk.nashorn.internal.runtime.regexp.joni.Warnings;
+package audio.files;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -1,6 +1,7 @@
 package graphic;
 
-import javax.xml.crypto.Data;
+import audio.transforms.AudioDataTransformation;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
