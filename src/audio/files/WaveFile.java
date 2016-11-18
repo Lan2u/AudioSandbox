@@ -177,7 +177,12 @@ public class WaveFile implements AudioFile{
     }
     
     public int getSample() {
-        return getAmplitude(data.nextChunk(header.bytesPerSample));
+        byte[] sample = data.nextChunk(header.bytesPerSample);
+        if (sample == null){
+            return -1;
+        }else {
+            return getAmplitude(sample);
+        }
     }
 
     /*

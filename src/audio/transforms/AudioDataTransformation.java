@@ -1,5 +1,6 @@
 package audio.transforms;
 
+import audio.files.WaveFile;
 import org.jtransforms.fft.DoubleFFT_1D;
 
 
@@ -112,6 +113,102 @@ public class AudioDataTransformation {
         return output;
     }
     
+    public static double[] getFrequencies(WaveFile waveFile, int CHUNK_SIZE){
+        double numberOfChunks = Math.ceil(waveFile.getNumberOfSamples()/CHUNK_SIZE);
+        double[] frequencies = new double[waveFile.getNumberOfSamples()/CHUNK_SIZE];
+        for (int chunkCount = 0; chunkCount < numberOfChunks; chunkCount++) {
+            // Get a chunk of samples and record the max amplitude of the chunk
+            double[] chunkSamples = new double[CHUNK_SIZE];
+            double max = Integer.MIN_VALUE;
+            for (int i = 0; i < CHUNK_SIZE; i++) {
+                chunkSamples[i] = waveFile.getSample();
+                if (chunkSamples[i] > max) {
+                    max = chunkSamples[i];
+                }
+            }
+        
+            // Turn the samples into floats ranging between -1 and 1 with 1 being the highest value and -1 the lowest (most negative)
+            double[] floatSamples = getRatioOfMax(chunkSamples, max);
+        
+            frequencies[chunkCount] = AudioDataTransformation.getFrequencyOfChunk(floatSamples, waveFile.getSampleRate());
+        }
+        return frequencies;
+    }
+    
+    /**
+     * @param samples The array of samples to get the ratio to the max of
+     * @param max The max value
+     * @return A double array which contains the ratios of each of the samples to the max value
+     * (so max value = 1.0, -max value = -1 and half max value = 0.5)
+     */
+    private static double[] getRatioOfMax(double[] samples, double max) {
+        double[] floatSamples = new double[samples.length];
+        for (int i = 0; i < floatSamples.length; i++) {
+            floatSamples[i]  = (((double)samples[i])/((double)max));
+        }
+        return floatSamples;
+    }
+    
+    private static double[] getAmplitudeAverage(double[] samples, int numberOfChannels) {
+        if (numberOfChannels > 1) {
+            double[][] channels = splitChannels(samples, numberOfChannels);
+            double[] channel1 = new double[samples.length/2];
+            double[] channel2 = new double[samples.length/2];
+            for (int i = 0; i < channels[0].length; i++) {
+                channel1[i]  = channels[0][i];
+                channel2[i] = channels[1][i];
+            }
+            return averageChannels(channel1,channel2);
+        }else{
+            return samples;
+        }
+    }
+    
+    /**
+     * @param samples The array of audio samples to be separated
+     * @param channels The number of channels
+     */
+    private static double[][] splitChannels(double[] samples, int channels) {
+        double[][] channelData = new double[channels][];
+        for (int k = 0; k < (samples.length/channels); k++){
+            channelData[0][k] = samples[k*2];
+            channelData[1][k] = samples[k*2 + 1];
+        }
+        return channelData;
+    }
+    
+    /**
+     * @param channel1 First data channel
+     * @param channel2 Second data channel
+     * @return The average of each channel as a double array (output[n] = (channel1[n] + channel2[n]) / 2
+     */
+    private static double[] averageChannels(double[] channel1, double[] channel2){
+        if (channel1.length == 0){
+            return channel2; // The first channel is empty so the average is just the second channel
+        } else if (channel2.length == 0){
+            return channel1; // The second channel is empty so the average is just the first channel
+        }
+        System.out.println(" Channel 1 length " + channel1.length + " channel 2 length " + channel2.length);
+        double[] averagedChannels = new double[channel1.length];
+        for (int i = 0; i < channel1.length; i++) {
+            averagedChannels[i] = (channel1[i] + channel2[i])/2.0;
+        }
+        return averagedChannels;
+    }
+    
+    private static float[] getFloats(int[] samples) {
+        float[] floats = new float[samples.length];
+        for (int i = 0; i < floats.length; i++) floats[i] = samples[i];
+        return floats;
+    }
+    
+    private static double[] getDoubles(int[] samples) {
+        double[] doubles = new double[samples.length];
+        for (int i = 0; i < doubles.length; i++) {
+            doubles[i] = samples[i];
+        }
+        return doubles;
+    }
     
     /* Webpages used
     http://blog.bjornroche.com/2012/07/frequency-detection-using-fft-aka-pitch.html
@@ -121,6 +218,4 @@ public class AudioDataTransformation {
     https://en.wikipedia.org/wiki/Quantization_(signal_processing)
     https://en.wikipedia.org/wiki/Sampling_(signal_processing)
      */
-    
-    
 }

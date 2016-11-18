@@ -6,6 +6,7 @@ import java.io.IOException;
 class AudioData{ // Store audio data
     
     private byte[] data;
+    private int readPosition = 0; // Position reached so far through the data array in samples
     
     AudioData(int size){
         data = new byte[size];
@@ -13,25 +14,19 @@ class AudioData{ // Store audio data
     
     void readData(FileInputStream in) throws IOException { // Read all the data into an array
         in.read(data);
+        // TODO replace this so that the audio is read bit by bit rather than all at once if the file is large
     }
     
-    int getDataSize(){ // Get the number of bytes of raw data
-        return data.length;
-    }
-    
-    byte[] getRawData(){
-        return data.clone();
-    }
-
     @Override
     public String toString(){
         return "Data length " + data.length + " Bytes";
     }
     
-    
-    private int readPosition = 0; // Position reached so far through the data array in samples
     byte[] nextChunk(int length){ // Get the next chunk of data (this is the raw data which will make up 1 sample)
         byte[] chunk = new byte[length];
+        if (readPosition >= data.length){
+            return null;
+        }
         System.arraycopy(data, readPosition, chunk, 0, length);
         readPosition = readPosition + length; //FIXME +1 might be required
         return chunk;
@@ -50,5 +45,13 @@ class AudioData{ // Store audio data
 
     public int getPosition() {
         return readPosition;
+    }
+    
+    int getDataSize(){ // Get the number of bytes of raw data
+        return data.length;
+    }
+    
+    byte[] getRawData(){
+        return data.clone();
     }
 }
