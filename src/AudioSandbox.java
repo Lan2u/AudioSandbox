@@ -44,58 +44,59 @@ public class AudioSandbox {
                 max = samples[i];
             }
         }
-        
-       /*
-        int[] samples = waveFile.getAllSamples();
-        int max = Integer.MIN_VALUE;
-        for (int sample:samples){
-            if (sample > max){
-                max = sample;
-            }
-        }*/
-        
        // Turn the samples into floats ranging between -1 and 1 with 1 being the highest value and -1 the lowest (most negative)
         double[] floatSamples = new double[samples.length];
         for (int i = 0; i < floatSamples.length; i++) {
             floatSamples[i]  = (((double)samples[i])/((double)max));
         }
         
-        // Print the samples for debugging
+        /* Print the samples for debugging
         for (double s: floatSamples){
             System.out.println(s);
         }
         System.out.println("");
         System.out.println("SAMPLES OVER");
         System.out.println("");
+        */
+        System.out.println(getFrequencyOfChunk(floatSamples, waveFile.getSampleRate()) + "Hz");
         
+        // Turning the interface off while testing FFT
+        //UserInterface gui = new UserInterface(WIDTH,HEIGHT);
+        //gui.setSize(WIDTH,HEIGHT);
+        
+        //gui.startDisplaying(waveFile, 5);
+        out.close();
+    }
+    
+    private static double getFrequencyOfChunk(double[] sampleChunk, int sampleRate) {
         // Average out the samples in the chunk
-        floatSamples = averageFilterSamples(floatSamples);
+        sampleChunk = averageFilterSamples(sampleChunk);
         
         // Apply a Hann window to the chunk to reduce sidelobes
-        double[] window = buildHannWindow(floatSamples.length);
-        floatSamples = applyWindow(window, floatSamples, CHUNK_SIZE);
-        
-       //binSize = sampleRate/N so as bin size increases accuracy of the frequency increases (accurate to a smaller value)
-        
+        double[] window = buildHannWindow(sampleChunk.length);
+        sampleChunk = applyWindow(window, sampleChunk, sampleChunk.length);
+    
+        //binSize = sampleRate/N so as bin size increases accuracy of the frequency increases (accurate to a smaller value)
+    
         // Perform fft
-        double[] fftOut = new double[floatSamples.length * 2];
-        System.arraycopy(floatSamples,0,fftOut,0,floatSamples.length);
-        DoubleFFT_1D fft = new DoubleFFT_1D(floatSamples.length);
+        double[] fftOut = new double[sampleChunk.length * 2];
+        System.arraycopy(sampleChunk,0,fftOut,0,sampleChunk.length);
+        DoubleFFT_1D fft = new DoubleFFT_1D(sampleChunk.length);
         fft.realForwardFull(fftOut);
-        
-        double[] real = new double[floatSamples.length];
-        double[] imaginary = new double[floatSamples.length];
-        
+    
+        double[] real = new double[sampleChunk.length];
+        double[] imaginary = new double[sampleChunk.length];
+    
         for (int k = 0; k < (fftOut.length/2); k++) {
             real[k] = fftOut[k*2];
             imaginary[k] = fftOut[k*2 + 1];
         }
-        
-        double[] magnitude = new double[floatSamples.length/2];
-        for (int i = 0; i < (floatSamples.length / 2.0); i++) {
+    
+        double[] magnitude = new double[sampleChunk.length/2];
+        for (int i = 0; i < (sampleChunk.length / 2.0); i++) {
             magnitude[i] = Math.sqrt(Math.pow(real[i], 2) + Math.pow(imaginary[i], 2));
         }
-        
+    
         int maxMagnitudeIndex = -1;
         double maxMagnitude = Double.MIN_VALUE;
         for (int i = 0; i < magnitude.length; i++) {
@@ -104,19 +105,10 @@ public class AudioSandbox {
                 maxMagnitudeIndex = i;
             }
         }
-        
-        double binSize = (waveFile.getSampleRate()/CHUNK_SIZE);
-        
-        double frequency = maxMagnitudeIndex * binSize;
-        System.out.println("");
-        System.out.println("Frequency " + frequency + "Hz");
-        
-        // Turning the interface off while testing FFT
-        //UserInterface gui = new UserInterface(WIDTH,HEIGHT);
-        //gui.setSize(WIDTH,HEIGHT);
-        
-        //gui.startDisplaying(waveFile, 5);
-        out.close();
+    
+        double binSize = (sampleRate/sampleChunk.length);
+    
+        return maxMagnitudeIndex * binSize;
     }
     
     private static double[] applyWindow(double[] window, double[] floatSamples, int size) {
@@ -134,19 +126,6 @@ public class AudioSandbox {
         return window;
     }
     
-    private static void printFreq(double[] freq) {
-        for (int i = 0; i < (freq.length/2); i++) {
-            System.out.println(freq[i]);
-        }
-        System.out.println("");
-        System.out.println("HALF WAY THOROUGH");
-        System.out.println();
-        for (int i = freq.length/2; i < freq.length; i++){
-            System.out.println(freq[i]);
-        }
-    }
-    
-    
     // Low-Pass filtering : Average out the frequency this will smooth out large peaks or troughs in the data
     // http://blog.bjornroche.com/2012/07/frequency-detection-using-fft-aka-pitch.html
     private static double[] averageFilterSamples(double[] floatSamples) {
@@ -163,21 +142,6 @@ public class AudioSandbox {
         double output = ((sample + lastSample)/2.0);
         lastSample = output;
         return output;
-    }
-
-    // TODO make this actually work (currently just messing around cause I really have no idea what I am doing)
-    private static double[] fftOutToFrequency(double[] real, double[] imaginary, int sampleRate) {
-        // TODO try having the imaginary array set to just 0
-        double[] magnitudes = new double[real.length];
-        for (int i = 0; i < magnitudes.length; i++) {
-
-
-        
-        }
-        for (int i = 1; i < magnitudes.length; i++) {
-            magnitudes[i] = sampleRate * 2 * Math.sin(magnitudes[i] / magnitudes[0]);
-        }
-        return magnitudes;
     }
     
     private static double[] getAmplitudeAverage(double[] samples, int numberOfChannels) {
