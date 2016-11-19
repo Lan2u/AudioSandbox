@@ -10,4 +10,6 @@ abstract class DynamicDrawPanel extends JPanel implements Runnable{
     DynamicDrawPanel(int WIDTH, int HEIGHT) {
         setSize(WIDTH,HEIGHT);
     }
+
+
 }
