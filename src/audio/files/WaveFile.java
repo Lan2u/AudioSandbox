@@ -118,6 +118,15 @@ public class WaveFile implements AudioFile{
         return (int)(data.getDataSize() / ((header.getBitsPerSample()/8.0) * 2)); //TODO workout exactly why it is *2 and why this works (it does?)
     }
     
+    @Override
+    public int[] getChunk(int chunk_size) {
+        int[] chunk = new int[chunk_size];
+        for (int i = 0; i < chunk_size; i++) {
+            chunk[i] = getSample();
+        }
+        return chunk;
+    }
+    
     private short getShort(byte[] bytes) {
         ByteBuffer bb = ByteBuffer.wrap(bytes);
         bb.order(ByteOrder.LITTLE_ENDIAN);
