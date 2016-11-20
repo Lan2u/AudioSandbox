@@ -11,5 +11,5 @@ public interface AudioFile {
     public int[] getAllSamples();
     public int getNumberOfSamples();
     
-    public int[] getChunk(int chunk_size);
+    public double[] getChunk(int chunk_size);
 }

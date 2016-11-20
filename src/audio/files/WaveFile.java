@@ -119,8 +119,8 @@ public class WaveFile implements AudioFile{
     }
     
     @Override
-    public int[] getChunk(int chunk_size) {
-        int[] chunk = new int[chunk_size];
+    public double[] getChunk(int chunk_size) {
+        double[] chunk = new double[chunk_size];
         for (int i = 0; i < chunk_size; i++) {
             chunk[i] = getSample();
         }

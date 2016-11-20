@@ -1,12 +1,9 @@
 package graphic.display;
 
 import audio.files.WaveFile;
-import graphic.display.drawpanels.DrawPanel;
 import graphic.display.drawpanels.dynamic.FrequencyDisplayPanel;
-import graphic.generation.DisplayThread;
 
 import javax.swing.*;
-import java.awt.image.BufferedImage;
 
 /**
  * Created by Paul Lancaster on 01/11/2016
@@ -15,8 +12,8 @@ public class UserInterface extends JFrame {
     
     private FrequencyDisplayPanel displayPanel;
 
-    public UserInterface(int WIDTH, int HEIGHT){
-        displayPanel = new FrequencyDisplayPanel(WIDTH,HEIGHT);
+    public UserInterface(int WIDTH, int HEIGHT, WaveFile waveFile){
+        displayPanel = new FrequencyDisplayPanel(WIDTH,HEIGHT,waveFile);
         setSize(WIDTH,HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         add(displayPanel);
@@ -25,7 +22,7 @@ public class UserInterface extends JFrame {
         repaint();
     }
 
-    public void startDisplaying(WaveFile waveFile, double seconds) {
+    public void startDisplaying() {
         Thread thread = new Thread(displayPanel);
         thread.start();
     }
