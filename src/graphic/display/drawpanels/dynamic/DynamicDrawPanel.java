@@ -12,4 +12,6 @@ abstract class DynamicDrawPanel extends DrawPanel implements Runnable{
     DynamicDrawPanel(int WIDTH, int HEIGHT) {
         super(WIDTH,HEIGHT);
     }
+
+
 }

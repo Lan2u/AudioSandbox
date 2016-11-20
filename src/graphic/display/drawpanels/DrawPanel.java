@@ -7,10 +7,10 @@ import java.awt.image.BufferedImage;
 /**
  * Created by Paul Lancaster on 18/11/2016
  */
-public abstract class DrawPanel extends JPanel{
+abstract class DrawPanel extends JPanel{
     private BufferedImage currentFrame;
     
-    protected DrawPanel(int width, int height){
+    DrawPanel(int width, int height){
         setSize(width,height);
         currentFrame = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     }
