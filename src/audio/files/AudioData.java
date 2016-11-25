@@ -2,13 +2,13 @@ package audio.files;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * Created by Paul Lancaster on 24/11/2016
  */
 abstract class AudioData {
-    
-    protected int position = 0; // Position within the data in samples
     
     static AudioData getData(int dataSize, int numberOfChannels) {
         switch(numberOfChannels){
@@ -21,14 +21,26 @@ abstract class AudioData {
         }
     }
     
-    int getPosition(){
-        return position;
-    }
-    
-    void resetPosition(){
-        position = 0;
-    }
-    
     abstract void readData(FileInputStream in, int bytesPerSample) throws IOException;
     
+    protected int getSample(byte[] bytes) {
+        return getAmplitude(bytes);
+    }
+    
+    protected int getAmplitude(byte[] sample){
+        // FIXME this only supports 2 bytes per sample
+        if (sample.length >2){
+            throw new IllegalArgumentException("AudioData#getAmplitude doesn't support more than 2 bytes per sample");
+           
+        }
+        return (sample[1] << 8 | sample[0] & 0xFF);
+    }
+    
+    abstract int getNumberOfSamples();
+    
+    abstract boolean hasNextSample(int channel);
+    
+    abstract short[] getChunk(int samples, int channel);
+    
+    abstract int[] getSamples(double seconds, int sampleRate, int channel, double length);
 }

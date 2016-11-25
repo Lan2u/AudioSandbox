@@ -3,15 +3,15 @@ package audio.files;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+
+
 //http://soundfile.sapp.org/doc/WaveFormat/
 
-// The high level audio files (wavefile, mp3file etc. should be the ONLY classes in the package which have anything
-// (except stuff that absolutely has to be) visible from outside the package. There should be no direct contact with
-// the audio file header or data without going through one of theses higher level sound objects first
+/* The high level audio files (wavefile, mp3file etc. should be the ONLY classes in the package which have anything
+* (except stuff that absolutely has to be) visible from outside the package. There should be no direct contact with
+* the audio file header or data without going through one of theses higher level sound objects first
+*/
 public class WaveFile implements AudioFile{
-    
     private AudioHeader header;
     private AudioData data;
     
@@ -23,91 +23,13 @@ public class WaveFile implements AudioFile{
     public WaveFile(File file) throws IOException { // Creates the wave-file loading the header infromation and data into memory
         header = new AudioHeader();
         FileInputStream in = new FileInputStream(file);
-        readHeaderData(in);
+        header.readHeaderData(in);
         data = AudioData.getData(header.getDataSize(), header.getNumberOfChannels());
     }
     
-    /** Read the header in from the audio file and use it to set the audio header object values
-     * @param in The input file stream from the audio file
-     * @throws IOException If there is an exception on in.read(byte[])
-     * @see FileInputStream#read(byte[])
-     */
-    private void readHeaderData(FileInputStream in) throws IOException {
-        final int HEADER_BYTE_READ_EACH_TIME = 4;
-        byte[] headerInputChunk = new byte[HEADER_BYTE_READ_EACH_TIME];
-        in.read(headerInputChunk);
-        header.setFileHeader(new String(headerInputChunk));
-        in.read(headerInputChunk);
-        header.setFileSize(getInt(headerInputChunk));
-        in.read(headerInputChunk);
-        header.setFormat(new String(headerInputChunk));
-        in.read(headerInputChunk); // Should be the string "fmt" Marks start of next chunk
-        in.read(headerInputChunk);
-        int chunkSize = getInt(headerInputChunk);
-        int chunkReadSoFar = in.read(headerInputChunk);
-        header.setAudioFormat(getInt(new byte[]{headerInputChunk[0], headerInputChunk[1]})); // Takes the first 2 values of the byte array, gets int equivalent and then set this as the audio format
-        header.setNumberOfChannels(getInt(new byte[]{headerInputChunk[2],headerInputChunk[3]}));
-        chunkReadSoFar += in.read(headerInputChunk);
-        header.setSampleRate(getInt(headerInputChunk));
-        chunkReadSoFar += in.read(headerInputChunk);
-        header.setByteRate(getInt(headerInputChunk));
-        chunkReadSoFar += in.read(headerInputChunk);
-        header.setBlockAlign(getInt(new byte[]{headerInputChunk[0],headerInputChunk[1]}));
-        header.setBitsPerSample(getInt(new byte[]{headerInputChunk[2],headerInputChunk[3]}));
-        if (chunkReadSoFar != chunkSize){
-            //TODO add support for extra parameters
-            System.out.println("Extra header space detected");
-        }
-        chunkReadSoFar += in.read(headerInputChunk);
-        header.setSubChunkStart(String.valueOf(chunkReadSoFar));
-        chunkReadSoFar += in.read(headerInputChunk);
-        header.setDataSize(getInt(headerInputChunk));
-    }
-    
-    private int getInt(byte[] byteRepOfInt) { // MAX 4 BYTES (int's use 4 bytes in java)
-        int MAX_BYTES = 4;
-        if (byteRepOfInt.length > MAX_BYTES){
-            throw new IllegalArgumentException("Size of byte array for int conversion greater than maximum allowed bytes");
-        }else {
-            ByteBuffer bb = ByteBuffer.allocate(MAX_BYTES);
-            for (byte b: byteRepOfInt){
-                bb.put(b);
-            }
-            bb.position(0);
-            bb.order(ByteOrder.LITTLE_ENDIAN);
-            return bb.getInt();
-        }
-    }
-    
     @Override
-    public String toString(){
-        return String.format("Header:%n%s%nLength (s) : %s%nData:%n%s",header.toString(),length,data.toString());
-    }
-    
-    private int getNextSample() {
-        int bytes = header.getBytesPerSample();
-        byte[] sample = data.nextChunk(bytes);
-        return getAmplitude(sample);
-    }
-
-    private int getAmplitude(byte[] sample){
-        // FIXME this only supports 2 bytes per sample
-        return (sample[1] << 8 | sample[0] & 0xFF);
-    }
-    
-    @Override
-    public int getNumberOfSamples(){
-        return (int)(data.getDataSize() / ((header.getBitsPerSample()/8.0) * 2)); //TODO workout exactly why it is *2 and why this works (it does?)
-    }
-    
-    private short getShort(byte[] bytes) {
-        ByteBuffer bb = ByteBuffer.wrap(bytes);
-        bb.order(ByteOrder.LITTLE_ENDIAN);
-        return bb.getShort();
-    }
-    
-    public boolean hasNextSample(){
-        return data.hasNextSample();
+    public int[] getSamples(double seconds, int channel) {
+        return data.getSamples(seconds,header.getSampleRate(),channel,header.getLength());
     }
     
     @Override
@@ -117,36 +39,15 @@ public class WaveFile implements AudioFile{
     
     @Override
     public int getChannels() {
-        return header.getNumberOfChannels();
-    }
-    
-    /**
-     * Get an array of samples of all the samples within the specified time
-     * @param seconds The number of seconds of audio data to get
-     * @return The audio data (array of samples)
-     */
-    @Override
-    public int[] getSamples(double seconds){
-        double secondsLeft = header.getLength() - (data.getPosition()/getSampleRate());
-        
-        int samplesToRead;
-        if (seconds < secondsLeft){
-            samplesToRead = (int)(seconds * getSampleRate() * getChannels());
-        }else{
-            samplesToRead = (int)(getSampleRate() * secondsLeft * getChannels());
+        if (data instanceof MonoAudioData){
+            return 1;
         }
-        if (samplesToRead == 0){
-            System.out.println("No more file to read");
-            return null;
+        else if (data instanceof StereoAudioData){
+            return 2;
         }
-
-        System.out.println("Samples to read " + samplesToRead);
-
-        int[] samples = new int[samplesToRead]; // Store the audio data
-        for (int i = 0; i < samplesToRead ; i++) {
-            samples[i] = getNextSample();
+        else{
+            return 0; // Unknown number of channels
         }
-        return samples;
     }
     
     @Override
@@ -154,11 +55,18 @@ public class WaveFile implements AudioFile{
         return header.getLength();
     }
     
+    @Override
+    public int[] getAllSamples(int channel) {
+        return data.getSamples(getLength(),header.getSampleRate(),channel,header.getLength());
+    }
     
+    @Override
+    public int getNumberOfSamples() {
+        return data.getNumberOfSamples();
+    }
     
-    /*
-        How to normalise the values
-       (All amplitude values / Math.mod(Max_amplilitude)) * Maximum display range
-        Alec's suggestion
-     */
+    @Override
+    public short[] getChunk(int samples, int channel) {
+        return data.getChunk(samples, channel);
+    }
 }
