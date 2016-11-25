@@ -1,6 +1,7 @@
 package graphic.display;
 
 import audio.files.WaveFile;
+import graphic.display.drawpanels.constant.staticFrequencyDisplayPanel;
 import graphic.display.drawpanels.dynamic.FrequencyDisplayPanel;
 
 import javax.swing.*;
@@ -10,10 +11,10 @@ import javax.swing.*;
  */
 public class UserInterface extends JFrame {
     
-    private FrequencyDisplayPanel displayPanel;
+    private staticFrequencyDisplayPanel displayPanel;
 
     public UserInterface(int WIDTH, int HEIGHT, WaveFile waveFile){
-        displayPanel = new FrequencyDisplayPanel(WIDTH,HEIGHT,waveFile);
+        displayPanel = new staticFrequencyDisplayPanel(WIDTH,HEIGHT,waveFile);
         setSize(WIDTH,HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         add(displayPanel);
@@ -21,9 +22,5 @@ public class UserInterface extends JFrame {
         setVisible(true);
         repaint();
     }
-
-    public void startDisplaying() {
-        Thread thread = new Thread(displayPanel);
-        thread.start();
-    }
+    
 }
