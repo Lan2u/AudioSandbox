@@ -1,6 +1,8 @@
 package audio;
 
 import audio.files.WaveFile;
+import display.AudioDisplay;
+import display.VisualEffect;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +18,7 @@ public class AudioSandbox {
     public static void main(String[] args) throws IOException {
         WaveFile waveFile = new WaveFile(new File(FILE_PATH));
         System.out.println(waveFile);
-        
+        AudioDisplay display = new AudioDisplay();
+        display.play(waveFile, VisualEffect.Frequency_Number);
     }
 }
