@@ -1,7 +1,6 @@
 package graphic.display.drawpanels.dynamic;
 
 import audio.files.AudioFile;
-import audio.transforms.AudioDataTransformation;
 
 /**
  * Created by Paul Lancaster on 18/11/2016

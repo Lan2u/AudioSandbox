@@ -69,4 +69,9 @@ public class WaveFile implements AudioFile{
     public short[] getChunk(int samples, int channel) {
         return data.getChunk(samples, channel);
     }
+    
+    @Override
+    public String toString(){
+        return header.toString();
+    }
 }

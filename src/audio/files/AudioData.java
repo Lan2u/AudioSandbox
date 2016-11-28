@@ -2,8 +2,6 @@ package audio.files;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 /**
  * Created by Paul Lancaster on 24/11/2016
@@ -27,11 +25,10 @@ abstract class AudioData {
         return getAmplitude(bytes);
     }
     
-    protected int getAmplitude(byte[] sample){
+    int getAmplitude(byte[] sample){
         // FIXME this only supports 2 bytes per sample
         if (sample.length >2){
             throw new IllegalArgumentException("AudioData#getAmplitude doesn't support more than 2 bytes per sample");
-           
         }
         return (sample[1] << 8 | sample[0] & 0xFF);
     }

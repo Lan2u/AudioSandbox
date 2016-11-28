@@ -40,7 +40,8 @@ class AudioHeader { // Store audio header data
                              "Block Align: %d%n" +
                              "Bits per sample: %d%n" +
                              "Sub Chunk Start: %s%n" +
-                             "Data Size %d%n",
+                             "Data Size %d%n" +
+                             "File length(s): %f%n",
                             fileHeader,
                             fileSize,
                             format,
@@ -51,7 +52,8 @@ class AudioHeader { // Store audio header data
                             blockAlign,
                             bitsPerSample,
                             subChunkStart,
-                            dataSize);
+                            dataSize,
+                            getLength());
     }
     
     /** Read the header in from the audio file and use it to set the audio header object values
