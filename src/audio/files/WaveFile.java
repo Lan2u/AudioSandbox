@@ -25,6 +25,7 @@ public class WaveFile implements AudioFile{
         FileInputStream in = new FileInputStream(file);
         header.readHeaderData(in);
         data = AudioData.getData(header.getDataSize(), header.getNumberOfChannels());
+        data.readData(in,header.getBytesPerSample()); // TODO new not tested
     }
     
     @Override

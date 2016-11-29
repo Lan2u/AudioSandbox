@@ -63,7 +63,7 @@ class MonoAudioData extends AudioData{
     }
     
     @Override
-    void readData(FileInputStream in, int bytesPerSample) throws IOException {
+    public void readData(FileInputStream in, int bytesPerSample) throws IOException {
         System.out.println(in.read(data_ch1) + " Bytes of mono audio data read into memory");
         // Sample_ch1
         sample_ch1 = new short[(int)Math.ceil(data_ch1.length/bytesPerSample)];

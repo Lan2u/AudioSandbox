@@ -19,6 +19,8 @@ class StereoAudioData extends AudioData{
     StereoAudioData(int dataSize) {
         data_ch1 = new byte[dataSize];
         data_ch2 = new byte[dataSize];
+        
+        
     }
     
     boolean hasNextSample(int channel) {
@@ -101,7 +103,7 @@ class StereoAudioData extends AudioData{
     }
     
     @Override
-    void readData(FileInputStream in, int bytesPerSample) throws IOException {
+    public void readData(FileInputStream in, int bytesPerSample) throws IOException {
         byte[] data = new byte[data_ch1.length*2];
         
         in.read(data);

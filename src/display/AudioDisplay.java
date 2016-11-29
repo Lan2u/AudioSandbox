@@ -2,12 +2,31 @@ package display;
 
 import audio.files.AudioFile;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 /**
  * Created by Paul Lancaster on 28/11/2016
  */
-public class AudioDisplay {
+public class AudioDisplay extends JFrame {
+    
+    AudioDisplayPanel panel;
+    
+    /*
+        3 ways to do this either:
+       - Load the visuals dynamically as the music plays frame by frame
+*this* - Load the data for the visuals before and then just translate that to something visual as each frame plays
+       - Load the visuals before (every frame) then play theses
+     */
+    public AudioDisplay(){
+        this(1000,1000);
+    }
+    public AudioDisplay(int width,int height){
+        setSize(width, height);
+        panel = new AudioDisplayPanel(width,height);
+    }
+    
+    
     ArrayList<AudioFile> queue = new ArrayList<>();
     ArrayList<VisualEffect> effects = new ArrayList<>();
     
@@ -24,11 +43,13 @@ public class AudioDisplay {
     // False if not (file currently playing, use que file instead)
     // Blocking by default
     public void play(AudioFile file, VisualEffect effect){
-        
+        panel.play(file,effect);
     }
     
     public boolean queueFile(AudioFile file, VisualEffect effect){
-        
+        queue.add(file);
+        effects.add(effect);
+        return true; // Queued successfully
     }
     
 }

@@ -95,23 +95,7 @@ public class AudioDataTransformation {
         return maxMagnitudeIndex * binSize;
     }
     
-    // Low-Pass filtering : Average out the frequency this will smooth out large peaks or troughs in the data
-    // http://blog.bjornroche.com/2012/07/frequency-detection-using-fft-aka-pitch.html
-    private static double[] averageFilterSamples(double[] floatSamples) {
-        double[] filterOutput = new double[floatSamples.length];
-        lastSample = floatSamples[0];
-        filterOutput[0] = lastSample;
-        for (int i = 1; i < floatSamples.length; i++) {
-            filterOutput[i] = stepAverageFilter(floatSamples[i]);
-        }
-        return filterOutput;
-    }
-    private static double lastSample;
-    private static double stepAverageFilter(double sample){
-        double output = ((sample + lastSample)/2.0);
-        lastSample = output;
-        return output;
-    }
+    
     
     public static double[] getFrequencies(WaveFile waveFile, int CHUNK_SIZE){
         double numberOfChunks = Math.ceil(waveFile.getNumberOfSamples()/CHUNK_SIZE);

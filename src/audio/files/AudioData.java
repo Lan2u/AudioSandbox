@@ -19,7 +19,7 @@ abstract class AudioData {
         }
     }
     
-    abstract void readData(FileInputStream in, int bytesPerSample) throws IOException;
+    public abstract void readData(FileInputStream in, int bytesPerSample) throws IOException;
     
     protected int getSample(byte[] bytes) {
         return getAmplitude(bytes);
