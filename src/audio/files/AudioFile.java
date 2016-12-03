@@ -12,4 +12,6 @@ public interface AudioFile {
     int[] getAllSamples(int channel);
     short[] getChunk(int samples,int channel);
     int[] getSamples(double seconds, int channel);
+    
+    void resetPos();
 }

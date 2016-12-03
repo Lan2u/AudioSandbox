@@ -83,20 +83,29 @@ class StereoAudioData extends AudioData{
         }
     }
     
+    @Override
+    public void resetPos() {
+        pos_ch1 = 0;
+        pos_ch2 = 0;
+    }
+    
     short nextSample(int channel) {
         switch(channel){
             case 1:
-                if (pos_ch1 > sample_ch1.length){
+                if (pos_ch1 >= (sample_ch1.length -1)){
+                    System.out.println("Sample out of range");
                     return 0;
+                }else {
+                    pos_ch1++;
+                    return sample_ch1[pos_ch1];
                 }
-                pos_ch1++;
-                return sample_ch1[pos_ch1];
             case 2:
-                if (pos_ch2 > sample_ch2.length){
-                    return 0;
-                }
                 pos_ch2++;
-                return sample_ch2[pos_ch2];
+                if (pos_ch2 >= (sample_ch2.length-1)){
+                    return 0;
+                }else {
+                    return sample_ch2[pos_ch2];
+                }
             default:
                 throw new IllegalArgumentException("Channel out of range");
         }

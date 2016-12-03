@@ -6,9 +6,10 @@
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/jfftw-1.2" />
-      <excludeFolder url="file://$MODULE_DIR$/src/audio/transforms" />
-      <excludeFolder url="file://$MODULE_DIR$/src/graphic" />
-      <excludeFolder url="file://$MODULE_DIR$/src/notInUse" />
+      <excludeFolder url="file://$MODULE_DIR$/src/old" />
+      <excludeFolder url="file://$MODULE_DIR$/src/old/graphic" />
+      <excludeFolder url="file://$MODULE_DIR$/src/old/notInUse" />
+      <excludeFolder url="file://$MODULE_DIR$/src/old/transforms" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -40,4 +40,6 @@ abstract class AudioData {
     abstract short[] getChunk(int samples, int channel);
     
     abstract int[] getSamples(double seconds, int sampleRate, int channel, double length);
+    
+    public abstract void resetPos();
 }

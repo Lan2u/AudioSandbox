@@ -55,7 +55,7 @@ class MonoAudioData extends AudioData{
     }
     
     short nextSample() {
-        if (pos_ch1 > sample_ch1.length){
+        if (pos_ch1 >= (sample_ch1.length-1)){
             return 0;
         }
         pos_ch1++;
@@ -77,5 +77,10 @@ class MonoAudioData extends AudioData{
     @Override
     int getNumberOfSamples(){
         return sample_ch1.length;
+    }
+    
+    @Override
+    public void resetPos() {
+        pos_ch1 = 0;
     }
 }

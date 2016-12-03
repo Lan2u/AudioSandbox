@@ -1,5 +1,3 @@
-package audio;
-
 import audio.files.WaveFile;
 import display.AudioDisplay;
 import display.VisualEffect;
@@ -13,7 +11,7 @@ import java.io.IOException;
 
     
 public class AudioSandbox {
-    private static final String FILE_PATH = "resources/audiocheck.net_sweep_10Hz_20000Hz_-3dBFS_4s.wav";
+    private static final String FILE_PATH = "resources/high_risk.wav";
 
     public static void main(String[] args) throws IOException {
         WaveFile waveFile = new WaveFile(new File(FILE_PATH));

@@ -20,7 +20,7 @@ public class WaveFile implements AudioFile{
      * @throws IOException if I/O exception occurs
      * @see FileInputStream#read(byte[])
      */
-    public WaveFile(File file) throws IOException { // Creates the wave-file loading the header infromation and data into memory
+    public WaveFile(File file) throws IOException { // Creates the wave-file loading the header information and data into memory
         header = new AudioHeader();
         FileInputStream in = new FileInputStream(file);
         header.readHeaderData(in);
@@ -31,6 +31,11 @@ public class WaveFile implements AudioFile{
     @Override
     public int[] getSamples(double seconds, int channel) {
         return data.getSamples(seconds,header.getSampleRate(),channel,header.getLength());
+    }
+    
+    @Override
+    public void resetPos() {
+        data.resetPos();
     }
     
     @Override

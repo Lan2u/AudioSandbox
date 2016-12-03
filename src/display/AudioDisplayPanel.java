@@ -44,36 +44,52 @@ public class AudioDisplayPanel extends JPanel{
         int WIDTH = 1800;
         int HEIGHT = 800;
         // We want there to be as many chunks as there are pixels of width
-       // int CHUNK_SIZE = (file.getNumberOfSamples() / WIDTH);
+        // int CHUNK_SIZE = (file.getNumberOfSamples() / WIDTH);
         
-        int CHUNK_SIZE = 1000;
-        int[] frequencies = getFrequencies(file, CHUNK_SIZE);
-        int[] yValues = new int[frequencies.length];
-        // Get max frequency
-        int maxFreq = 0;
-        for (int freq: frequencies){
-            if (freq > maxFreq){
-                maxFreq = freq;
+       // int CHUNK_SIZE = 128;
+        for (int CHUNK_SIZE = 4; CHUNK_SIZE < 10000; CHUNK_SIZE= CHUNK_SIZE+4) {
+            file.resetPos();
+            int[] frequencies = getFrequencies(file, CHUNK_SIZE);
+            int[] yValues = new int[frequencies.length];
+            // Get max frequency
+            int maxFreq = (file.getSampleRate() / 2);
+            for (int freq : frequencies) {
+                if (freq > maxFreq) {
+                    maxFreq = freq;
+                }
             }
-        }
-        // Bring all frequencies within range of the height
-        for (int i = 0; i < yValues.length; i++) {
-            yValues[i] = HEIGHT - 1 -(int)Math.round((frequencies[i]/((double)maxFreq))*(HEIGHT - 10.0));
-        }
     
-        BufferedImage image = new BufferedImage(yValues.length, HEIGHT, BufferedImage.TYPE_INT_RGB);
-        Graphics2D graphics = image.createGraphics();
-        for (int x = 0; x < yValues.length; x++) {
-            if (x < WIDTH ){
-                graphics.drawLine(x,HEIGHT,x,yValues[x]);
-            }else{
-                System.out.println(frequencies[x]);
+            // Average frequencies
+            // int AVERAGE_PASSES = 5; // Average out waveform this many times
+            // for (int run = 0; run < AVERAGE_PASSES; run++) {
+            //   for (int k = 0; k < AVERAGE_PASSES; k++) {
+            //       int lastFreq = frequencies[0];
+            //       for (int i = 1; i < frequencies.length; i++) {
+            //          frequencies[i] = (int) ((lastFreq + frequencies[i]) / 2.0);
+            //          lastFreq = frequencies[i];
+            //      }
+            //  }
+    
+    
+            // Bring all frequencies within range of the height
+            for (int i = 0; i < yValues.length; i++) {
+                yValues[i] = HEIGHT - 1 - (int) Math.round((frequencies[i] / ((double) maxFreq)) * (HEIGHT));
             }
-        }
-        try {
-            ImageIO.write(image,"png",new File("Frequency.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
+    
+            BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+            Graphics2D graphics = image.createGraphics();
+            for (int x = 0; x < yValues.length; x++) {
+                if (x < WIDTH) {
+                    graphics.drawLine(x, HEIGHT, x, yValues[x]);
+                } else {
+                    System.out.println(frequencies[x]);
+                }
+            }
+            try {
+                ImageIO.write(image, "png", new File("CHUNK RUN 2:" + CHUNK_SIZE + ".png"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
     
@@ -81,8 +97,11 @@ public class AudioDisplayPanel extends JPanel{
         double NUMBER_OF_CHUNKS = Math.ceil(file.getNumberOfSamples() / CHUNK_SIZE);
     
         int[] frequencies = new int[(int) NUMBER_OF_CHUNKS];
+        
+        int CHANNEL = 1;
+        
         for (int i = 0; i < frequencies.length; i++){
-            short[] chunk = file.getChunk(CHUNK_SIZE,1);
+            short[] chunk = file.getChunk(CHUNK_SIZE,CHANNEL);
             frequencies[i] = (int) Math.round(getFreqOfChunk(chunk, file.getSampleRate()));
             if (frequencies[i] < 0) frequencies[i] = Math.abs(frequencies[i]); // positive negative values
             // TODO understand why we get negative values and how to handle them
@@ -94,7 +113,7 @@ public class AudioDisplayPanel extends JPanel{
     // Get the frequency of a chunk
     private double getFreqOfChunk(short[] chunk, int sampleRate) {
         // Average out the samples in the chunk
-        chunk = averageFilterSamples(chunk);
+     //   chunk = averageFilterSamples(chunk); // TUrned off because the frequency data was more spread out and spiky not less
     
         // Apply a Hann window to the chunk to reduce sidelobes
         double[] window = buildHannWindow(chunk.length);
@@ -145,7 +164,7 @@ public class AudioDisplayPanel extends JPanel{
     
     // Low-Pass filtering : Average out the frequency this will smooth out large peaks or troughs in the data
     // http://blog.bjornroche.com/2012/07/frequency-detection-using-fft-aka-pitch.html
-    //TODO testing
+    //TODO testing I don't think this works properly
     private static short[] averageFilterSamples(short[] chunkSamples) {
         short[] filterOutput = new short[chunkSamples.length];
         short lastSample = chunkSamples[0];
