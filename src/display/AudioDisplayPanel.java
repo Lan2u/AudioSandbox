@@ -14,6 +14,7 @@ import java.io.IOException;
  * Created by Paul Lancaster on 28/11/2016
  */
 public class AudioDisplayPanel extends JPanel{
+    
     BufferedImage frame;
     
     AudioDisplayPanel(int width, int height) {
@@ -41,13 +42,25 @@ public class AudioDisplayPanel extends JPanel{
     }
     
     private void frequencyDistribution(AudioFile file){
+        /*
+        
+            
+            
+         */
         int WIDTH = 1800;
         int HEIGHT = 800;
-        // We want there to be as many chunks as there are pixels of width
-        // int CHUNK_SIZE = (file.getNumberOfSamples() / WIDTH);
         
-       // int CHUNK_SIZE = 128;
-        for (int CHUNK_SIZE = 4; CHUNK_SIZE < 10000; CHUNK_SIZE= CHUNK_SIZE+4) {
+        
+        int fps = 10;
+        long samplesPerFrame = Math.round(file.getNumberOfSamples()/fps);
+        int chunkSize = 20;
+        
+        long dT = 10000;
+        getNextFrame(chunkSize,samplesPerFrame,dT);
+        
+        int CHUNK_SIZE = 128;
+        
+            System.out.println("Loop start");
             file.resetPos();
             int[] frequencies = getFrequencies(file, CHUNK_SIZE);
             int[] yValues = new int[frequencies.length];
@@ -86,10 +99,53 @@ public class AudioDisplayPanel extends JPanel{
                 }
             }
             try {
-                ImageIO.write(image, "png", new File("CHUNK RUN 2:" + CHUNK_SIZE + ".png"));
+                ImageIO.write(image, "png", new File("CHUNKSIZE" + CHUNK_SIZE + ".png"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            System.out.println("File made");
+    }
+    
+    
+    
+    /*
+    1   So the image updates continously between 10 and 30 times a second
+        2   The chunk size is a factor of sample rate * time of each frame(seconds)
+        3   so at 10fps and sample rate 44100
+        4   chunksize is a factor of 4410 eg. 3 or 5 although preferably a number which gives the highest efficiency (need to research)
+        5   So for each the frequencies of all the chunks in the frame is worked out and the corresponding amplitude at that frequency
+        6   The highest amplitude at each frequency band (There will be 20 bands for now but the number of bands can increase/decrease)
+        7   All bands contain cover an equivalent number of frequencies each
+        8   The highest amplitude at that band will then be displayed as a bar
+        9   This will update each frame as the song moves along.
+       10   For now just channel 1 will be displayed but channel 2 will be added later and displayed in a different colour
+     */
+    private long timeSinceLastFrame = 0; // nano seconds
+    private static long NANO_PER_FRAME = 0; // nano seconds
+    private int channel = 1;
+    
+    private void getNextFrame(AudioFile file, int chunkSize,int samplesPerFrame, long dT) {
+        // Use the chunk size to get all the samples except the last
+        // chunk which is a smaller size to make up the samples
+        
+        timeSinceLastFrame =+ dT;
+        if (timeSinceLastFrame > NANO_PER_FRAME){
+            
+            int numberOfChunks = samplesPerFrame/chunkSize;
+            Chunk[] chunks = new Chunk[numberOfChunks+1];
+            
+            for (int i = 0; i < numberOfChunks; i++) { // Get the chunks, get their amplitude average then store along with frequency
+                short[] chunkAmp = file.getChunk(chunkSize,channel);
+                Chunk chunk = new Chunk(chunkAmp,getFreqOfChunk(chunkAmp,file.getSampleRate()));
+                chunks[i] = chunk;
+            }
+            int samplesLeft = samplesPerFrame - numberOfChunks*chunkSize;
+            if (samplesLeft > 0){ // Get the last chunk (which may be a different size to the others to make up the samples per frame)
+                short[] chunkAmp = file.getChunk(samplesLeft,channel);
+                Chunk chunk = new Chunk(chunkAmp,getFreqOfChunk(chunkAmp,file.getSampleRate()));
+                chunks[chunks.length-1] = chunk;
+            }
+            timeSinceLastFrame = 0;
         }
     }
     
@@ -191,4 +247,14 @@ public class AudioDisplayPanel extends JPanel{
         return samples;
     }
     
+    //TODO this is likely a bad way to do this but idk how else yet
+    private class Chunk {
+        private short amplitude;
+        private double frequency;
+        Chunk(short[] amplitudes, double frequency){
+            // TODO average amplitudes then store
+            this.frequency = frequency;
+        }
+        
+    }
 }
