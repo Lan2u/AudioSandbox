@@ -52,6 +52,8 @@ public class AudioDisplayPanel extends JPanel{
         
         
         int fps = 10;
+        // TODO I see a problem with this because the frame might not excute exactly on time and that could lead to the visualiser lagging behind the audio
+        // I'll see what happens if it is a problem it should be easier to fix once stuff works apart from that bug than trying to fix the bug now
         long samplesPerFrame = Math.round(file.getNumberOfSamples()/fps);
         int chunkSize = 20;
         
