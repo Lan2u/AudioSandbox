@@ -3,6 +3,7 @@ package display;
 import audio.files.AudioFile;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -23,7 +24,11 @@ public class AudioDisplay extends JFrame {
     }
     public AudioDisplay(int width,int height){
         setSize(width, height);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         panel = new AudioDisplayPanel(width,height);
+        add(panel);
+        setSize(new Dimension(WIDTH+100,HEIGHT+100));
+        setVisible(true);
     }
     
     

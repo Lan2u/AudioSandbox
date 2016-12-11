@@ -89,6 +89,17 @@ class StereoAudioData extends AudioData{
         pos_ch2 = 0;
     }
     
+    @Override
+    public int getSamplesLeft(int channel) {
+        switch(channel){
+            case 1:
+                return (getNumberOfSamples() - pos_ch1 -1 );
+            default:
+                System.out.println("Samples left on channels other than 1 not implemented");
+                return 0;
+        }
+    }
+    
     short nextSample(int channel) {
         switch(channel){
             case 1:

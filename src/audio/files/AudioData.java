@@ -42,4 +42,6 @@ abstract class AudioData {
     abstract int[] getSamples(double seconds, int sampleRate, int channel, double length);
     
     public abstract void resetPos();
+    
+    public abstract int getSamplesLeft(int channel);
 }

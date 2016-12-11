@@ -39,6 +39,17 @@ public class WaveFile implements AudioFile{
     }
     
     @Override
+    public boolean hasNextSample(int channel) {
+        return data.hasNextSample(channel);
+    }
+    
+    @Override
+    public int samplesLeft(int channel) {
+        //TODO implement for more than 1 channel
+        return data.getSamplesLeft(channel);
+    }
+    
+    @Override
     public int getSampleRate() {
         return header.getSampleRate();
     }

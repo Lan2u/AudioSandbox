@@ -83,4 +83,9 @@ class MonoAudioData extends AudioData{
     public void resetPos() {
         pos_ch1 = 0;
     }
+    
+    @Override
+    public int getSamplesLeft(int channel) {
+        return (getNumberOfSamples() - pos_ch1-1);
+    }
 }

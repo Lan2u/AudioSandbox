@@ -14,4 +14,8 @@ public interface AudioFile {
     int[] getSamples(double seconds, int channel);
     
     void resetPos();
+    
+    boolean hasNextSample(int channel);
+    
+    int samplesLeft(int channel);
 }
