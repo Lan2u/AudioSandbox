@@ -5,6 +5,7 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/AudioVisualiser" />
       <excludeFolder url="file://$MODULE_DIR$/jfftw-1.2" />
       <excludeFolder url="file://$MODULE_DIR$/src/old" />
       <excludeFolder url="file://$MODULE_DIR$/src/old/graphic" />
