@@ -11,7 +11,7 @@ import java.io.IOException;
 
     
 public class AudioSandbox {
-    private static final String FILE_PATH = "resources/MormonJesus.wav";
+    private static final String FILE_PATH = "resources/high_risk.wav";
 
     public static void main(String[] args) throws IOException {
         WaveFile waveFile = new WaveFile(new File(FILE_PATH));

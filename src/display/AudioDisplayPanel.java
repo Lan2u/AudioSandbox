@@ -3,9 +3,12 @@ package display;
 import audio.files.AudioFile;
 import org.jtransforms.fft.DoubleFFT_1D;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -33,11 +36,22 @@ public class AudioDisplayPanel extends JPanel{
         }
     }
     
+    private static int XZ,c;
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
        // System.out.println("Painted");
         g.drawImage(frame,0,0,Color.PINK, this);
+        c++;
+        if (c >= 500){
+            XZ= XZ + 500;
+            try {
+                ImageIO.write(frame,"png",new File("Image"+XZ+".png"));
+                c=0;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
     
     private void frequencyNumberDisplay(AudioFile file) {
@@ -57,31 +71,32 @@ public class AudioDisplayPanel extends JPanel{
         // I'll see what happens if it is a problem it should be easier to fix once stuff works apart from that bug than trying to fix the bug now
         // NOTE I implemented a possible fix anyway but this should still be one of the first areas to be checked if something breaks
         
-        int WIDTH = 800;
-        int HEIGHT = 400;
+        int WIDTH = 1000; //TODO tie into the actual width of the panel
+        int HEIGHT = 1000; // TODO tie into the actual height of the panel
         int freqBands = 20;
-        long NANO_PER_FRAME = (100000L/FPS);
+        long NANO_PER_FRAME = (1000000000L/FPS);
         
         long lastTime = System.nanoTime();
+        System.out.println(System.nanoTime());
         while (chunksLeft()){
-            Graphics2D g2d = frame.createGraphics();
-            
             long currentTime = System.nanoTime();
             long dT = Math.abs(currentTime-lastTime);
             timeSinceLastFrame=timeSinceLastFrame+dT;
             if (timeSinceLastFrame >= NANO_PER_FRAME){
-                System.out.println("Frame change");
+                frame = new BufferedImage(frame.getWidth(),frame.getHeight(),frame.getType());
+                Graphics2D g2d = frame.createGraphics();
+                g2d.setColor(Color.CYAN);
                 generateFrame(g2d,WIDTH,HEIGHT,nextChunks(CPF,channel),freqBands,file.getSampleRate());
                 this.repaint();
                 timeSinceLastFrame = 0;
-            }
+           }
             lastTime = currentTime;
         }
+        System.out.println(lastTime);
     }
     
     private boolean chunksLeft() {
-        chunk_pos = 0;
-        return chunk_pos <= chunks.size();
+        return chunk_pos+1 < chunks.size(); //chunk_pos + 1 because size of array lists starts at 1 not 0
     }
     
     private int[] scaleArray(int[] array, int limit){
@@ -100,6 +115,10 @@ public class AudioDisplayPanel extends JPanel{
         }
         
         return yValues;
+    }
+    
+    public static void banter(){
+        System.out.println("Banter");
     }
     
     private void averageOutArray(int[] array) {
@@ -129,6 +148,8 @@ public class AudioDisplayPanel extends JPanel{
     
     private void generateFrame(Graphics2D g2d, int width, int height, Chunk[] chunks, int freqBands, int sampleRate) {
         int bandSize = sampleRate / freqBands;
+        int BASE_Y = 600;
+        int BAND_WIDTH = 20;
         
         double[] bandAmplitudes = new double[freqBands-1];
         for (Chunk chunk: chunks){
@@ -149,15 +170,16 @@ public class AudioDisplayPanel extends JPanel{
                 bandAmplitudes[band] = (bandAmplitudes[band] + chunk.amplitude)/2.0;
             }
         }
+        
+        g2d.drawLine(0,BASE_Y,width,BASE_Y);
         for (int band = 0; band < bandAmplitudes.length; band++) {
-            int BAND_WIDTH = 20;
-            int BASE_Y = 20;
-            int x = band* 20 + band * BAND_WIDTH;
+            int x = (band+1)* 20 + band * BAND_WIDTH;
             double BAND_MAX_HEIGHT = 400;
             int BAND_HEIGHT = (int)(BAND_MAX_HEIGHT*(bandAmplitudes[band]/33000.0));
-            g2d.setColor(Color.RED);
-            g2d.fillRect(x,height-BASE_Y,BAND_WIDTH,height-BAND_HEIGHT);
+            int y = BASE_Y-BAND_HEIGHT;
+            g2d.fillRect(x,y,BAND_WIDTH,BAND_HEIGHT);
         }
+        
     }
     
     // Returns the number of nano seconds per chunk
@@ -166,7 +188,7 @@ public class AudioDisplayPanel extends JPanel{
     // Boolean frequencies = Should the frequencies be loaded and stored as well or just the amplitudes
     private void loadChunks(AudioFile file,int CPF,int FPS, int channel, boolean frequencies){
         int CHUNK_SIZE = (file.getSampleRate()/(FPS*CPF));
-        long numberOfChunks =(file.getNumberOfSamples()/CHUNK_SIZE);
+        long numberOfChunks =(file.getNumberOfSamples()/CHUNK_SIZE)/2; // FIXME yyIf not divided by 2 then the file is to long (by double) and the second half is all 0 amplitude but I have no idea why
         
         chunks = new ArrayList<>();
         
@@ -188,7 +210,11 @@ public class AudioDisplayPanel extends JPanel{
     private Chunk[] nextChunks(int chunks, int channel){
         Chunk[] chunk = new Chunk[chunks];
         for (int i = 0; i < chunks; i++) {
-            chunk[i] = nextChunk(channel);
+            if(chunksLeft()) {
+                chunk[i] = nextChunk(channel);
+            }else{
+                chunk[i] = new Chunk();
+            }
         }
         return chunk;
     }
@@ -310,9 +336,26 @@ public class AudioDisplayPanel extends JPanel{
             this.amplitude = (temp/amplitudes.length);
             this.frequency = frequency;
         }
+        
+        // Default chunk everything 0
+        public Chunk() {
+            amplitude = 0;
+            frequency = 0;
+        }
+    
         @Override
         public String toString(){
             return String.format("%d at %.1fHz",amplitude,frequency);
         }
     }
+    
+    /* Computing question
+    static int f(int input){
+        if (input == 1) return 1;
+        return input * (
+                if (input == 1) return 1;
+                return input * f(input-1);
+        )
+    }
+    */
 }
