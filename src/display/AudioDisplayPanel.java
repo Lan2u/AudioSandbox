@@ -12,10 +12,10 @@ import java.util.ArrayList;
  * Created by Paul Lancaster on 28/11/2016
  */
 public class AudioDisplayPanel extends JPanel{
-    private BufferedImage frame;
-    private static long timeSinceLastFrame = 0; // Nano-seconds
-    private ArrayList<Chunk> chunks;
-    private int chunk_pos = -1;
+    private BufferedImage frame; // Display frame
+    private static long timeSinceLastFrame = 0; // Nanoseconds
+    private ArrayList<Chunk> chunks; // Chunks
+    private int chunk_pos = -1; // Position in chunk array
     
     AudioDisplayPanel(int width, int height) {
         setSize(width, height);
@@ -157,7 +157,7 @@ public class AudioDisplayPanel extends JPanel{
         }
     }
     
-    // Returns the number of nano seconds per chunk
+    // Returns the number of nanoseconds per chunk
     // cpf = Chunks Per frame
     // fps = frame per second
     // Boolean frequencies = Should the frequencies be loaded and stored as well or just the amplitudes
