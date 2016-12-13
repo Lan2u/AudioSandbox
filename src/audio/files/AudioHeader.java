@@ -8,6 +8,7 @@ import java.nio.ByteOrder;
 /**
  * Created by Paul Lancaster on 30/10/2016
  */
+@SuppressWarnings({"ResultOfMethodCallIgnored", "unused"})
 class AudioHeader { // Store audio header data
     
     // In order of being read from file
@@ -65,32 +66,31 @@ class AudioHeader { // Store audio header data
         final int HEADER_BYTE_READ_EACH_TIME = 4;
         byte[] headerInputChunk = new byte[HEADER_BYTE_READ_EACH_TIME];
         in.read(headerInputChunk);
-        setFileHeader(new String(headerInputChunk));
+        this.fileHeader = new String(headerInputChunk);
         in.read(headerInputChunk);
-        setFileSize(getInt(headerInputChunk));
+        this.fileSize = getInt(headerInputChunk);
         in.read(headerInputChunk);
-        setFormat(new String(headerInputChunk));
+        this.format = new String(headerInputChunk);
         in.read(headerInputChunk); // Should be the string "fmt" Marks start of next chunk
         in.read(headerInputChunk);
         int chunkSize = getInt(headerInputChunk);
         int chunkReadSoFar = in.read(headerInputChunk);
-        setAudioFormat(getInt(new byte[]{headerInputChunk[0], headerInputChunk[1]})); // Takes the first 2 values of the byte array, gets int equivalent and then set this as the audio format
-        setNumberOfChannels(getInt(new byte[]{headerInputChunk[2],headerInputChunk[3]}));
+        this.audioFormat = getInt(new byte[]{headerInputChunk[0], headerInputChunk[1]});
+        this.numberOfChannels = getInt(new byte[]{headerInputChunk[2],headerInputChunk[3]});
         chunkReadSoFar += in.read(headerInputChunk);
-        setSampleRate(getInt(headerInputChunk));
+        this.sampleRate = getInt(headerInputChunk);
         chunkReadSoFar += in.read(headerInputChunk);
-        setByteRate(getInt(headerInputChunk));
+        this.byteRate = getInt(headerInputChunk);
         chunkReadSoFar += in.read(headerInputChunk);
-        setBlockAlign(getInt(new byte[]{headerInputChunk[0],headerInputChunk[1]}));
+        this.blockAlign = getInt(new byte[]{headerInputChunk[0],headerInputChunk[1]});
         setBitsPerSample(getInt(new byte[]{headerInputChunk[2],headerInputChunk[3]}));
         if (chunkReadSoFar != chunkSize){
             //TODO add support for extra parameters
             System.out.println("Extra header space detected");
         }
-        chunkReadSoFar += in.read(headerInputChunk);
-        setSubChunkStart(String.valueOf(chunkReadSoFar));
-        chunkReadSoFar += in.read(headerInputChunk);
-        setDataSize(getInt(headerInputChunk));
+        in.read(headerInputChunk);
+        in.read(headerInputChunk);
+        this.dataSize = getInt(headerInputChunk);
     }
     
     private int getInt(byte[] byteRepOfInt) { // MAX 4 BYTES (int's use 4 bytes in java)
@@ -126,39 +126,39 @@ class AudioHeader { // Store audio header data
     
     /* Setters and Getters */
     
-    void setFileHeader(String fileHeader) {
+    private void setFileHeader(String fileHeader) {
             this.fileHeader = fileHeader;
         }
     
-    void setFormat(String format) {
+    private void setFormat(String format) {
             this.format = format;
         }
     
-    void setAudioFormat(int audioFormat) {
+    private void setAudioFormat(int audioFormat) {
         this.audioFormat = audioFormat;
     }
     
-    void setFileSize(int fileSize) {
+    private void setFileSize(int fileSize) {
         this.fileSize = fileSize;
     }
     
-    void setNumberOfChannels(int numberOfChannels) {
+    private void setNumberOfChannels(int numberOfChannels) {
         this.numberOfChannels = numberOfChannels;
     }
     
-    void setSampleRate(int sampleRate) {
+    private void setSampleRate(int sampleRate) {
         this.sampleRate = sampleRate;
     }
     
-    void setByteRate(int byteRate) {
+    private void setByteRate(int byteRate) {
         this.byteRate = byteRate;
     }
     
-    void setBlockAlign(int blockAlign) {
+    private void setBlockAlign(int blockAlign) {
         this.blockAlign = blockAlign;
     }
     
-    void setBitsPerSample(int bitsPerSample) {
+    private void setBitsPerSample(int bitsPerSample) {
         this.bytesPerSample = (bitsPerSample/8);
         this.bitsPerSample = bitsPerSample;
     }
@@ -191,11 +191,11 @@ class AudioHeader { // Store audio header data
         return bytesPerSample;
     }
     
-    void setSubChunkStart(String subChunkStart) {
+    private void setSubChunkStart(String subChunkStart) {
         this.subChunkStart = subChunkStart;
     }
     
-    void setDataSize(int dataSize) {
+    private void setDataSize(int dataSize) {
         this.dataSize = dataSize;
     }
     

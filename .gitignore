@@ -61,3 +61,5 @@ fabric.properties
 \\\
 !/JTransforms-3.1-with-dependencies.jar
 /3rd Party + Junk/
+/libraries/
+/resources/

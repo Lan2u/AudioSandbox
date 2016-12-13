@@ -10,19 +10,14 @@ import java.util.ArrayList;
  * Created by Paul Lancaster on 28/11/2016
  */
 public class AudioDisplay extends JFrame {
-    
-    AudioDisplayPanel panel;
-    
+    private AudioDisplayPanel panel;
     /*
-        3 ways to do this either:
-       - Load the visuals dynamically as the music plays frame by frame
 *this* - Load the data for the visuals before and then just translate that to something visual as each frame plays
-       - Load the visuals before (every frame) then play theses
      */
     public AudioDisplay(){
         this(1000,1000);
     }
-    public AudioDisplay(int width,int height){
+    private AudioDisplay(int width, int height){
         setSize(width, height);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         panel = new AudioDisplayPanel(width,height);
@@ -31,9 +26,8 @@ public class AudioDisplay extends JFrame {
         setVisible(true);
     }
     
-    
-    ArrayList<AudioFile> queue = new ArrayList<>();
-    ArrayList<VisualEffect> effects = new ArrayList<>();
+    private ArrayList<AudioFile> queue = new ArrayList<>();
+    private ArrayList<VisualEffect> effects = new ArrayList<>();
     
     // Plays current song queue, plays nothing if the queue is empty
     public void play(){
@@ -57,4 +51,12 @@ public class AudioDisplay extends JFrame {
         return true; // Queued successfully
     }
     
+    @Override
+    public String toString() {
+        return "AudioDisplay{" +
+                "panel=" + panel +
+                ", queue=" + queue +
+                ", effects=" + effects +
+                '}';
+    }
 }

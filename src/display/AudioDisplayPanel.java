@@ -3,29 +3,26 @@ package display;
 import audio.files.AudioFile;
 import org.jtransforms.fft.DoubleFFT_1D;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
  * Created by Paul Lancaster on 28/11/2016
  */
 public class AudioDisplayPanel extends JPanel{
-    
-    BufferedImage frame;
-    private static long timeSinceLastFrame = 0; // nano seconds
+    private BufferedImage frame;
+    private static long timeSinceLastFrame = 0; // Nano-seconds
     private ArrayList<Chunk> chunks;
+    private int chunk_pos = -1;
     
     AudioDisplayPanel(int width, int height) {
         setSize(width, height);
         frame = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
     }
     
-    public void play(AudioFile file, VisualEffect effect) {
+    void play(AudioFile file, VisualEffect effect) {
         switch(effect){
             case Frequency_Distribution:
                 frequencyDistribution(file);
@@ -36,48 +33,28 @@ public class AudioDisplayPanel extends JPanel{
         }
     }
     
-    private static int XZ,c;
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
        // System.out.println("Painted");
         g.drawImage(frame,0,0,Color.PINK, this);
-        c++;
-        if (c >= 500){
-            XZ= XZ + 500;
-            try {
-                ImageIO.write(frame,"png",new File("Image"+XZ+".png"));
-                c=0;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    
-    private void frequencyNumberDisplay(AudioFile file) {
-       // int[] frequencies = getFrequencies(file, 64);
-       // System.out.println("Frequency number display not implemented");
     }
     
     private void frequencyDistribution(AudioFile file){
-        file.resetPos();
-        
         int CPF = 10; //Chunks per frame
         int FPS = 10; // Frames per second
         int channel = 1; // Audio channel
-        loadChunks(file,CPF,FPS,channel,true); // Get frequencies/amplitudes and store
+        boolean loadFrequencies = true; // Load amplitudes and frequencies (false means just amplitudes)
         
-        // I see a problem with this because the frame might not execute exactly on time and that could lead to the visualiser lagging behind the audio
-        // I'll see what happens if it is a problem it should be easier to fix once stuff works apart from that bug than trying to fix the bug now
-        // NOTE I implemented a possible fix anyway but this should still be one of the first areas to be checked if something breaks
+        file.resetPos();
+        loadChunks(file,CPF,FPS,channel,loadFrequencies); // Get frequencies/amplitudes and store
         
         int WIDTH = 1000; //TODO tie into the actual width of the panel
         int HEIGHT = 1000; // TODO tie into the actual height of the panel
-        int freqBands = 20;
-        long NANO_PER_FRAME = (1000000000L/FPS);
+        int freqBands = 10; // The number of frequency bands, more bands means a more accurate representation of the various frequencies
+        long NANO_PER_FRAME = (1000000000L/FPS); // Nano seconds per frame
         
         long lastTime = System.nanoTime();
-        System.out.println(System.nanoTime());
         while (chunksLeft()){
             long currentTime = System.nanoTime();
             long dT = Math.abs(currentTime-lastTime);
@@ -92,7 +69,6 @@ public class AudioDisplayPanel extends JPanel{
            }
             lastTime = currentTime;
         }
-        System.out.println(lastTime);
     }
     
     private boolean chunksLeft() {
@@ -145,25 +121,23 @@ public class AudioDisplayPanel extends JPanel{
     //    9   This will update each frame as the song moves along.
     //   10   For now just channel 1 will be displayed but channel 2 will be added later and displayed in a different colour
     
-    
     private void generateFrame(Graphics2D g2d, int width, int height, Chunk[] chunks, int freqBands, int sampleRate) {
-        int bandSize = sampleRate / freqBands;
+        int bandSize = (int)((sampleRate/2.0)/ freqBands); // Since the frequency can't actually be higher than sample rate divided by 2
         int BASE_Y = 600;
         int BAND_WIDTH = 20;
-        
         double[] bandAmplitudes = new double[freqBands-1];
+        
         for (Chunk chunk: chunks){
             int band = (int)(chunk.frequency/bandSize);
-            // The frequency divided by the band size rounded down. Eg.
-            // Frequency = 10000, freqBands = 10, sample rate = 44100
-            // Each band covers 4410 frequencies
-            // Frequency/4410 = 2 (rounding down)
-            // This means that the frequency is in the band of 2 * 4410 = 8820-13230Hz (band 3)
-            // The bands range from 0-(freqBands-1)
-            // Since the frequency can't actually be higher than sample rate divided by 2 it means that
-            // it is quite likely that this will need to be changed other wise there will be alot of
-            // redundant bands
-            
+            /* The frequency divided by the band size rounded down.
+             Eg.
+             Frequency = 10000, freqBands = 10, sample rate = 44100
+             Each band covers 4410 frequencies
+             Frequency/4410 = 2 (rounding down)
+             This means that the frequency is in the band of 2 * 4410 = 8820-13230Hz (band 3)
+             The bands range from 0-(freqBands-1)
+            */
+                    
             if (bandAmplitudes[band] == 0){
                 bandAmplitudes[band] = chunk.amplitude;
             }else{
@@ -171,7 +145,9 @@ public class AudioDisplayPanel extends JPanel{
             }
         }
         
-        g2d.drawLine(0,BASE_Y,width,BASE_Y);
+        g2d.setColor(Color.GREEN);
+        g2d.drawLine(0,BASE_Y,width,BASE_Y); // Base (zero) line
+        g2d.setColor(Color.red);
         for (int band = 0; band < bandAmplitudes.length; band++) {
             int x = (band+1)* 20 + band * BAND_WIDTH;
             double BAND_MAX_HEIGHT = 400;
@@ -179,7 +155,6 @@ public class AudioDisplayPanel extends JPanel{
             int y = BASE_Y-BAND_HEIGHT;
             g2d.fillRect(x,y,BAND_WIDTH,BAND_HEIGHT);
         }
-        
     }
     
     // Returns the number of nano seconds per chunk
@@ -188,7 +163,7 @@ public class AudioDisplayPanel extends JPanel{
     // Boolean frequencies = Should the frequencies be loaded and stored as well or just the amplitudes
     private void loadChunks(AudioFile file,int CPF,int FPS, int channel, boolean frequencies){
         int CHUNK_SIZE = (file.getSampleRate()/(FPS*CPF));
-        long numberOfChunks =(file.getNumberOfSamples()/CHUNK_SIZE)/2; // FIXME yyIf not divided by 2 then the file is to long (by double) and the second half is all 0 amplitude but I have no idea why
+        long numberOfChunks =(file.getNumberOfSamples()/CHUNK_SIZE)/2; // FIXME If not divided by 2 then the file is to long (by double) and the second half is all 0 amplitude but I have no idea why
         
         chunks = new ArrayList<>();
         
@@ -219,7 +194,6 @@ public class AudioDisplayPanel extends JPanel{
         return chunk;
     }
     
-    private int chunk_pos = -1;
     private Chunk nextChunk(int channel){
         chunk_pos++;
         return chunks.get(chunk_pos);
@@ -294,10 +268,11 @@ public class AudioDisplayPanel extends JPanel{
         return temp;
     }
     
-    // Low-Pass filtering : Average out the frequency this will smooth out large peaks or troughs in the data
-    // http://blog.bjornroche.com/2012/07/frequency-detection-using-fft-aka-pitch.html
     //TODO testing I don't think this works properly
     private static short[] averageFilterSamples(short[] chunkSamples) {
+        // Low-Pass filtering : Average out the frequency this will smooth out large peaks or troughs in the data
+        // http://blog.bjornroche.com/2012/07/frequency-detection-using-fft-aka-pitch.html
+        
         short[] filterOutput = new short[chunkSamples.length];
         short lastSample = chunkSamples[0];
         filterOutput[0] = chunkSamples[0];
@@ -307,6 +282,7 @@ public class AudioDisplayPanel extends JPanel{
         }
         return filterOutput;
     }
+    
     //TODO testing
     private static double[] buildHannWindow(int size) {
         double[] window = new double[size];
@@ -315,6 +291,7 @@ public class AudioDisplayPanel extends JPanel{
         }
         return window;
     }
+    
     //TODO testing
     private static short[] applyWindow(double[] window, short[] samples) {
         for (int i = 0; i < samples.length; i++) {
@@ -327,8 +304,12 @@ public class AudioDisplayPanel extends JPanel{
     private class Chunk {
         private int amplitude;
         private double frequency;
+        // Default chunk everything 0
+        public Chunk() {
+            amplitude = 0;
+            frequency = 0;
+        }
         Chunk(short[] amplitudes, double frequency){
-            // TODO average amplitudes then store
             int temp = 0;
             for (short amp: amplitudes){
                 temp=temp+Math.abs(amp);
@@ -336,26 +317,18 @@ public class AudioDisplayPanel extends JPanel{
             this.amplitude = (temp/amplitudes.length);
             this.frequency = frequency;
         }
-        
-        // Default chunk everything 0
-        public Chunk() {
-            amplitude = 0;
-            frequency = 0;
-        }
-    
         @Override
         public String toString(){
             return String.format("%d at %.1fHz",amplitude,frequency);
         }
     }
     
-    /* Computing question
-    static int f(int input){
-        if (input == 1) return 1;
-        return input * (
-                if (input == 1) return 1;
-                return input * f(input-1);
-        )
+    @Override
+    public String toString() {
+        return "AudioDisplayPanel{" +
+                "frame=" + frame +
+                ", chunks=" + chunks +
+                ", chunk_pos=" + chunk_pos +
+                '}';
     }
-    */
 }

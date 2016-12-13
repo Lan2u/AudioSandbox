@@ -8,14 +8,11 @@ public interface AudioFile {
     int getSampleRate();
     int getChannels();
     int getNumberOfSamples();
-    
     int[] getAllSamples(int channel);
     short[] getChunk(int samples,int channel);
     int[] getSamples(double seconds, int channel);
     
     void resetPos();
-    
     boolean hasNextSample(int channel);
-    
     int samplesLeft(int channel);
 }

@@ -2,10 +2,12 @@ package audio.files;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Created by Paul Lancaster on 24/11/2016
  */
+@SuppressWarnings("ResultOfMethodCallIgnored")
 class StereoAudioData extends AudioData{
     private byte[] data_ch1; // Channel 1 bytes
     private byte[] data_ch2; // Channel 2 bytes
@@ -100,7 +102,7 @@ class StereoAudioData extends AudioData{
         }
     }
     
-    short nextSample(int channel) {
+    private short nextSample(int channel) {
         switch(channel){
             case 1:
                 if (pos_ch1 >= (sample_ch1.length -1)){
@@ -155,5 +157,17 @@ class StereoAudioData extends AudioData{
     @Override
     int getNumberOfSamples(){
         return sample_ch1.length;
+    }
+    
+    @Override
+    public String toString() {
+        return "StereoAudioData{" +
+                "data_ch1=" + Arrays.toString(data_ch1) +
+                ", data_ch2=" + Arrays.toString(data_ch2) +
+                ", sample_ch1=" + Arrays.toString(sample_ch1) +
+                ", sample_ch2=" + Arrays.toString(sample_ch2) +
+                ", pos_ch1=" + pos_ch1 +
+                ", pos_ch2=" + pos_ch2 +
+                '}';
     }
 }

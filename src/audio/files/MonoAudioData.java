@@ -2,6 +2,7 @@ package audio.files;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Created by Paul Lancaster on 24/11/2016
@@ -54,7 +55,7 @@ class MonoAudioData extends AudioData{
         }
     }
     
-    short nextSample() {
+    private short nextSample() {
         if (pos_ch1 >= (sample_ch1.length-1)){
             return 0;
         }
@@ -87,5 +88,14 @@ class MonoAudioData extends AudioData{
     @Override
     public int getSamplesLeft(int channel) {
         return (getNumberOfSamples() - pos_ch1-1);
+    }
+    
+    @Override
+    public String toString() {
+        return "MonoAudioData{" +
+                "data_ch1=" + Arrays.toString(data_ch1) +
+                ", sample_ch1=" + Arrays.toString(sample_ch1) +
+                ", pos_ch1=" + pos_ch1 +
+                '}';
     }
 }
