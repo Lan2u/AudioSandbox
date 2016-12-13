@@ -51,7 +51,7 @@ public class AudioDisplayPanel extends JPanel{
         
         int WIDTH = 1000; //TODO tie into the actual width of the panel
         int HEIGHT = 1000; // TODO tie into the actual height of the panel
-        int freqBands = 10; // The number of frequency bands, more bands means a more accurate representation of the various frequencies
+        int freqBands = 100; // The number of frequency bands, more bands means a more accurate representation of the various frequencies
         long NANO_PER_FRAME = (1000000000L/FPS); // Nano seconds per frame
         
         long lastTime = System.nanoTime();
@@ -66,7 +66,7 @@ public class AudioDisplayPanel extends JPanel{
                 generateFrame(g2d,WIDTH,HEIGHT,nextChunks(CPF,channel),freqBands,file.getSampleRate());
                 this.repaint();
                 timeSinceLastFrame = 0;
-           }
+            }
             lastTime = currentTime;
         }
     }
@@ -124,7 +124,7 @@ public class AudioDisplayPanel extends JPanel{
     private void generateFrame(Graphics2D g2d, int width, int height, Chunk[] chunks, int freqBands, int sampleRate) {
         int bandSize = (int)((sampleRate/2.0)/ freqBands); // Since the frequency can't actually be higher than sample rate divided by 2
         int BASE_Y = 600;
-        int BAND_WIDTH = 20;
+        int BAND_WIDTH = (width/freqBands);
         double[] bandAmplitudes = new double[freqBands-1];
         
         for (Chunk chunk: chunks){
@@ -149,7 +149,7 @@ public class AudioDisplayPanel extends JPanel{
         g2d.drawLine(0,BASE_Y,width,BASE_Y); // Base (zero) line
         g2d.setColor(Color.red);
         for (int band = 0; band < bandAmplitudes.length; band++) {
-            int x = (band+1)* 20 + band * BAND_WIDTH;
+            int x = band*BAND_WIDTH;
             double BAND_MAX_HEIGHT = 400;
             int BAND_HEIGHT = (int)(BAND_MAX_HEIGHT*(bandAmplitudes[band]/33000.0));
             int y = BASE_Y-BAND_HEIGHT;
