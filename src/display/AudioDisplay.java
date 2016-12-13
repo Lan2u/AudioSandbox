@@ -35,8 +35,8 @@ public class AudioDisplay extends JFrame {
     // Plays current song queue, plays nothing if the queue is empty
     public void play(){
         // This could be done better to link the effect and queue together
-        for (int i = 0; i < queue.size(); i++) {
-            play(queue.get(i));
+        for (LoadedFile song : queue) {
+            play(song);
         }
     }
     
@@ -44,7 +44,7 @@ public class AudioDisplay extends JFrame {
     // Return true if successful
     // False if not (file currently playing, use que file instead)
     // Blocking by default
-    public void play(LoadedFile file){
+    private void play(LoadedFile file){
         if (!file.isLoaded()){
             file.load(CHUNK_SIZE);
         }

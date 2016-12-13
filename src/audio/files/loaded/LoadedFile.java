@@ -20,7 +20,7 @@ public class LoadedFile{
     private int ch2_chunk_pos = -1;
     private Dimension size; // Size of the produced frames
     
-    LoadedFile(AudioFile file, VisualEffect effect){
+    public LoadedFile(AudioFile file, VisualEffect effect){
         this.file = file;
         this.effect = effect;
     }
@@ -45,7 +45,7 @@ public class LoadedFile{
             default:
                 throw new IllegalArgumentException("Unsupported number of channels : " + file.getChannels());
         }
-        return true;
+        return loaded = true;
     }
     
     private void processChunks(AudioFile file, int channel, int CHUNK_SIZE, ArrayList<Chunk> chunks) {
@@ -96,11 +96,16 @@ public class LoadedFile{
         return true;
     }
     
-    public BufferedImage nextFrame() {
-        BufferedImage image = new BufferedImage((int)size.getWidth(),(int)size.getHeight(),BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2d = image.createGraphics();
-        effect.drawFrame(g2d,image.getWidth(),image.getHeight(),this);
-        return image;
+    // Return true if the frame should be repainted
+    public boolean nextFrame(BufferedImage frame, long dT) {
+        if (dT >= effect.getNanoPerFrame()) {
+            frame = new BufferedImage((int) size.getWidth(), (int) size.getHeight(), BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2d = frame.createGraphics();
+            effect.drawFrame(g2d, frame.getWidth(), frame.getHeight(), this);
+            return true;
+        }else{
+            return false;
+        }
     }
     
     // TODO testing
@@ -195,7 +200,7 @@ public class LoadedFile{
     private Chunk[] nextChunks(int chunks, int channel){
         Chunk[] chunk = new Chunk[chunks];
         for (int i = 0; i < chunks; i++) {
-            if(chunksLeft()) {
+            if(chunksLeft(channel)) {
                 chunk[i] = nextChunk(channel);
             }else{
                 chunk[i] = new Chunk();
@@ -205,8 +210,16 @@ public class LoadedFile{
     }
     
     private Chunk nextChunk(int channel){
-        chunk_pos++;
-        return chunks.get(chunk_pos);
+        switch(channel){
+            case 1:
+                ch1_chunk_pos++;
+                return ch1_chunks.get(ch1_chunk_pos);
+            case 2:
+                ch2_chunk_pos++;
+                return ch2_chunks.get(ch2_chunk_pos);
+            default:
+                throw new IllegalArgumentException("Channel out of range : " + channel);
+        }
     }
     
     public boolean isLoaded() {
@@ -217,15 +230,15 @@ public class LoadedFile{
         return file;
     }
     
-    public Chunk[] getCH1() {
-        return ch1_chunks;
-    }
-    
     public int getChannels() {
         return file.getChannels(); // Created to minimize typing as this is very commonly needed
     }
     
-    public Chunk[] getCH2() {
-        return ch2_chunks;
+    public Chunk[] getCH1(int numOfChunks) {
+        return nextChunks(numOfChunks, 1);
+    }
+    
+    public Chunk[] getCH2(int numOfChunks) {
+        return nextChunks(numOfChunks, 2);
     }
 }

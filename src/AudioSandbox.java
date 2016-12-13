@@ -1,6 +1,6 @@
 import audio.files.WaveFile;
+import audio.files.loaded.VisualEffect;
 import display.AudioDisplay;
-import display.VisualEffect;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +18,7 @@ public class AudioSandbox {
         
         System.out.println(waveFile);
         AudioDisplay display = new AudioDisplay();
-        display.play(waveFile, VisualEffect.Frequency_Distribution);
+        display.queueFile(waveFile, VisualEffect.Frequency_Distribution);
+        display.play();
     }
 }
