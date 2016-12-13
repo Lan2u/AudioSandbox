@@ -1,5 +1,7 @@
 package display;
 
+import audio.files.loaded.LoadedFile;
+import audio.files.loaded.VisualEffect;
 import audio.files.AudioFile;
 
 import javax.swing.*;
@@ -11,29 +13,30 @@ import java.util.ArrayList;
  */
 public class AudioDisplay extends JFrame {
     private AudioDisplayPanel panel;
+    private ArrayList<LoadedFile> queue = new ArrayList<>();
+    private int CHUNK_SIZE = 10; // Samples per chunk
+    
     /*
-*this* - Load the data for the visuals before and then just translate that to something visual as each frame plays
-     */
+        Load the data for the visuals before and then just translate that to something visual as each frame plays
+    */
     public AudioDisplay(){
         this(1000,1000);
     }
+    
     private AudioDisplay(int width, int height){
         setSize(width, height);
+        setMaximumSize(new Dimension(width+1,height));
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         panel = new AudioDisplayPanel(width,height);
         add(panel);
-        setSize(new Dimension(WIDTH+100,HEIGHT+100));
         setVisible(true);
     }
-    
-    private ArrayList<AudioFile> queue = new ArrayList<>();
-    private ArrayList<VisualEffect> effects = new ArrayList<>();
     
     // Plays current song queue, plays nothing if the queue is empty
     public void play(){
         // This could be done better to link the effect and queue together
         for (int i = 0; i < queue.size(); i++) {
-            play(queue.get(i),effects.get(i));
+            play(queue.get(i));
         }
     }
     
@@ -41,22 +44,15 @@ public class AudioDisplay extends JFrame {
     // Return true if successful
     // False if not (file currently playing, use que file instead)
     // Blocking by default
-    public void play(AudioFile file, VisualEffect effect){
-        panel.play(file,effect);
+    public void play(LoadedFile file){
+        if (!file.isLoaded()){
+            file.load(CHUNK_SIZE);
+        }
+        panel.play(file);
     }
     
     public boolean queueFile(AudioFile file, VisualEffect effect){
-        queue.add(file);
-        effects.add(effect);
+        queue.add(new LoadedFile(file,effect));
         return true; // Queued successfully
-    }
-    
-    @Override
-    public String toString() {
-        return "AudioDisplay{" +
-                "panel=" + panel +
-                ", queue=" + queue +
-                ", effects=" + effects +
-                '}';
     }
 }
