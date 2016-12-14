@@ -1,5 +1,5 @@
-import audio.files.WaveFile;
-import audio.files.loaded.VisualEffect;
+import audio.file.WaveFile;
+import audio.loaded.VisualEffect;
 import display.AudioDisplay;
 
 import java.io.File;

@@ -1,4 +1,6 @@
-package audio.files;
+package audio.file;
+
+import audio.data.*;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -1,6 +1,6 @@
 package display;
 
-import audio.files.loaded.LoadedFile;
+import audio.loaded.LoadedFile;
 
 import javax.swing.*;
 import java.awt.*;

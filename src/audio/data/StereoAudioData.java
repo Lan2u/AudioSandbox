@@ -1,4 +1,4 @@
-package audio.files;
+package audio.data;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,7 +8,7 @@ import java.util.Arrays;
  * Created by Paul Lancaster on 24/11/2016
  */
 @SuppressWarnings("ResultOfMethodCallIgnored")
-class StereoAudioData extends AudioData{
+public class StereoAudioData extends AudioData{
     private byte[] data_ch1; // Channel 1 bytes
     private byte[] data_ch2; // Channel 2 bytes
     
@@ -25,7 +25,7 @@ class StereoAudioData extends AudioData{
         
     }
     
-    boolean hasNextSample(int channel) {
+    public boolean hasNextSample(int channel) {
         switch(channel){
             case 1:
                 return pos_ch1 < data_ch1.length;
@@ -37,7 +37,7 @@ class StereoAudioData extends AudioData{
     }
     
     @Override
-    short[] getChunk(int samples, int channel) {
+    public short[] getChunk(int samples, int channel) {
         short[] chunk  = new short[samples];
         for (int i = 0; i < samples; i++) {
             chunk[i] = nextSample(channel);
@@ -46,7 +46,7 @@ class StereoAudioData extends AudioData{
     }
     
     @Override
-    int[] getSamples(double seconds, int sampleRate, int channel, double length) {
+    public int[] getSamples(double seconds, int sampleRate, int channel, double length) {
         switch (channel){
             case 1:
                 double secondsLeft = length - ((double)pos_ch1/(double)sampleRate);
@@ -155,7 +155,7 @@ class StereoAudioData extends AudioData{
     }
     
     @Override
-    int getNumberOfSamples(){
+    public int getNumberOfSamples(){
         return sample_ch1.length;
     }
     

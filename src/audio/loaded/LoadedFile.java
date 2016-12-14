@@ -1,6 +1,7 @@
-package audio.files.loaded;
+package audio.loaded;
 
-import audio.files.AudioFile;
+import audio.file.AudioFile;
+import calculate.FreqCalculator;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

@@ -1,4 +1,4 @@
-package audio.files;
+package audio.data;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -6,9 +6,9 @@ import java.io.IOException;
 /**
  * Created by Paul Lancaster on 24/11/2016
  */
-abstract class AudioData {
+public abstract class AudioData {
     
-    static AudioData getData(int dataSize, int numberOfChannels) {
+    public static AudioData getData(int dataSize, int numberOfChannels) {
         switch(numberOfChannels){
             case 1:
                 return new MonoAudioData(dataSize);
@@ -33,13 +33,13 @@ abstract class AudioData {
         return (sample[1] << 8 | sample[0] & 0xFF);
     }
     
-    abstract int getNumberOfSamples();
+    public abstract int getNumberOfSamples();
     
-    abstract boolean hasNextSample(int channel);
+    public abstract boolean hasNextSample(int channel);
     
-    abstract short[] getChunk(int samples, int channel);
+    public abstract short[] getChunk(int samples, int channel);
     
-    abstract int[] getSamples(double seconds, int sampleRate, int channel, double length);
+    public abstract int[] getSamples(double seconds, int sampleRate, int channel, double length);
     
     public abstract void resetPos();
     

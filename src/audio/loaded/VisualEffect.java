@@ -1,4 +1,4 @@
-package audio.files.loaded;
+package audio.loaded;
 
 import java.awt.*;
 

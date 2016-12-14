@@ -1,4 +1,4 @@
-package audio.files;
+package audio.data;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -7,7 +7,7 @@ import java.util.Arrays;
 /**
  * Created by Paul Lancaster on 24/11/2016
  */
-class MonoAudioData extends AudioData{
+public class MonoAudioData extends AudioData{
     private byte[] data_ch1; // Audio byte data
     
     private short[] sample_ch1; // Audio sample data
@@ -18,12 +18,12 @@ class MonoAudioData extends AudioData{
         data_ch1 = new byte[dataSize];
     }
     
-    boolean hasNextSample(int channel) {
+    public boolean hasNextSample(int channel) {
         return pos_ch1 < data_ch1.length;
     }
     
     @Override
-    short[] getChunk(int samples, int channel) {
+    public short[] getChunk(int samples, int channel) {
         short[] chunk  = new short[samples];
         for (int i = 0; i < samples; i++) {
             chunk[i] = nextSample();
@@ -32,7 +32,7 @@ class MonoAudioData extends AudioData{
     }
     
     @Override
-    int[] getSamples(double seconds, int sampleRate, int channel, double length) {
+    public int[] getSamples(double seconds, int sampleRate, int channel, double length) {
         switch (channel){
             case 1:
                 double secondsLeft = length - ((double)pos_ch1/(double)sampleRate);
@@ -76,7 +76,7 @@ class MonoAudioData extends AudioData{
     }
     
     @Override
-    int getNumberOfSamples(){
+    public int getNumberOfSamples(){
         return sample_ch1.length;
     }
     

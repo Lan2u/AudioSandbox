@@ -1,8 +1,8 @@
 package display;
 
-import audio.files.loaded.LoadedFile;
-import audio.files.loaded.VisualEffect;
-import audio.files.AudioFile;
+import audio.loaded.LoadedFile;
+import audio.loaded.VisualEffect;
+import audio.file.AudioFile;
 
 import javax.swing.*;
 import java.awt.*;
