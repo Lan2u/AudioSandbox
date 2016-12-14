@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class AudioDisplay extends JFrame {
     private AudioDisplayPanel panel;
     private ArrayList<LoadedFile> queue = new ArrayList<>();
-    private int CHUNK_SIZE = 10; // Samples per chunk
+    private int CHUNK_SIZE = 100; // Samples per chunk
     
     /*
         Load the data for the visuals before and then just translate that to something visual as each frame plays
@@ -37,6 +37,7 @@ public class AudioDisplay extends JFrame {
         // This could be done better to link the effect and queue together
         for (LoadedFile song : queue) {
             play(song);
+            queue.remove(song);
         }
     }
     

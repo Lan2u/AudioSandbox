@@ -1,5 +1,7 @@
 package RandomJavaCode;
 
+import audio.files.AudioFile;
+
 /**
  * Created by Paul Lancaster on 13/12/2016
  */
@@ -35,5 +37,19 @@ public class RandomJavaCode {
         }
     }
     
-    
+    private int[] getFrequencies(AudioFile file, int CHUNK_SIZE /* Size of each chunk in samples */) {
+        double NUMBER_OF_CHUNKS = Math.ceil(file.getNumberOfSamples() / CHUNK_SIZE);
+        
+        int[] frequencies = new int[(int) NUMBER_OF_CHUNKS];
+        
+        int CHANNEL = 1;
+        
+        for (int i = 0; i < frequencies.length; i++){
+            short[] chunk = file.getChunk(CHUNK_SIZE,CHANNEL);
+            frequencies[i] = (int) Math.round(getFreqOfChunk(chunk, file.getSampleRate()));
+            if (frequencies[i] < 0) frequencies[i] = Math.abs(frequencies[i]); // positive negative values
+            // TODO understand why we get negative values and how to handle them
+        }
+        return frequencies;
+    }
 }

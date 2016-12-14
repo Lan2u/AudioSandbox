@@ -20,7 +20,7 @@ public enum VisualEffect {
     void drawFrame(Graphics2D g2d, int width, int height, LoadedFile file){ // Never called directly only called by a doing .drawFrame onto a loaded file
         switch (this){
             case Frequency_Distribution:
-                int FREQ_BANDS = 40;
+                int FREQ_BANDS = 400;
                 drawFrequencyDistributionFrame(g2d,width,height,FREQ_BANDS,file);
                 break;
             case Frequency_Number:
@@ -69,11 +69,8 @@ public enum VisualEffect {
         double[] bandAmplitudes = new double[FREQ_BANDS - 1];
         for(Chunk chunk: chunks){
             int band = (int) (chunk.getFrequency() / BAND_SIZE);
-            if (bandAmplitudes[band] == 0) {
-                bandAmplitudes[band] = chunk.getAmplitude();
-            } else {
-                bandAmplitudes[band] = (bandAmplitudes[band] + chunk.getAmplitude()) / 2.0;
-            }
+            bandAmplitudes[band] = bandAmplitudes[band] + chunk.getAmplitude();
+            
         }
         return bandAmplitudes;
     }

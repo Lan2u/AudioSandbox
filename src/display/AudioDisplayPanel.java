@@ -42,7 +42,6 @@ public class AudioDisplayPanel extends JPanel{
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        System.out.println("Painted");
         g.drawImage(frame,0,0,Color.PINK, this);
     }
     
