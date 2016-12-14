@@ -97,14 +97,14 @@ public class LoadedFile{
     }
     
     // Return true if the frame should be repainted
-    public boolean nextFrame(BufferedImage frame, long dT) {
+    public BufferedImage nextFrame(BufferedImage frame, long dT) {
         if (dT >= effect.getNanoPerFrame()) {
             frame = new BufferedImage((int) size.getWidth(), (int) size.getHeight(), BufferedImage.TYPE_INT_RGB);
             Graphics2D g2d = frame.createGraphics();
             effect.drawFrame(g2d, frame.getWidth(), frame.getHeight(), this);
-            return true;
+            return frame;
         }else{
-            return false;
+            return null;
         }
     }
     
@@ -150,7 +150,7 @@ public class LoadedFile{
             }
         }
         double binSize = (sampleRate / chunk.length);
-        return maxMagnitudeIndex * binSize;
+        return Math.abs(maxMagnitudeIndex * binSize);
     }
     
     private double[] shortToDouble(short[] array) {

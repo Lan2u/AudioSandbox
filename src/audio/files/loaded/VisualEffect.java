@@ -20,7 +20,7 @@ public enum VisualEffect {
     void drawFrame(Graphics2D g2d, int width, int height, LoadedFile file){ // Never called directly only called by a doing .drawFrame onto a loaded file
         switch (this){
             case Frequency_Distribution:
-                int FREQ_BANDS = 10;
+                int FREQ_BANDS = 40;
                 drawFrequencyDistributionFrame(g2d,width,height,FREQ_BANDS,file);
                 break;
             case Frequency_Number:
@@ -39,10 +39,8 @@ public enum VisualEffect {
         double BASE_Y = 0.1; //Percentage of the way up the panel
         int BAND_WIDTH = (width / FREQ_BANDS);
         double BAND_MAX_HEIGHT = 0.8; // Percentage of the way up the panel
-        
         int BASE_Y_ABS = (int) ((1.0 - BASE_Y) * height); // Convert to actual value (not %)
         int BAND_MAX_HEIGHT_ABS =(int)(BAND_MAX_HEIGHT * height); // Convert to actual value (not %)
-        
         int CPF = 10; // Chunks per frame
         
         g2d.drawLine(0, (int) BASE_Y, width, (int) BASE_Y); // Base (zero) line

@@ -23,11 +23,11 @@ public class Chunk {
         return String.format("%d at %.1fHz",amplitude,frequency);
     }
     
-    public double getFrequency() {
+    double getFrequency() {
         return frequency;
     }
     
-    public int getAmplitude() {
+    int getAmplitude() {
         return amplitude;
     }
 }

@@ -11,7 +11,6 @@ import java.awt.image.BufferedImage;
  */
 public class AudioDisplayPanel extends JPanel{
     private BufferedImage frame; // Display frame
-    private static long timeSinceLastFrame = 0; // Nanoseconds
     
     AudioDisplayPanel(int width, int height) {
         frame = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
@@ -19,13 +18,22 @@ public class AudioDisplayPanel extends JPanel{
     }
     
     void play(LoadedFile file) {
+        if (!file.isLoaded()){
+            throw new IllegalArgumentException("File not loaded");
+        }
+        
         file.setSize(this.getSize());
         
+        long timeSinceLastFrame = 0;
         long lastTime = System.nanoTime();
         while (file.hasNextFrame()){
             long currentTime = System.nanoTime();
-            if (file.nextFrame(frame, currentTime-lastTime)){
+            timeSinceLastFrame += Math.abs(currentTime - lastTime);
+            BufferedImage image =file.nextFrame(frame, timeSinceLastFrame);
+            if (image != null) {
+                frame = image;
                 repaint();
+                timeSinceLastFrame = 0;
             }
             lastTime = currentTime;
         }
@@ -34,7 +42,7 @@ public class AudioDisplayPanel extends JPanel{
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-       // System.out.println("Painted");
+        System.out.println("Painted");
         g.drawImage(frame,0,0,Color.PINK, this);
     }
     
