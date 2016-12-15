@@ -5,6 +5,9 @@ import org.jtransforms.fft.DoubleFFT_1D;
 /**
  * Created by Paul Lancaster on 14/12/2016
  */
+
+//TODO test this, this algorithm isn't working correctly
+
 public abstract class FreqCalculator {
     // Get the frequency of a chunk
     public static double getFreqOfChunk(short[] chunk, int sampleRate) {
