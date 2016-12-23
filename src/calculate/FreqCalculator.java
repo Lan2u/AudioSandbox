@@ -5,61 +5,100 @@ import org.jtransforms.fft.DoubleFFT_1D;
 /**
  * Created by Paul Lancaster on 14/12/2016
  */
+/*
+http://stackoverflow.com/questions/3058236/how-to-extract-frequency-information-from-samples-from-portaudio-using-fftw-in-c
+
+ */
+
+
 
 //TODO test this, this algorithm isn't working correctly
 
 public abstract class FreqCalculator {
-    // Get the frequency of a chunk
-    public static double getFreqOfChunk(short[] chunk, int sampleRate) {
-        // Average out the samples in the chunk
-        //   chunk = averageFilterSamples(chunk); // TUrned off because the frequency data was more spread out and spiky not less
-        
-        // Apply a Hann window to the chunk to reduce sidelobes
-        double[] window = buildHannWindow(chunk.length);
-        chunk = applyWindow(window, chunk);
-        
-        // binSize = sampleRate/N so as bin size increases accuracy of the frequency
-        // increases (accurate to a smaller value)
-        
-        // Perform fft
-        short[] fftOut = new short[chunk.length * 2];
-        System.arraycopy(chunk, 0, fftOut, 0, chunk.length);
-        DoubleFFT_1D fft = new DoubleFFT_1D(fftOut.length / 2); // FIXME check that the right length is being passed here and that it isn't too big
-        fft.realForwardFull(shortToDouble(fftOut));
-        
-        double[] real = new double[chunk.length];
-        double[] imaginary = new double[chunk.length];
-        
-        for (int k = 0; k < chunk.length; k++) {
-            real[k] = fftOut[k * 2];
-            imaginary[k] = fftOut[k * 2 + 1];
-        }
-        
-        // THIS IS NOT AN ARRAY OF FREQUENCIES IT IS AN ARRAY OF MAGNITUDES
-        double[] magnitude = new double[chunk.length]; // FIXME array length might be able to be halfed, testing needed
-        for (int i = 0; i < magnitude.length; i++) {
-            magnitude[i] = Math.sqrt(Math.pow(real[i], 2) + Math.pow(imaginary[i], 2));
-        }
-        
-        int maxMagnitudeIndex = -1;
-        double maxMagnitude = Double.MIN_VALUE;
-        for (int i = 0; i < magnitude.length; i++) {
-            if (magnitude[i] > maxMagnitude) {
-                maxMagnitude = magnitude[i];
-                maxMagnitudeIndex = i;
-            }
-        }
-        double binSize = (sampleRate / chunk.length);
-        return Math.abs(maxMagnitudeIndex * binSize);
-    }
     
+    // Chunk should be of length N (FFT SIZE)
+    public static double getFreqOfChunk(short[] chunk, int sampleRate){
+        double[] decimalChunk = shortToDouble(chunk);
+        
+        // Build and apply window
+        buildHannWindow(chunk.length);
+        decimalChunk = applyWindow(decimalChunk,decimalChunk);
+    
+        DoubleFFT_1D dFF = new DoubleFFT_1D(chunk.length);
+        dFF.realForward(decimalChunk);
+        
+        int N = decimalChunk.length;
+        
+        final int ARRAY_LENGTH = N/2 + 1;
+        
+        double[] real = new double[ARRAY_LENGTH];
+        double[] im = new double[ARRAY_LENGTH];
+        
+        if (decimalChunk.length % 2 == 0){ // Even
+            for (int k = 0; k < (N/2); k++) { // Real
+                real[k] = decimalChunk[2*k];
+            }
+            for (int k = 1; k < N/2; k++) { // Imaginary
+                im[k] = decimalChunk[2*k + 1];
+            }
+            real[N/2] = decimalChunk[1];
+            
+        }else{ // Odd
+            for (int k = 0; k < (N+1)/2; k++) { // Real
+                real[k] = decimalChunk[2*k];
+            }
+            for (int k = 0; k < (N-1)/2; k++) { // Imaginary
+                im[k] = decimalChunk[2*k +1];
+            }
+            im[(N-1)/2] = decimalChunk[1];
+        }
+    
+        double[] magnitude = new double[ARRAY_LENGTH];
+        for (int i = 0; i < ARRAY_LENGTH; i++) {
+            magnitude[i] = Math.sqrt(real[i] * real[i] + im[i] * im[i]);
+        }
+    
+        for (int i = 0; i < ARRAY_LENGTH; i++) {
+            System.out.println(real[i] + " + " + im[i] +"i - Magnitude : " + magnitude[i]);
+        }
+        
+        return 0.0;
+    }
     
     private static double[] shortToDouble(short[] array) {
         double[] temp = new double[array.length];
         for (int i = 0; i < array.length; i++) {
-            temp[i] = array[i];
+            if (array[i] == 0){
+                temp[i] = 0;
+            } else {
+                temp[i] = (Short.MAX_VALUE*2 / array[i]);
+            }
+            
+            if(temp[i] > 1) System.out.println("ERROR DOUBLE VALUE GREATER THAN 1 : " + temp[i]); // Means that the amplitude was out of range
         }
         return temp;
+    }
+    
+    /* Old classes used (other implementation used before) */
+    private static final int MIN_DATA_CHUNK_SIZE = 2;
+    
+    private static void PerformFFT(ComplexNumber[] data, int N){
+        
+    }
+    
+    public static ComplexNumber DDT(short[] data, int sampleRate){
+        // https://en.wikipedia.org/wiki/Discrete_Fourier_transform
+        // http://www.librow.com/articles/article-10
+        int N = data.length;
+        double totalSum = 0.0;
+        for (int n = 0; n <= N-1; n++){
+            int xn = data[n];
+            for (int k =0; k <= sampleRate/2; k++){
+                // k = frequency being considered
+                // See the wikipedia page
+            }
+        }
+        return null;
     }
     
     //TODO testing I don't think this works properly
@@ -85,11 +124,11 @@ public abstract class FreqCalculator {
         }
         return window;
     }
-    
+
     //TODO testing
-    private static short[] applyWindow(double[] window, short[] samples) {
+    private static double[] applyWindow(double[] window, double[] samples) {
         for (int i = 0; i < samples.length; i++) {
-            samples[i] = (short)Math.round(samples[i] * window[i]);
+            samples[i] = Math.round(samples[i] * window[i]);
         }
         return samples;
     }
