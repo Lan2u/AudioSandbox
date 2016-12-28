@@ -9,9 +9,9 @@ public class Chunk {
         frequency = 0;
     }
     
-    Chunk(short[] amplitudes, double frequency){
+    Chunk(int[] amplitudes, double frequency){
         int temp = 0;
-        for (short amp: amplitudes){
+        for (int amp: amplitudes){
             temp=temp+Math.abs(amp);
         }
         this.amplitude = (temp/amplitudes.length);

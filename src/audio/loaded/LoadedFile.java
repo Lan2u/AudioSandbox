@@ -53,13 +53,13 @@ public class LoadedFile{
         // FIXME If not divided by 2 then the file is to long (by double) and the second half is all 0 amplitude but I have no idea why
         
         for (int i = 0; i < numberOfChunks; i++) { // Get the chunks, get their amplitude average then store along with frequency
-            short[] chunkAmp = file.getChunk(CHUNK_SIZE,channel);
+            int[] chunkAmp = file.getChunk(CHUNK_SIZE,channel);
             chunks.add(new Chunk(chunkAmp, getFreqOfChunk(chunkAmp, file.getSampleRate())));
         }
         int samplesLeft = (int)(file.getNumberOfSamples() - numberOfChunks*CHUNK_SIZE);
         if (samplesLeft > 0){ // Get the last chunk (which may be a different size to the others to make sure no samples are ignored
             // FIXME this may need removed if it causes issues at the end)
-            short[] chunkAmp = file.getChunk(samplesLeft,channel);
+            int[] chunkAmp = file.getChunk(samplesLeft,channel);
             chunks.add(new Chunk(chunkAmp,getFreqOfChunk(chunkAmp,file.getSampleRate())));
         }
     }
@@ -92,7 +92,7 @@ public class LoadedFile{
         }
     }
     
-    private static double getFreqOfChunk(short[] chunk, int sampleRate) {
+    private static double getFreqOfChunk(int[] chunk, int sampleRate) {
         return FreqCalculator.getFreqOfChunk(chunk, sampleRate);
     }
     

@@ -50,10 +50,18 @@ public class Test {
         WaveFile file = new WaveFile(new File(FILE_PATH));
         System.out.println(file);
         
+        int[] samples = file.getAllSamples(1);
+        System.out.println("Max sample value = " + getMax(samples));
         
-        FreqCalculator.getFreqOfChunk(file.getChunk(N,channel), file.getSampleRate());
-    
         System.out.println("Test finished " + Calendar.getInstance().getTime());
+    }
+    
+    private static int getMax(int[] samples) {
+        int MAX = Integer.MIN_VALUE;
+        for(int s: samples){
+            if (s > MAX) MAX = s;
+        }
+        return MAX;
     }
     
     public static void printArray(int[] array, String identifier){

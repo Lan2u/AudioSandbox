@@ -9,7 +9,7 @@ public interface AudioFile {
     int getChannels();
     int getNumberOfSamples();
     int[] getAllSamples(int channel);
-    short[] getChunk(int samples,int channel);
+    int[] getChunk(int samples,int channel);
     int[] getSamples(double seconds, int channel);
     
     void resetPos();

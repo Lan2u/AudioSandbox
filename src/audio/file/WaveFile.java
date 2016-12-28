@@ -85,7 +85,7 @@ public class WaveFile implements AudioFile{
     }
     
     @Override
-    public short[] getChunk(int samples, int channel) {
+    public int[] getChunk(int samples, int channel) {
         return data.getChunk(samples, channel);
     }
     

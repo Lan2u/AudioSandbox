@@ -16,9 +16,11 @@ http://stackoverflow.com/questions/3058236/how-to-extract-frequency-information-
 
 public abstract class FreqCalculator {
     
+    private static final int MAX_AMPLITUDE = 32767; // Maximum possible amplitude
+    
     // Chunk should be of length N (FFT SIZE)
-    public static double getFreqOfChunk(short[] chunk, int sampleRate){
-        double[] decimalChunk = shortToDouble(chunk);
+    public static double getFreqOfChunk(int[] chunk, int sampleRate){
+        double[] decimalChunk = intToDouble(chunk);
         
         // Build and apply window
         buildHannWindow(chunk.length);
@@ -63,6 +65,20 @@ public abstract class FreqCalculator {
         }
         
         return 0.0;
+    }
+    
+    private static double[] intToDouble(int[] array) {
+        double[] temp = new double[array.length];
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == 0){
+                temp[i] = 0;
+            } else {
+                temp[i] = (MAX_AMPLITUDE/array[i]);
+            }
+            
+            if(temp[i] > 1) System.out.println("ERROR DOUBLE VALUE GREATER THAN 1 : " + temp[i]); // Means that the amplitude was out of range
+        }
+        return temp;
     }
     
     private static double[] shortToDouble(short[] array) {
