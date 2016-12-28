@@ -12,8 +12,8 @@ public class StereoAudioData extends AudioData{
     private byte[] data_ch1; // Channel 1 bytes
     private byte[] data_ch2; // Channel 2 bytes
     
-    private short[] sample_ch1; // Channel 1 samples
-    private short[] sample_ch2; // Channel 2 samples
+    private int[] sample_ch1; // Channel 1 samples
+    private int[] sample_ch2; // Channel 2 samples
     
     private int pos_ch1 = -1; // Position within the data in samples
     private int pos_ch2 = -1;
@@ -37,8 +37,8 @@ public class StereoAudioData extends AudioData{
     }
     
     @Override
-    public short[] getChunk(int samples, int channel) {
-        short[] chunk  = new short[samples];
+    public int[] getChunk(int samples, int channel) {
+        int[] chunk  = new int[samples];
         for (int i = 0; i < samples; i++) {
             chunk[i] = nextSample(channel);
         }
@@ -102,7 +102,7 @@ public class StereoAudioData extends AudioData{
         }
     }
     
-    private short nextSample(int channel) {
+    private int nextSample(int channel) {
         switch(channel){
             case 1:
                 if (pos_ch1 >= (sample_ch1.length -1)){
@@ -136,8 +136,8 @@ public class StereoAudioData extends AudioData{
             data_ch2[k] = data[k*2+1];
         }
         
-        sample_ch1 = new short[(int)Math.ceil(data_ch1.length/bytesPerSample)];
-        sample_ch2 = new short[(int)Math.ceil(data_ch2.length/bytesPerSample)];
+        sample_ch1 = new int[(int)Math.ceil(data_ch1.length/bytesPerSample)];
+        sample_ch2 = new int[(int)Math.ceil(data_ch2.length/bytesPerSample)];
         
         // Sample_ch1
         for (int i = 0; i < (data_ch1.length/bytesPerSample); i++) {

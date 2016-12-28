@@ -39,6 +39,7 @@ public class Test {
     
     // Perform tests
     private static void test() throws IOException {
+        
         final String FILE_PATH = "resources/8600Hz.wav";
         
         System.out.println("Test began " + Calendar.getInstance().getTime());
@@ -48,9 +49,17 @@ public class Test {
         
         WaveFile file = new WaveFile(new File(FILE_PATH));
         System.out.println(file);
+        
+        
         FreqCalculator.getFreqOfChunk(file.getChunk(N,channel), file.getSampleRate());
     
         System.out.println("Test finished " + Calendar.getInstance().getTime());
+    }
+    
+    public static void printArray(int[] array, String identifier){
+        for (int i = 0; i < array.length; i++) {
+            System.out.println(identifier+"["+i+"] : " +array[i]);
+        }
     }
     
     public static void printArray(short[] array, String identifier){
@@ -64,7 +73,7 @@ public class Test {
             System.out.println(identifier+"["+i+"] : " +array[i]);
         }
     }
-    
+    /*
     public static short[] intToShort(int[] array){
         short[] shortArray = new short[array.length];
         for (int i = 0; i < array.length; i++) {
@@ -78,4 +87,5 @@ public class Test {
         }
         return shortArray;
     }
+    */
 }

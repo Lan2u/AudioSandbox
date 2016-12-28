@@ -10,7 +10,7 @@ import java.util.Arrays;
 public class MonoAudioData extends AudioData{
     private byte[] data_ch1; // Audio byte data
     
-    private short[] sample_ch1; // Audio sample data
+    private int[] sample_ch1; // Audio sample data
     
     private int pos_ch1 = -1; // Position within the data in samples
     
@@ -23,8 +23,8 @@ public class MonoAudioData extends AudioData{
     }
     
     @Override
-    public short[] getChunk(int samples, int channel) {
-        short[] chunk  = new short[samples];
+    public int[] getChunk(int samples, int channel) {
+        int[] chunk  = new int[samples];
         for (int i = 0; i < samples; i++) {
             chunk[i] = nextSample();
         }
@@ -55,7 +55,7 @@ public class MonoAudioData extends AudioData{
         }
     }
     
-    private short nextSample() {
+    private int nextSample() {
         if (pos_ch1 >= (sample_ch1.length-1)){
             return 0;
         }
@@ -67,7 +67,7 @@ public class MonoAudioData extends AudioData{
     public void readData(FileInputStream in, int bytesPerSample) throws IOException {
         System.out.println(in.read(data_ch1) + " Bytes of mono audio data read into memory");
         // Sample_ch1
-        sample_ch1 = new short[(int)Math.ceil(data_ch1.length/bytesPerSample)];
+        sample_ch1 = new int[(int)Math.ceil(data_ch1.length/bytesPerSample)];
         for (int i = 0; i < (data_ch1.length/bytesPerSample); i++) {
             byte[] sampleData = new byte[bytesPerSample];
             System.arraycopy(data_ch1,i*bytesPerSample, sampleData, 0, bytesPerSample);

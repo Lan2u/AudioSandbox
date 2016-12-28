@@ -37,7 +37,7 @@ public abstract class AudioData {
     
     public abstract boolean hasNextSample(int channel);
     
-    public abstract short[] getChunk(int samples, int channel);
+    public abstract int[] getChunk(int samples, int channel);
     
     public abstract int[] getSamples(double seconds, int sampleRate, int channel, double length);
     
