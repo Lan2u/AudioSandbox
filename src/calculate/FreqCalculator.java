@@ -2,6 +2,12 @@ package calculate;
 
 import org.jtransforms.fft.DoubleFFT_1D;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
 /**
  * Created by Paul Lancaster on 14/12/2016
  */
@@ -17,14 +23,15 @@ http://stackoverflow.com/questions/3058236/how-to-extract-frequency-information-
 public abstract class FreqCalculator {
     
     private static final int MAX_AMPLITUDE = 32767; // Maximum possible amplitude
+    private static final int PADDING = 1;
     
     // Chunk should be of length N (FFT SIZE)
     public static double getFreqOfChunk(int[] chunk, int sampleRate){
-        double[] decimalChunk = intToDouble(chunk);
+        double[] decimalChunk = intToDouble(chunk, 0);
         
         // Build and apply window
-        buildHannWindow(chunk.length);
-        decimalChunk = applyWindow(decimalChunk,decimalChunk);
+       // buildHannWindow(chunk.length);
+       // decimalChunk = applyWindow(decimalChunk,decimalChunk);
     
         DoubleFFT_1D dFF = new DoubleFFT_1D(chunk.length);
         dFF.realForward(decimalChunk);
@@ -63,20 +70,92 @@ public abstract class FreqCalculator {
         for (int i = 0; i < ARRAY_LENGTH; i++) {
             System.out.println(real[i] + " + " + im[i] +"i - Magnitude : " + magnitude[i]);
         }
-        
-        return 0.0;
+    
+        BufferedImage plotImage = new BufferedImage(magnitude.length, 5000, BufferedImage.TYPE_INT_RGB);
+        for (int i = 0; i < magnitude.length; i++) {
+           // plotImage.setRGB(i,(int)Math.log(Math.abs(magnitude[i])), Color.WHITE.getRGB());
+            plotImage.setRGB(i,(int)magnitude[i], Color.WHITE.getRGB());
+        }
+        try {
+            ImageIO.write(plotImage,"png",new File("plot.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    
+    
+        return calcFreq(real, im, magnitude);
     }
     
-    private static double[] intToDouble(int[] array) {
-        double[] temp = new double[array.length];
-        for (int i = 0; i < array.length; i++) {
-            if (array[i] == 0){
-                temp[i] = 0;
-            } else {
-                temp[i] = (MAX_AMPLITUDE/array[i]);
+    private void plotDataOnGraph(int height, int[] data) {
+        BufferedImage plot = new BufferedImage(data.length, height, BufferedImage.TYPE_INT_RGB);
+    
+        int maxAmplitude = data[getMaxAmpIndex(data)];
+        
+        // TODO WRITE THIS METHOD TO PLOT DATA ON A GRAPH (WITH A MIDDLE LINE WITH POSITIVE VALUES ABOVE AND NEGATIVE VALUES BELOW.)
+        
+        double scaleFactor = (height - PADDING * 2) / maxPoint;
+    
+        for (int x = 0; x < data.length; x++) {
+            int y = (int) Math.abs((data[x] * scaleFactor));
+            y = height - y; // Inverse the display so peaks are peaks rather than troughs
+            plot.setRGB(x, y, Color.WHITE.getRGB());
+           // plot.setRGB(x, height / 2, Color.GREEN.getRGB());
+        }
+    }
+    
+    private int getMaxAmpIndex(int[] data) {
+        
+    }
+    
+    private void drawBands(Graphics2D g2d, double[] bandAmplitudes, Color colour, int BAND_WIDTH, int BASE_Y, int BAND_MAX_HEIGHT) {
+        g2d.setColor(colour);
+        for (int band = 0; band < bandAmplitudes.length; band++) {
+            int x = band * BAND_WIDTH;
+            int BAND_HEIGHT = (int) (BAND_MAX_HEIGHT * (bandAmplitudes[band] / 33000.0));
+            int y = BASE_Y - BAND_HEIGHT;
+            g2d.drawRect(x, y, BAND_WIDTH, BAND_HEIGHT);
+        }
+    }
+    
+    private static double calcFreq(double[] real, double[] im, double[] mag) {
+        int index = getMaxIndex(real);
+        return real[index];
+    }
+    
+    private static int getMaxIndex(int[] array){
+        return getMaxIndex(intToDouble(array,0));
+    }
+    
+    private static int getMaxIndex(double[] array) {
+        double max = array[0];
+        int maxI = 0;
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] > max){
+                max = array[i];
+                maxI = i;
             }
-            
-            if(temp[i] > 1) System.out.println("ERROR DOUBLE VALUE GREATER THAN 1 : " + temp[i]); // Means that the amplitude was out of range
+        }
+        return maxI;
+    }
+    
+    // Max_value == 0 means that the values shouldn't be scaled and should be directly converted.
+    private static double[] intToDouble(int[] array, double MAX_VALUE) {
+        double[] temp = new double[array.length];
+        if (MAX_VALUE == 0){
+            for (int i = 0; i < array.length; i++) {
+                temp[i] = array[i];
+            }
+        }else {
+            for (int i = 0; i < array.length; i++) {
+                if (array[i] == 0.0) {
+                    temp[i] = 0.0;
+                } else {
+                    temp[i] = (array[i] / MAX_VALUE);
+                }
+        
+                if (temp[i] > 1.0)
+                    System.out.println("ERROR DOUBLE VALUE GREATER THAN 1 : " + temp[i]); // Means that the amplitude was out of range
+            }
         }
         return temp;
     }

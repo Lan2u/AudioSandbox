@@ -57,6 +57,7 @@ public class MonoAudioData extends AudioData{
     
     private int nextSample() {
         if (pos_ch1 >= (sample_ch1.length-1)){
+            System.out.println("Position out of range : " + pos_ch1);
             return 0;
         }
         pos_ch1++;

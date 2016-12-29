@@ -52,8 +52,26 @@ public class Test {
         
         int[] samples = file.getAllSamples(1);
         System.out.println("Max sample value = " + getMax(samples));
+        System.out.println("Min sample value = " + getMin(samples));
+    
+        file.resetPos();
+        
+        int[] chunk = file.getChunk(N, 1);
+    
+        System.out.println("Chunk of size " + N + " max amplitude value of " + getMax(chunk));
+        System.out.println("Chunk of size " + N + " min amplitude value of " + getMax(chunk));
+        
+        System.out.println("Calculated primary frequency of chunk: " + FreqCalculator.getFreqOfChunk(chunk, SAMPLE_RATE) + "Hz");
         
         System.out.println("Test finished " + Calendar.getInstance().getTime());
+    }
+    
+    private static int getMin(int[] samples){
+        int MIN = Integer.MAX_VALUE;
+        for(int s: samples){
+            if (s < MIN) MIN = s;
+        }
+        return MIN;
     }
     
     private static int getMax(int[] samples) {
