@@ -11,38 +11,25 @@ import java.util.Calendar;
  * Created by Paul Lancaster on 14/12/2016
  */
 
-/* Calculate package tests
-    - Calculate frequency when
-        - 0 amplitude (Failed 15/12/2016)
-        - All one amplitude
-        - Clean sin signal
-        - Real signal
- */
-@SuppressWarnings("ALL")
 public class Test {
-    
-   // private static final String ERR_OUT_PATH = "errOut.txt";
     private static final String STD_OUT_PATH = "stdOut.txt";
     
     public static void main(String[] args){
-        try(//PrintStream errOut = new PrintStream(ERR_OUT_PATH);
+        try(
             PrintStream stdOut = new PrintStream(STD_OUT_PATH);
         ){
             System.setOut(stdOut);
-        //    System.setErr(errOut);
             test();
             
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    
     // Perform tests
     private static void test() throws IOException {
-        
-        final String FILE_PATH = "resources/8600Hz.wav";
-        
         System.out.println("Test began " + Calendar.getInstance().getTime());
+        
+        final String FILE_PATH = "resources/440Hz.wav";
         final int SAMPLE_RATE = 44100;
         final int N = 1024; // FFT size
         int channel = 1;
@@ -51,18 +38,10 @@ public class Test {
         System.out.println(file);
         
         int[] samples = file.getAllSamples(1);
-        System.out.println("Max sample value = " + getMax(samples));
-        System.out.println("Min sample value = " + getMin(samples));
-    
         file.resetPos();
-        
         int[] chunk = file.getChunk(N, 1);
-    
-        System.out.println("Chunk of size " + N + " max amplitude value of " + getMax(chunk));
-        System.out.println("Chunk of size " + N + " min amplitude value of " + getMax(chunk));
         
-        System.out.println("Calculated primary frequency of chunk: " + FreqCalculator.getFreqOfChunk(chunk, SAMPLE_RATE) + "Hz");
-        
+        System.out.println("Calculated primary frequency of chunk: " + FreqCalculator.getPrimaryFreqOfChunk(chunk, SAMPLE_RATE) + "Hz");
         System.out.println("Test finished " + Calendar.getInstance().getTime());
     }
     
@@ -99,19 +78,4 @@ public class Test {
             System.out.println(identifier+"["+i+"] : " +array[i]);
         }
     }
-    /*
-    public static short[] intToShort(int[] array){
-        short[] shortArray = new short[array.length];
-        for (int i = 0; i < array.length; i++) {
-            if (array[i] > Short.MAX_VALUE){
-                shortArray[i] = Short.MAX_VALUE;
-            }else if(array[i] < Short.MIN_VALUE){
-                shortArray[i] = Short.MIN_VALUE;
-            }else{
-                shortArray[i] = (short) array[i];
-            }
-        }
-        return shortArray;
-    }
-    */
 }

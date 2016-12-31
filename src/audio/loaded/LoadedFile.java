@@ -93,7 +93,7 @@ public class LoadedFile{
     }
     
     private static double getFreqOfChunk(int[] chunk, int sampleRate) {
-        return FreqCalculator.getFreqOfChunk(chunk, sampleRate);
+        return FreqCalculator.getPrimaryFreqOfChunk(chunk, sampleRate);
     }
     
     public void setSize(Dimension size) {

@@ -2,11 +2,8 @@ package calculate;
 
 import org.jtransforms.fft.DoubleFFT_1D;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Created by Paul Lancaster on 14/12/2016
@@ -16,32 +13,48 @@ http://stackoverflow.com/questions/3058236/how-to-extract-frequency-information-
 
  */
 
-
-
 //TODO test this, this algorithm isn't working correctly
 
 public abstract class FreqCalculator {
     
-    private static final int MAX_AMPLITUDE = 32767; // Maximum possible amplitude
-    private static final int PADDING = 1;
-    
-    // Chunk should be of length N (FFT SIZE)
-    public static double getFreqOfChunk(int[] chunk, int sampleRate){
-        double[] decimalChunk = intToDouble(chunk, 0);
+    /**
+     * Perform FFT on the chunk of amplitudes passed in and then store the results in the 3 arrays
+     * @param chunk The input chunk of amplitudes
+     * @param real The output real component of the FFT on chunk
+     * @param im The output imaginary component of the FFT on chunk
+     * @param magnitude The magnitude of each component
+     */
+    private static void performFFT(int[] chunk, double[] real, double[] im, double[] magnitude){
+        // TODO decide if we actually need to calculate and store the magnitude and imaginary components of the FFT out since the real is only used
+        double[] decimalChunk = intToDoubleNoScale(chunk);
         
         // Build and apply window
-       // buildHannWindow(chunk.length);
-       // decimalChunk = applyWindow(decimalChunk,decimalChunk);
+        // buildHannWindow(chunk.length);
+        // decimalChunk = applyWindow(decimalChunk,decimalChunk);
+        
+        new DoubleFFT_1D(chunk.length).realForward(decimalChunk);
+        splitIntoParts(decimalChunk, real, im, magnitude);
+    }
     
-        DoubleFFT_1D dFF = new DoubleFFT_1D(chunk.length);
-        dFF.realForward(decimalChunk);
-        
-        int N = decimalChunk.length;
-        
-        final int ARRAY_LENGTH = N/2 + 1;
-        
+    // Chunk should be of length N (FFT SIZE)
+    public static int getPrimaryFreqOfChunk(int[] chunk, int sampleRate){
+        final int ARRAY_LENGTH = chunk.length/2;
         double[] real = new double[ARRAY_LENGTH];
         double[] im = new double[ARRAY_LENGTH];
+        double[] magnitude = new double[ARRAY_LENGTH/2 + 1];
+        performFFT(chunk,real,im,magnitude);
+        return calcPrimaryFreq(real, chunk.length, sampleRate);
+    }
+    
+    /**
+     * Separate out the real and imaginary components from the FFT output and calculate the magnitude of each component
+     * @param decimalChunk The FFT output array
+     * @param real The array to store the real values (must have size >= decimalChunk.length/2)
+     * @param im The array to store the imaginary values (must have size >= decimalChunk.length/2)
+     * @param magnitude The array to store the magnitudes of each component (must have size >= decimalChunk.length/2)
+     */
+    private static void splitIntoParts(double[] decimalChunk, double[] real, double[] im, double[] magnitude) {
+        int N = decimalChunk.length; // Used to improve readability
         
         if (decimalChunk.length % 2 == 0){ // Even
             for (int k = 0; k < (N/2); k++) { // Real
@@ -50,8 +63,8 @@ public abstract class FreqCalculator {
             for (int k = 1; k < N/2; k++) { // Imaginary
                 im[k] = decimalChunk[2*k + 1];
             }
-            real[N/2] = decimalChunk[1];
-            
+            real[N/2 - 1] = decimalChunk[1];
+        
         }else{ // Odd
             for (int k = 0; k < (N+1)/2; k++) { // Real
                 real[k] = decimalChunk[2*k];
@@ -61,50 +74,100 @@ public abstract class FreqCalculator {
             }
             im[(N-1)/2] = decimalChunk[1];
         }
-    
-        double[] magnitude = new double[ARRAY_LENGTH];
-        for (int i = 0; i < ARRAY_LENGTH; i++) {
+        
+        for (int i = 0; i < magnitude.length; i++) {
             magnitude[i] = Math.sqrt(real[i] * real[i] + im[i] * im[i]);
         }
-    
-        for (int i = 0; i < ARRAY_LENGTH; i++) {
-            System.out.println(real[i] + " + " + im[i] +"i - Magnitude : " + magnitude[i]);
-        }
-    
-        BufferedImage plotImage = new BufferedImage(magnitude.length, 5000, BufferedImage.TYPE_INT_RGB);
-        for (int i = 0; i < magnitude.length; i++) {
-           // plotImage.setRGB(i,(int)Math.log(Math.abs(magnitude[i])), Color.WHITE.getRGB());
-            plotImage.setRGB(i,(int)magnitude[i], Color.WHITE.getRGB());
-        }
-        try {
-            ImageIO.write(plotImage,"png",new File("plot.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    
-    
-        return calcFreq(real, im, magnitude);
     }
     
-    private void plotDataOnGraph(int height, int[] data) {
-        BufferedImage plot = new BufferedImage(data.length, height, BufferedImage.TYPE_INT_RGB);
-    
-        int maxAmplitude = data[getMaxAmpIndex(data)];
+    private static BufferedImage getFreqDistributionPlot(int[] chunk, DOMAIN domain, int height){
+        double[] decimalChunk = intToDoubleNoScale(chunk);
         
-        // TODO WRITE THIS METHOD TO PLOT DATA ON A GRAPH (WITH A MIDDLE LINE WITH POSITIVE VALUES ABOVE AND NEGATIVE VALUES BELOW.)
+        DoubleFFT_1D dFF = new DoubleFFT_1D(chunk.length);
+        dFF.realForward(decimalChunk);
         
-        double scaleFactor = (height - PADDING * 2) / maxPoint;
+        final int ARRAY_LENGTH = decimalChunk.length/2;
+        double[] real = new double[ARRAY_LENGTH];
+        double[] im = new double[ARRAY_LENGTH];
+        double[] magnitude = new double[ARRAY_LENGTH/2 + 1];
+        splitIntoParts(decimalChunk, real, im, magnitude);
+        
+        switch(domain){
+            case REAL:
+                return plotDataOnGraph(height,real);
+            case IMAGINARY:
+                return plotDataOnGraph(height,im);
+            default:
+                return plotDataOnGraph(height, magnitude);
+        }
+        
+    }
     
+    private static double[] log10Array(double[] array) {
+        for (int i = 0; i < array.length; i++) {
+            array[i] = Math.log10(array[i]);
+        }
+        return array;
+    }
+    
+    /**
+     * This method is used to plot data on a graph with a center line and negative values below and
+     * positive values above. The graph is as wide as the amount of data so care is needed not to have too large a data array
+     * @param height The height of the graph ( values are scaled to fit so use a bigger height for more obvious separation)
+     * @param data The data to be plotted (suggest considering using a log function on the data if the range is high else it may not display)
+     * @return The ploted graph
+     */
+    private static BufferedImage plotDataOnGraph(int height, double[] data) {
+        final int PADDING = 1;
+        int width = data.length;
+        
+        // The height must be even so this adds a pixel to ensure that
+        if ((height % 2) != 0) height++;
+        
+        int CENTER_Y = height/2;
+        BufferedImage plot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = plot.createGraphics();
+        g2d.drawLine(0,height/2, width,height/2);
+        
+        int maxAmplitude = (int)Math.ceil(data[getMaxAmpIndex(data)]);
+        double scaleFactor;
+        if (maxAmplitude == 0){
+            scaleFactor = 1;
+        }else {
+            scaleFactor = (height - PADDING * 2) / (2 * maxAmplitude);
+        }
+        
+        int xOfMaxY = -1;
+        int maxY = Integer.MIN_VALUE;
         for (int x = 0; x < data.length; x++) {
-            int y = (int) Math.abs((data[x] * scaleFactor));
+            int y = (int) Math.abs((data[x] * scaleFactor)); // Scale the values down
+            if (y > maxY){
+                maxY = y;
+                xOfMaxY = x;
+            }
             y = height - y; // Inverse the display so peaks are peaks rather than troughs
-            plot.setRGB(x, y, Color.WHITE.getRGB());
-           // plot.setRGB(x, height / 2, Color.GREEN.getRGB());
+            y = y - height/2; // Bring into center
+            g2d.drawLine(x,CENTER_Y,x,y);
         }
+        System.out.println("Maximum y value found at x value = " + xOfMaxY);
+        
+        return plot;
     }
     
-    private int getMaxAmpIndex(int[] data) {
-        
+    /**
+     * @param data The array to scan
+     * @return The index of the value in the array which has the highest value regardless of sign so -5 is greater than 2 in this case
+     */
+    private static int getMaxAmpIndex(double[] data) {
+        double max = data[0];
+        int maxIndex = 0;
+        for (int i = 1; i < data.length; i++) {
+            if (max < Math.abs(data[i])){
+                maxIndex = i;
+                max = Math.abs(data[i]);
+            }
+        }
+        return maxIndex;
     }
     
     private void drawBands(Graphics2D g2d, double[] bandAmplitudes, Color colour, int BAND_WIDTH, int BASE_Y, int BAND_MAX_HEIGHT) {
@@ -117,13 +180,14 @@ public abstract class FreqCalculator {
         }
     }
     
-    private static double calcFreq(double[] real, double[] im, double[] mag) {
+    private static int calcPrimaryFreq(double[] real, int N, int sampleRate) {
         int index = getMaxIndex(real);
-        return real[index];
+        double binSize = sampleRate/N;
+        return (int)Math.round(index * binSize);
     }
     
     private static int getMaxIndex(int[] array){
-        return getMaxIndex(intToDouble(array,0));
+        return getMaxIndex(intToDoubleNoScale(array));
     }
     
     private static int getMaxIndex(double[] array) {
@@ -138,24 +202,23 @@ public abstract class FreqCalculator {
         return maxI;
     }
     
-    // Max_value == 0 means that the values shouldn't be scaled and should be directly converted.
-    private static double[] intToDouble(int[] array, double MAX_VALUE) {
+    // The array is changed to a double array with values newArray[i] = (SCALE_VALUE / array)
+    private static double[] intToDouble(int[] array, int SCALE_VALUE) {
         double[] temp = new double[array.length];
-        if (MAX_VALUE == 0){
-            for (int i = 0; i < array.length; i++) {
-                temp[i] = array[i];
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == 0.0) {
+                temp[i] = 0.0;
+            } else {
+                temp[i] = (array[i] / SCALE_VALUE);
             }
-        }else {
-            for (int i = 0; i < array.length; i++) {
-                if (array[i] == 0.0) {
-                    temp[i] = 0.0;
-                } else {
-                    temp[i] = (array[i] / MAX_VALUE);
-                }
-        
-                if (temp[i] > 1.0)
-                    System.out.println("ERROR DOUBLE VALUE GREATER THAN 1 : " + temp[i]); // Means that the amplitude was out of range
-            }
+        }
+        return temp;
+    }
+    
+    private static double[] intToDoubleNoScale(int[] array){
+        double[] temp = new double[array.length];
+        for (int i = 0; i < array.length; i++) {
+            temp[i] = array[i];
         }
         return temp;
     }
@@ -227,5 +290,4 @@ public abstract class FreqCalculator {
         }
         return samples;
     }
-    
 }

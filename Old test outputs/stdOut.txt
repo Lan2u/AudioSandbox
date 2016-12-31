@@ -1,0 +1,21 @@
+Test began Sat Dec 31 00:45:09 GMT 2016
+352800 Bytes of mono audio data read into memory
+File Header: RIFF
+File Size: 352836
+File Format: WAVE
+Audio Format: 1
+Channels: 1
+SampleRate: 44100
+Byte Rate: 88200
+Block Align: 2
+Bits per sample: 16
+Sub Chunk Start: null
+Data Size 352800
+File length(s): 4.000000
+
+Max sample value = 26221
+Min sample value = -26220
+Chunk of size 1024 max amplitude value of 26215
+Chunk of size 1024 min amplitude value of 26215
+Calculated primary frequency of chunk: 430Hz
+Test finished Sat Dec 31 00:45:09 GMT 2016
