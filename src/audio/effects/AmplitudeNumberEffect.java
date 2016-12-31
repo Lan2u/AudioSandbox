@@ -8,6 +8,10 @@ import java.awt.*;
  * Created by Paul Lancaster on 31/12/2016
  */
 public class AmplitudeNumberEffect extends VisualEffect{
+    
+    
+    
+    
     /**
      * Loads the visual effect using details from the given LoadedFile and encapsulates that file
      * @param file The file that becomes stored (encapsulated) in and used for the visual effect
@@ -34,7 +38,6 @@ public class AmplitudeNumberEffect extends VisualEffect{
         
     }
     
-    // TODO used as part of the
     @Override
     long calcMinNanoPerFrame(AudioFile file){
         
@@ -48,11 +51,9 @@ public class AmplitudeNumberEffect extends VisualEffect{
         
     }
     
-    /**
-     * Load effect specific details/settings using the file
-     * The nano seconds per frame is special and loaded in a different method because it is the absolute minimum needed
-     *
-     * @param file The file to load the settings from. This should almost always be the file that is already encapsulated
-     *             within this visual effect class
-     */
+    @Override
+    public boolean hasNextFrame() {
+        // TODO
+        return true;
+    }
 }

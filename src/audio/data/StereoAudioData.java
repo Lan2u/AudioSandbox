@@ -9,8 +9,7 @@ import java.util.Arrays;
  */
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class StereoAudioData extends AudioData{
-    private byte[] data_ch1; // Channel 1 bytes
-    private byte[] data_ch2; // Channel 2 bytes
+    private int dataSize; // The size of the data in each channel
     
     private int[] sample_ch1; // Channel 1 samples
     private int[] sample_ch2; // Channel 2 samples
@@ -19,18 +18,15 @@ public class StereoAudioData extends AudioData{
     private int pos_ch2 = -1;
     
     StereoAudioData(int dataSize) {
-        data_ch1 = new byte[dataSize];
-        data_ch2 = new byte[dataSize];
-        
-        
+        this.dataSize = dataSize;
     }
     
     public boolean hasNextSample(int channel) {
         switch(channel){
             case 1:
-                return pos_ch1 < data_ch1.length;
+                return pos_ch1 < sample_ch1.length;
             case 2:
-                return pos_ch2 < data_ch2.length;
+                return pos_ch2 < sample_ch2.length;
             default:
                 throw new IllegalArgumentException("Channel out of range");
         }
@@ -126,18 +122,21 @@ public class StereoAudioData extends AudioData{
     
     @Override
     public void readData(FileInputStream in, int bytesPerSample) throws IOException {
-        byte[] data = new byte[data_ch1.length*2];
+        byte[] data = new byte[dataSize*2];
         
         in.read(data);
+    
+        byte[] data_ch1 = new byte[dataSize]; // Channel 1 bytes
+        byte[] data_ch2 = new byte[dataSize]; // Channel 2 bytes
         
         // Data_ch1 and data_ch2
-        for (int k = 0; k < data_ch1.length; k++) {
+        for (int k = 0; k < dataSize; k++) {
             data_ch1[k] = data[k*2];
             data_ch2[k] = data[k*2+1];
         }
         
-        sample_ch1 = new int[(int)Math.ceil(data_ch1.length/bytesPerSample)];
-        sample_ch2 = new int[(int)Math.ceil(data_ch2.length/bytesPerSample)];
+        sample_ch1 = new int[(int)Math.ceil(dataSize/bytesPerSample)];
+        sample_ch2 = new int[(int)Math.ceil(dataSize/bytesPerSample)];
         
         // Sample_ch1
         for (int i = 0; i < (data_ch1.length/bytesPerSample); i++) {
@@ -162,8 +161,6 @@ public class StereoAudioData extends AudioData{
     @Override
     public String toString() {
         return "StereoAudioData{" +
-                "data_ch1=" + Arrays.toString(data_ch1) +
-                ", data_ch2=" + Arrays.toString(data_ch2) +
                 ", sample_ch1=" + Arrays.toString(sample_ch1) +
                 ", sample_ch2=" + Arrays.toString(sample_ch2) +
                 ", pos_ch1=" + pos_ch1 +

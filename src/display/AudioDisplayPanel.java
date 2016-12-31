@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 /**
  * Created by Paul Lancaster on 28/11/2016
  */
+
 public class AudioDisplayPanel extends JPanel{
     private BufferedImage frame; // Display frame
     
