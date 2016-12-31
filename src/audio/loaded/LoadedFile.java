@@ -1,5 +1,6 @@
 package audio.loaded;
 
+import audio.effects.VisualEffect;
 import audio.file.AudioFile;
 import calculate.FreqCalculator;
 
@@ -80,17 +81,13 @@ public class LoadedFile{
         return true;
     }
     
-    // Return true if the frame should be repainted
     public BufferedImage nextFrame(BufferedImage frame, long dT) {
-        if (dT >= effect.getNanoPerFrame()) {
-            frame = new BufferedImage((int) size.getWidth(), (int) size.getHeight(), BufferedImage.TYPE_INT_RGB);
-            Graphics2D g2d = frame.createGraphics();
-            effect.drawFrame(g2d, frame.getWidth(), frame.getHeight(), this);
-            return frame;
-        }else{
-            return null;
-        }
+        frame = new BufferedImage((int) size.getWidth(), (int) size.getHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = frame.createGraphics();
+        effect.drawFrame(g2d, frame.getWidth(), frame.getHeight(), this);
+        return frame;
     }
+    
     
     private static double getFreqOfChunk(int[] chunk, int sampleRate) {
         return FreqCalculator.getPrimaryFreqOfChunk(chunk, sampleRate);

@@ -1,4 +1,7 @@
-package audio.loaded;
+package audio.effects;
+
+import audio.loaded.Chunk;
+import audio.loaded.LoadedFile;
 
 import java.awt.*;
 
@@ -17,13 +20,15 @@ public enum VisualEffect {
         nanoPerFrame = (1000000000L/FPS);
     }
     
-    void drawFrame(Graphics2D g2d, int width, int height, LoadedFile file){ // Never called directly only called by a doing .drawFrame onto a loaded file
+    void drawFrame(Graphics2D g2d,long deltaT, int width, int height, LoadedFile file){ // Never called directly only called by a doing .drawFrame onto a loaded file
         switch (this){
             case Frequency_Distribution:
                 int FREQ_BANDS = 400;
                 drawFrequencyDistributionFrame(g2d,width,height,FREQ_BANDS,file);
                 break;
             case Frequency_Number:
+                int channel = 1;
+                drawFrequencyNumberDisplay(g2d, width, height,1, file);
                 break;
             case Amplitude_Number:
                 break;
@@ -32,6 +37,10 @@ public enum VisualEffect {
             default:
                 throw new IllegalArgumentException("Graphics for effect not yet implemented");
         }
+    }
+    
+    private void drawFrequencyNumberDisplay(Graphics2D g2d,long deltaT,int width, int height, int channel, LoadedFile file) {
+        g2d.drawString(,0,0);
     }
     
     private void drawFrequencyDistributionFrame(Graphics2D g2d, int width, int height, int FREQ_BANDS, LoadedFile file) {
@@ -75,7 +84,7 @@ public enum VisualEffect {
         return bandAmplitudes;
     }
     
-    public long getNanoPerFrame() {
+    public long getMinimumNanoPerFrame() {
         return nanoPerFrame;
     }
     

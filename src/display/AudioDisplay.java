@@ -1,7 +1,7 @@
 package display;
 
 import audio.loaded.LoadedFile;
-import audio.loaded.VisualEffect;
+import audio.effects.VisualEffect;
 import audio.file.AudioFile;
 
 import javax.swing.*;
