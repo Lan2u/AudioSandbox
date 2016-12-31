@@ -1,5 +1,6 @@
 package display;
 
+import audio.effects.VisualEffect;
 import audio.loaded.LoadedFile;
 
 import javax.swing.*;
@@ -17,7 +18,7 @@ public class AudioDisplayPanel extends JPanel{
         setSize(width, height);
     }
     
-    void play(LoadedFile file) {
+    void play(VisualEffect file) {
         if (!file.isLoaded()){
             throw new IllegalArgumentException("File not loaded");
         }

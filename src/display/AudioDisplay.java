@@ -45,10 +45,7 @@ public class AudioDisplay extends JFrame {
     // Return true if successful
     // False if not (file currently playing, use que file instead)
     // Blocking by default
-    private void play(LoadedFile file){
-        if (!file.isLoaded()){
-            file.load(CHUNK_SIZE);
-        }
+    public void play(VisualEffect file){
         panel.play(file);
     }
     

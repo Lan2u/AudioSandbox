@@ -1,5 +1,6 @@
-import audio.file.WaveFile;
+import audio.effects.AmplitudeNumberEffect;
 import audio.effects.VisualEffect;
+import audio.file.WaveFile;
 import display.AudioDisplay;
 
 import java.io.File;
@@ -18,8 +19,37 @@ public class AudioSandbox {
         
         System.out.println(waveFile);
         AudioDisplay display = new AudioDisplay();
-        display.queueFile(waveFile, VisualEffect.Frequency_Number);
-        display.play();
+        
+        int chunkSize = 512;
+        VisualEffect ampNumEffect = new AmplitudeNumberEffect(waveFile, chunkSize);
+        
+        display.play(ampNumEffect);
         
     }
+    
+    /* Correct usage of the visual effects with a audio file using amplitude number effect as an example
+        AudioFile file = new AudioFile(new File(FILE_PATH));
+        AudioDisplay display = new AudioDisplay();
+        int chunkSize = 512;
+        VisualEffect ampNumEffect = new AmplitudeNumberEffect(waveFile, chunkSize);
+        display.play(effect);
+        
+        or alternatively
+        
+        int chunkSize = 512;
+        VisualEffect ampNumEffect = new AmplitudeNumberEffect(waveFile, chunkSize);
+        display.queue(effect);
+        queue more effects...
+        display.play(); start playback (blocking)
+        
+        alternatively
+        int chunkSize = 512;
+        VisualEffect ampNumEffect = new AmplitudeNumberEffect(waveFile, chunkSize);
+        display.queue(effect);
+        queue more effects...
+        TODO display.playNoBlock(); start playback
+        TODO diplay.queue(effect) queue doing playback
+        
+        
+     */
 }

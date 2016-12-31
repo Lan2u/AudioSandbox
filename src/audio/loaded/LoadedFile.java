@@ -1,3 +1,4 @@
+/* Has been changed
 package audio.loaded;
 
 import audio.effects.VisualEffect;
@@ -5,12 +6,11 @@ import audio.file.AudioFile;
 import calculate.FreqCalculator;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 /**
  * Created by Paul Lancaster on 13/12/2016
- */
+ 
 public class LoadedFile{
     private boolean loaded = false;
     private AudioFile file;
@@ -29,7 +29,7 @@ public class LoadedFile{
     /**
      * Load the chunks that represent the audio file getting their amplitudes and frequencies
      * @return true if load successful
-     */
+     
     public boolean load(int CHUNK_SIZE){
         // Returns the number of nanoseconds per chunk
         // cpf = Chunks Per frame
@@ -79,13 +79,6 @@ public class LoadedFile{
     public boolean hasNextFrame() {
         //TODO THIS
         return true;
-    }
-    
-    public BufferedImage nextFrame(BufferedImage frame, long dT) {
-        frame = new BufferedImage((int) size.getWidth(), (int) size.getHeight(), BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2d = frame.createGraphics();
-        effect.drawFrame(g2d, frame.getWidth(), frame.getHeight(), this);
-        return frame;
     }
     
     
@@ -142,3 +135,4 @@ public class LoadedFile{
         return nextChunks(numOfChunks, 2);
     }
 }
+*/
