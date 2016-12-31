@@ -11,24 +11,28 @@ public class AmplitudeNumberEffect extends VisualEffect{
     private int chunkSize; // The number of amplitude values to average and display (There would be well too many if each individual value was displayed)
     private CHANNEL channel;
     
-    
     /**
      * Loads the visual effect using details from the given LoadedFile and encapsulates that file
      * The various settings needed for the effect are then calculated and stored
      * @param file The file that becomes stored (encapsulated) in and used for the visual effect
      */
-
+    
     public AmplitudeNumberEffect(AudioFile file, int chunkSize, CHANNEL channel){
         super(file); // Calls the load specific details and the calculate nano seconds methods
         this.chunkSize = chunkSize;
         this.channel = channel;
+        
+        minimumNanoPerFrame = calcMinNanoPerFrame(audioFile);
     }
     
     // EFFECT SETTINGS / DETAILS METHODS //
     
     @Override
     long calcMinNanoPerFrame(AudioFile file){
-        return 1000000000L;
+        double chunksPerSecond = file.getSampleRate()/((double)chunkSize);
+        double nanoseconds = 1000000000.0/chunksPerSecond;
+        System.out.println("Nanoseconds per frame " + nanoseconds);
+        return Math.round(nanoseconds);
     }
     
     // DRAW EFFECT METHODS //
@@ -64,5 +68,10 @@ public class AmplitudeNumberEffect extends VisualEffect{
             default:
                 return true;
         }
+    }
+    
+    @Override
+    public String getName() {
+        return "Amplitude number display";
     }
 }

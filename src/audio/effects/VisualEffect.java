@@ -51,7 +51,6 @@ public abstract class VisualEffect{
      */
     VisualEffect(AudioFile file) {
         this.audioFile = file;
-        minimumNanoPerFrame = calcMinNanoPerFrame(file);
     }
     
     public long getNanoPerFrame(){
@@ -59,4 +58,6 @@ public abstract class VisualEffect{
     }
     
     public abstract boolean hasNextFrame();
+    
+    abstract public String getName();
 }

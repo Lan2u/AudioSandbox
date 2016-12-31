@@ -36,6 +36,7 @@ public class AudioDisplayPanel extends JPanel{
             }
             lastTime = currentTime;
         }
+        System.out.println(effect.getName() + " finished playing");
     }
     
     @Override

@@ -102,7 +102,7 @@ public class StereoAudioData extends AudioData{
         switch(channel){
             case 1:
                 if (pos_ch1 >= (sample_ch1.length -1)){
-                    System.out.println("Sample out of range");
+                    System.out.println("Sample (ch1) out of range");
                     return 0;
                 }else {
                     pos_ch1++;
@@ -111,6 +111,7 @@ public class StereoAudioData extends AudioData{
             case 2:
                 pos_ch2++;
                 if (pos_ch2 >= (sample_ch2.length-1)){
+                    System.out.println("Sample (ch2) out of range");
                     return 0;
                 }else {
                     return sample_ch2[pos_ch2];

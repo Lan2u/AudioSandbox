@@ -27,6 +27,9 @@ public class MonoAudioData extends AudioData{
         int[] chunk  = new int[samples];
         for (int i = 0; i < samples; i++) {
             chunk[i] = nextSample();
+            if (chunk[i] == Integer.MAX_VALUE){
+                return chunk;
+            }
         }
         return chunk;
     }
@@ -57,8 +60,8 @@ public class MonoAudioData extends AudioData{
     
     private int nextSample() {
         if (pos_ch1 >= (sample_ch1.length-1)){
-            System.out.println("Position out of range : " + pos_ch1);
-            return 0;
+            System.out.println("Position out of range (mono audio) : " + pos_ch1);
+            return Integer.MAX_VALUE; // Should never be returned normally so is used to terminate
         }
         pos_ch1++;
         return sample_ch1[pos_ch1];
