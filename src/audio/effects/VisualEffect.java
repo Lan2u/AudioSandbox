@@ -40,8 +40,6 @@ public abstract class VisualEffect{
         }
     }
     
-    protected abstract void loadSpecificDetails(AudioFile file);
-    
     // TODO used as part of the
     abstract long calcMinNanoPerFrame(AudioFile file);
     
@@ -53,7 +51,6 @@ public abstract class VisualEffect{
      */
     VisualEffect(AudioFile file) {
         this.audioFile = file;
-        loadSpecificDetails(file);
         minimumNanoPerFrame = calcMinNanoPerFrame(file);
     }
     

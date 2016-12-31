@@ -1,4 +1,5 @@
 import audio.effects.AmplitudeNumberEffect;
+import audio.effects.CHANNEL;
 import audio.effects.VisualEffect;
 import audio.file.WaveFile;
 import display.AudioDisplay;
@@ -21,7 +22,7 @@ public class AudioSandbox {
         AudioDisplay display = new AudioDisplay();
         
         int chunkSize = 512;
-        VisualEffect ampNumEffect = new AmplitudeNumberEffect(waveFile, chunkSize);
+        VisualEffect ampNumEffect = new AmplitudeNumberEffect(waveFile, chunkSize, CHANNEL.one);
         
         display.play(ampNumEffect);
         
