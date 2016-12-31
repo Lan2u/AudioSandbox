@@ -28,8 +28,7 @@ public class AmplitudeNumberEffect extends VisualEffect{
     
     @Override
     long calcMinNanoPerFrame(AudioFile file){
-        
-        return 0L;
+        return 1000000000L;
     }
     
     // DRAW EFFECT METHODS //
