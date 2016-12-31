@@ -1,8 +1,6 @@
 package display;
 
-import audio.loaded.LoadedFile;
 import audio.effects.VisualEffect;
-import audio.file.AudioFile;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +11,7 @@ import java.util.ArrayList;
  */
 public class AudioDisplay extends JFrame {
     private AudioDisplayPanel panel;
-    private ArrayList<LoadedFile> queue = new ArrayList<>();
+    private ArrayList<VisualEffect> queue = new ArrayList<>();
     private int CHUNK_SIZE = 100; // Samples per chunk
     
     /*
@@ -35,7 +33,7 @@ public class AudioDisplay extends JFrame {
     // Plays current song queue, plays nothing if the queue is empty
     public void play(){
         // This could be done better to link the effect and queue together
-        for (LoadedFile song : queue) {
+        for (VisualEffect song : queue) {
             play(song);
             queue.remove(song);
         }
@@ -43,14 +41,14 @@ public class AudioDisplay extends JFrame {
     
     // Play the given audio file
     // Return true if successful
-    // False if not (file currently playing, use que file instead)
+    // False if not (file currently playing, use queue file instead)
     // Blocking by default
     public void play(VisualEffect file){
         panel.play(file);
     }
     
-    public boolean queueFile(AudioFile file, VisualEffect effect){
-        queue.add(new LoadedFile(file,effect));
+    public boolean queueFile(VisualEffect effect){
+        queue.add(effect);
         return true; // Queued successfully
     }
 }

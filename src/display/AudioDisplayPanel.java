@@ -1,7 +1,6 @@
 package display;
 
 import audio.effects.VisualEffect;
-import audio.loaded.LoadedFile;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,21 +17,19 @@ public class AudioDisplayPanel extends JPanel{
         setSize(width, height);
     }
     
-    void play(VisualEffect file) {
-        if (!file.isLoaded()){
-            throw new IllegalArgumentException("File not loaded");
-        }
-        
-        file.setSize(this.getSize());
-        
+    /**
+     * This is where the effect is actually triggered from this is the "game loop" while the effect is playing
+     * @param effect to play
+     */
+    void play(VisualEffect effect) {
         long timeSinceLastFrame = 0;
         long lastTime = System.nanoTime();
-        while (file.hasNextFrame()){
+        while (effect.hasNextFrame()){
+            BufferedImage nextFrame = new BufferedImage(frame.getWidth(),frame.getHeight(),frame.getType());
             long currentTime = System.nanoTime();
             timeSinceLastFrame += Math.abs(currentTime - lastTime);
-            BufferedImage image =file.nextFrame(frame, timeSinceLastFrame);
-            if (image != null) {
-                frame = image;
+            if (effect.drawNextFrame(nextFrame.createGraphics(), nextFrame.getWidth(),nextFrame.getHeight(), timeSinceLastFrame)) {
+                frame = nextFrame;
                 repaint();
                 timeSinceLastFrame = 0;
             }

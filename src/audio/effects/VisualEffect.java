@@ -3,7 +3,6 @@ package audio.effects;
 import audio.file.AudioFile;
 
 import java.awt.*;
-import java.io.FileNotFoundException;
 
 /**
  * Created by Paul Lancaster on 31/12/2016 01:32
@@ -29,11 +28,10 @@ public abstract class VisualEffect{
      * @param height The height of the frame
      * @param deltaT The time in nano seconds since the last frame was displayed
      * @return true if the frame was updated or false if it wasn't
-     * @throws FileNotFoundException if no LoadedFile was found loaded into the effect (through the .load() method);
      */
     
     // This should be the only public method for drawing frames the other methods are internal
-    public boolean drawNextFrame(Graphics2D g2d, int width, int height, long deltaT) throws FileNotFoundException {
+    public boolean drawNextFrame(Graphics2D g2d, int width, int height, long deltaT){
         if (deltaT > minimumNanoPerFrame){
             drawEffect(g2d, width, height, deltaT);
             return true;
@@ -62,4 +60,6 @@ public abstract class VisualEffect{
     public long getNanoPerFrame(){
         return minimumNanoPerFrame;
     }
+    
+    public abstract boolean hasNextFrame();
 }
