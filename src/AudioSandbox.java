@@ -24,7 +24,9 @@ public class AudioSandbox {
         int chunkSize = 1024;
         VisualEffect ampNumEffect = new AmplitudeNumberEffect(waveFile, chunkSize, CHANNEL.one);
         
-        display.play(ampNumEffect);
+        display.queue(ampNumEffect);
+        display.queue(ampNumEffect);
+        display.play();
         
     }
     

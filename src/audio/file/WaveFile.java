@@ -52,6 +52,11 @@ public class WaveFile implements AudioFile{
     }
     
     @Override
+    public boolean hasNextSamples(int chunkSize, int channel) {
+        return data.hasNextSamples(chunkSize,channel);
+    }
+    
+    @Override
     public int getSampleRate() {
         return header.getSampleRate();
     }

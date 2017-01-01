@@ -98,6 +98,18 @@ public class StereoAudioData extends AudioData{
         }
     }
     
+    @Override
+    public boolean hasNextSamples(int chunkSize, int channel) {
+        switch (channel){
+            case 1:
+                return (pos_ch1+chunkSize) < sample_ch1.length;
+            case 2:
+                return (pos_ch2+chunkSize) < sample_ch2.length;
+            default:
+                return false;
+        }
+    }
+    
     private int nextSample(int channel) {
         switch(channel){
             case 1:

@@ -33,10 +33,10 @@ public class AudioDisplay extends JFrame {
     // Plays current song queue, plays nothing if the queue is empty
     public void play(){
         // This could be done better to link the effect and queue together
-        for (VisualEffect song : queue) {
-            play(song);
-            queue.remove(song);
+        for (int i = 0; i < queue.size(); i++) {
+            play(queue.get(i));
         }
+        queue.clear();
     }
     
     // Play the given audio file
@@ -47,7 +47,7 @@ public class AudioDisplay extends JFrame {
         panel.play(file);
     }
     
-    public boolean queueFile(VisualEffect effect){
+    public boolean queue(VisualEffect effect){
         queue.add(effect);
         return true; // Queued successfully
     }

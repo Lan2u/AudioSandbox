@@ -28,7 +28,7 @@ public class MonoAudioData extends AudioData{
         for (int i = 0; i < samples; i++) {
             chunk[i] = nextSample();
             if (chunk[i] == Integer.MAX_VALUE){
-                return chunk;
+                break;
             }
         }
         return chunk;
@@ -92,6 +92,11 @@ public class MonoAudioData extends AudioData{
     @Override
     public int getSamplesLeft(int channel) {
         return (getNumberOfSamples() - pos_ch1-1);
+    }
+    
+    @Override
+    public boolean hasNextSamples(int chunkSize, int channel) {
+        return (pos_ch1+chunkSize) < sample_ch1.length;
     }
     
     @Override

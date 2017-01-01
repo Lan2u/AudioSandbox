@@ -51,6 +51,7 @@ public abstract class VisualEffect{
      */
     VisualEffect(AudioFile file) {
         this.audioFile = file;
+        file.resetPos();
     }
     
     public long getNanoPerFrame(){

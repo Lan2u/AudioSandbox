@@ -15,4 +15,6 @@ public interface AudioFile {
     void resetPos();
     boolean hasNextSample(int channel);
     int samplesLeft(int channel);
+    
+    boolean hasNextSamples(int chunkSize, int channel);
 }

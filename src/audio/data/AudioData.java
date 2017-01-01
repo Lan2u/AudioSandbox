@@ -44,4 +44,6 @@ public abstract class AudioData {
     public abstract void resetPos();
     
     public abstract int getSamplesLeft(int channel);
+    
+    public abstract boolean hasNextSamples(int chunkSize, int channel);
 }

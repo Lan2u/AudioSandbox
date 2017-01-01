@@ -60,11 +60,11 @@ public class AmplitudeNumberEffect extends VisualEffect{
     public boolean hasNextFrame() {
         switch (channel){
             case two:
-                return audioFile.hasNextSample(2);
+                return audioFile.hasNextSamples(chunkSize,2);
             case both:
-                return audioFile.hasNextSample(1) || audioFile.hasNextSample(2);
+                return audioFile.hasNextSamples(chunkSize,1) || audioFile.hasNextSamples(chunkSize,2);
             case one:
-                return audioFile.hasNextSample(1);
+                return audioFile.hasNextSamples(chunkSize,1);
             default:
                 return true;
         }
