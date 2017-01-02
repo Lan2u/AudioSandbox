@@ -18,7 +18,7 @@ public class AmplitudeNumberEffect extends VisualEffect{
      */
     
     public AmplitudeNumberEffect(AudioFile file, int chunkSize, CHANNEL channel){
-        super(file); // Calls the load specific details and the calculate nano seconds methods
+        super(file); // Calls the load specific details that every VisualEffect has to
         this.chunkSize = chunkSize;
         this.channel = channel;
         
@@ -73,5 +73,11 @@ public class AmplitudeNumberEffect extends VisualEffect{
     @Override
     public String getName() {
         return "Amplitude number display";
+    }
+    
+    @Override
+    public void finish() {
+        audioFile.resetPos();
+        System.out.println(getName() + " finished playing");
     }
 }

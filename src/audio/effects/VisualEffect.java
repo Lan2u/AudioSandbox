@@ -61,4 +61,6 @@ public abstract class VisualEffect{
     public abstract boolean hasNextFrame();
     
     abstract public String getName();
+    
+    public abstract void finish();
 }
