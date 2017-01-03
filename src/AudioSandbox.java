@@ -23,6 +23,7 @@ public class AudioSandbox {
         
         int chunkSize = 1024;
         VisualEffect freqNumEffect = new PrimaryFrequencyDisplay(waveFile,chunkSize, CHANNEL.one);
+        
         display.queue(freqNumEffect);
         display.play();
     }

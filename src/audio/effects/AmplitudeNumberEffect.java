@@ -16,7 +16,6 @@ public class AmplitudeNumberEffect extends VisualEffect{
      * The various settings needed for the effect are then calculated and stored
      * @param file The file that becomes stored (encapsulated) in and used for the visual effect
      */
-    
     public AmplitudeNumberEffect(AudioFile file, int chunkSize, CHANNEL channel){
         super(file); // Calls the load specific details that every VisualEffect has to
         this.chunkSize = chunkSize;
@@ -47,14 +46,22 @@ public class AmplitudeNumberEffect extends VisualEffect{
         }
     }
     
-    private double getArrayAverage(int[] samples) {
+    /**
+     * @param array The int array to average
+     * @return The average of the values in the array
+     */
+    private double getArrayAverage(int[] array) {
         long total = 0L;
-        for (int sample: samples){
-            total = total + sample;
+        for (int n: array){
+            total = total + n;
         }
-        return (total/samples.length);
+        return (total/array.length);
     }
     
+    /**
+     * Check if there is another frame left in the effect
+     * @return True if there is another frame left in the effect (on the effect channel) and false if there isn't
+     */
     @Override
     public boolean hasNextFrame() {
         switch (channel){
@@ -68,6 +75,7 @@ public class AmplitudeNumberEffect extends VisualEffect{
                 return true;
         }
     }
+    
     
     @Override
     public String getName() {

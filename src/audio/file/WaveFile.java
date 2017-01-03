@@ -47,7 +47,6 @@ public class WaveFile implements AudioFile{
     
     @Override
     public int samplesLeft(int channel) {
-        //TODO implement for more than 1 channel
         return data.getSamplesLeft(channel);
     }
     

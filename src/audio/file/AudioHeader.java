@@ -17,7 +17,7 @@ class AudioHeader { // Store audio header data
     private String format;
     
     private int audioFormat;
-    private int numberOfChannels;
+    private int numberOfChannels; // The number of audio channels
     private int sampleRate; // Samples per second
     private int byteRate; // sample rate * number of channels * bytes per sample
     private int blockAlign; // The number of bytes for one sample including all channels
@@ -93,6 +93,12 @@ class AudioHeader { // Store audio header data
         this.dataSize = getInt(headerInputChunk);
     }
     
+    /**
+     * Gets the integer representation of an array of bytes (max 4)
+     * Uses little endian
+     * @param byteRepOfInt The array of bytes which reprensents the array
+     * @return The int from the array of bytes
+     */
     private int getInt(byte[] byteRepOfInt) { // MAX 4 BYTES (int's use 4 bytes in java)
         int MAX_BYTES = 4;
         if (byteRepOfInt.length > MAX_BYTES){
@@ -108,7 +114,10 @@ class AudioHeader { // Store audio header data
         }
     }
     
-    // Get the length of the audio file in seconds, if the value isn't known then calculate it and store it first
+    /**
+     * Get the length of the audio file in seconds, if the value isn't known then calculate it and store it first
+     * @return The length
+     */
     double getLength(){
         if(length <= 0){
             calcLength();

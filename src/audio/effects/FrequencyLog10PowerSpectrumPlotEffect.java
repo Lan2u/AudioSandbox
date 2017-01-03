@@ -25,10 +25,20 @@ public class FrequencyLog10PowerSpectrumPlotEffect extends VisualEffect {
         minimumNanoPerFrame = calcMinNanoPerFrame(file);
     }
     
+    /**
+     * Calculate the minimum amount of nano seconds that a frame should be displayed for
+     * @param file The file containing the information used to calculate the value
+     * @return The calculated minimum amount of nano seconds that a frame should be displayed for
+     */
     private long calcMinNanoPerFrame(AudioFile file) {
         return 1000000000L * chunk_size /file.getSampleRate();
     }
     
+    /**
+     * Calculate all the frequency spectrums for each chunk
+     * @param file The file to check the chunks from
+     * @param channel The channel on which to get the chunks from
+     */
     private void calcPowerSpectrums(AudioFile file, CHANNEL channel) {
         int spectrumCount = file.getNumberOfSamples()/ chunk_size;
         powerSpectrums = new int[spectrumCount][];
@@ -39,12 +49,21 @@ public class FrequencyLog10PowerSpectrumPlotEffect extends VisualEffect {
         
     }
     
+    /**
+     * @param chunk The chunk to get the power spectrum of
+     * @return The power spectrum (magnitude) of the chunk
+     */
     private int[] getPowerSpectrum(int[] chunk){
         double[] magnitude = FreqCalculator.getMagPowerSpectrum(chunk);
         magnitude = FreqCalculator.log10Array(magnitude);
         return doubleToInt(magnitude);
     }
     
+    /**
+     * Converts a double array into an int array with the values rounded to the nearest integer (rounding up if half way between)
+     * @param array The double array to convert
+     * @return The converted int array of the double array
+     */
     private int[] doubleToInt(double[] array) {
         int[] out = new int[array.length];
         for (int i = 0; i <array.length; i++) {
@@ -81,6 +100,11 @@ public class FrequencyLog10PowerSpectrumPlotEffect extends VisualEffect {
         pos++;
     }
     
+    /**
+     * Returns the index of the highest magnitude value in the array (ignoring the sign of the value so -2 is greater than 1 in this case)
+     * @param data The array of data to scan for the highest magnitude value
+     * @return The index of the highest magnitude value regardless of sign
+     */
     private static int getMaxAmpIndex(int[] data) {
         int max = data[0];
         int maxIndex = 0;

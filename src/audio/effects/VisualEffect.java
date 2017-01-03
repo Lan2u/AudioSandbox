@@ -6,6 +6,8 @@ import java.awt.*;
 
 /**
  * Created by Paul Lancaster on 31/12/2016 01:32
+ *
+ * The parent class of all visual effects
  */
 public abstract class VisualEffect{
     /**
@@ -18,17 +20,6 @@ public abstract class VisualEffect{
      * The audio file that is used within the visual effect
      */
     protected AudioFile audioFile;
-    /**
-     * Draw the next frame of the visual effect onto the supplied graphics and then return true however if the time
-     * difference is too small for a frame update then nothing is drawn and instead the method returns false to
-     * signify that a frame update was not necessary
-     *
-     * @param g2d The graphics onto which the effect should be drawn
-     * @param width The width of the frame
-     * @param height The height of the frame
-     * @param deltaT The time in nano seconds since the last frame was displayed
-     * @return true if the frame was updated or false if it wasn't
-     */
     
     // This should be the only public method for drawing frames the other methods are internal
     public boolean drawNextFrame(Graphics2D g2d, int width, int height, long deltaT){
@@ -40,6 +31,13 @@ public abstract class VisualEffect{
         }
     }
     
+    /**
+     * The method that the effect is actually drawn in and is called each frame
+     * @param g2d The Graphics2D object to actually draw the effect on
+     * @param width The width of the frame/object that the effect will be drawn on
+     * @param height The height of the frame/object that the effect will be drawn on
+     * @param deltaT The time difference since the last frame was displayed
+     */
     protected abstract void drawEffect(Graphics2D g2d, int width, int height, long deltaT);
         
     /**
@@ -51,9 +49,19 @@ public abstract class VisualEffect{
         file.resetPos();
     }
     
+    /**
+     * Checks if there is another frame of the effect left to display
+     * @return True if the effect has another frame and false if not
+     */
     public abstract boolean hasNextFrame();
     
+    /**
+     * @return The english name of the effect
+     */
     abstract public String getName();
     
+    /**
+     * Called when the effect finishes
+     */
     public abstract void finish();
 }
