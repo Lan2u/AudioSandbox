@@ -21,14 +21,13 @@ public class AmplitudeNumberEffect extends VisualEffect{
         super(file); // Calls the load specific details that every VisualEffect has to
         this.chunkSize = chunkSize;
         this.channel = channel;
-        
         minimumNanoPerFrame = calcMinNanoPerFrame(audioFile);
+        System.out.println("Minimum Nano Per Frame " +minimumNanoPerFrame);
     }
     
     // EFFECT SETTINGS / DETAILS METHODS //
     
-    @Override
-    long calcMinNanoPerFrame(AudioFile file){
+    private long calcMinNanoPerFrame(AudioFile file){
         double chunksPerSecond = file.getSampleRate()/((double)chunkSize);
         double nanoseconds = 1000000000.0/chunksPerSecond;
         System.out.println("Nanoseconds per frame " + nanoseconds);

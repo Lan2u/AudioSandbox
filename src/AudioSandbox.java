@@ -1,5 +1,4 @@
-import audio.effects.AmplitudeNumberEffect;
-import audio.effects.CHANNEL;
+import audio.effects.FrequencyNumberEffect;
 import audio.effects.VisualEffect;
 import audio.file.WaveFile;
 import display.AudioDisplay;
@@ -13,7 +12,7 @@ import java.io.IOException;
 
     
 public class AudioSandbox {
-    private static final String FILE_PATH = "resources/440Hz.wav";
+    private static final String FILE_PATH = "resources/440HzTo20KHzLinear.wav";
     
     public static void main(String[] args) throws IOException {
         WaveFile waveFile = new WaveFile(new File(FILE_PATH));
@@ -22,11 +21,9 @@ public class AudioSandbox {
         AudioDisplay display = new AudioDisplay();
         
         int chunkSize = 1024;
-        VisualEffect ampNumEffect = new AmplitudeNumberEffect(waveFile, chunkSize, CHANNEL.one);
-        display.queue(ampNumEffect);
-        display.queue(ampNumEffect);
+        VisualEffect freqNumEffect = new FrequencyNumberEffect(waveFile,chunkSize);
+        display.queue(freqNumEffect);
         display.play();
-        
     }
     
     /* Correct usage of the visual effects with a audio file using amplitude number effect as an example

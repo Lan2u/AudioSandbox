@@ -40,9 +40,6 @@ public abstract class VisualEffect{
         }
     }
     
-    // TODO used as part of the
-    abstract long calcMinNanoPerFrame(AudioFile file);
-    
     protected abstract void drawEffect(Graphics2D g2d, int width, int height, long deltaT);
         
     /**
@@ -52,10 +49,6 @@ public abstract class VisualEffect{
     VisualEffect(AudioFile file) {
         this.audioFile = file;
         file.resetPos();
-    }
-    
-    public long getNanoPerFrame(){
-        return minimumNanoPerFrame;
     }
     
     public abstract boolean hasNextFrame();
