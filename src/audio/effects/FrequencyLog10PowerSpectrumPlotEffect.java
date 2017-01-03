@@ -55,21 +55,42 @@ public class FrequencyLog10PowerSpectrumPlotEffect extends VisualEffect {
     
     @Override
     protected void drawEffect(Graphics2D g2d, int width, int height, long deltaT) {
-        int bands = powerSpectrums[0].length;
-        int bandWidth = width / bands; // FIXME what if there are more bands than the width pixel
-        for (int band = 0; band < bands; band++) {
-            g2d.setColor(Color.CYAN);
-            int bandHeight = powerSpectrums[pos][band];
-            int x = bands * bandWidth;
-            /*
-            if (((bandHeight - (height/2)) < 0) || (bandHeight + height/2) > height){
-                bandHeight = height/2;
-                g2d.setColor(Color.GREEN);
-            }
-            */
-            g2d.fillRect(x, (height / 2) - bandHeight, bandWidth, bandHeight);
+        int[] data = powerSpectrums[pos];
+        
+        final int PADDING = 1;
+    
+        // The height must be even so this adds a pixel to ensure that
+        int CENTER_Y = height/2;
+        
+        g2d.drawLine(0,height/2, width,height/2); // Center line
+        
+        int maxAmplitude = (int)Math.ceil(data[getMaxAmpIndex(data)]);
+        double scaleFactor;
+        if (maxAmplitude == 0){
+            scaleFactor = 1;
+        }else {
+            scaleFactor = (height - PADDING * 2) / (2 * maxAmplitude);
+        }
+        
+        for (int x = 0; x < data.length; x++) {
+            int y = (int) Math.abs((data[x] * scaleFactor)); // Scale the values down
+            y = height - y; // Inverse the display so peaks are peaks rather than troughs
+            y = y - height/2; // Bring into center
+            g2d.drawLine(x,CENTER_Y,x,y);
         }
         pos++;
+    }
+    
+    private static int getMaxAmpIndex(int[] data) {
+        int max = data[0];
+        int maxIndex = 0;
+        for (int i = 1; i < data.length; i++) {
+            if (max < Math.abs(data[i])){
+                maxIndex = i;
+                max = Math.abs(data[i]);
+            }
+        }
+        return maxIndex;
     }
     
     @Override
