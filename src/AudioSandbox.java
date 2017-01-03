@@ -1,4 +1,4 @@
-import audio.effects.FrequencyNumberEffect;
+import audio.effects.FrequencyLog10PowerSpectrumPlotEffect;
 import audio.effects.VisualEffect;
 import audio.file.WaveFile;
 import display.AudioDisplay;
@@ -21,7 +21,7 @@ public class AudioSandbox {
         AudioDisplay display = new AudioDisplay();
         
         int chunkSize = 1024;
-        VisualEffect freqNumEffect = new FrequencyNumberEffect(waveFile,chunkSize);
+        VisualEffect freqNumEffect = new FrequencyLog10PowerSpectrumPlotEffect(waveFile,chunkSize);
         display.queue(freqNumEffect);
         display.play();
     }
