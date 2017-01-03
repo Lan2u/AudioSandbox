@@ -1,4 +1,5 @@
-import audio.effects.FrequencyLog10PowerSpectrumPlotEffect;
+import audio.effects.CHANNEL;
+import audio.effects.PrimaryFrequencyDisplay;
 import audio.effects.VisualEffect;
 import audio.file.WaveFile;
 import display.AudioDisplay;
@@ -12,7 +13,7 @@ import java.io.IOException;
 
     
 public class AudioSandbox {
-    private static final String FILE_PATH = "resources/440HzTo20KHzLinear.wav";
+    private static final String FILE_PATH = "resources/BreadFish.wav";
     
     public static void main(String[] args) throws IOException {
         WaveFile waveFile = new WaveFile(new File(FILE_PATH));
@@ -21,7 +22,7 @@ public class AudioSandbox {
         AudioDisplay display = new AudioDisplay();
         
         int chunkSize = 1024;
-        VisualEffect freqNumEffect = new FrequencyLog10PowerSpectrumPlotEffect(waveFile,chunkSize);
+        VisualEffect freqNumEffect = new PrimaryFrequencyDisplay(waveFile,chunkSize, CHANNEL.one);
         display.queue(freqNumEffect);
         display.play();
     }
