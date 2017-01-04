@@ -13,7 +13,7 @@ import java.io.IOException;
 
     
 public class AudioSandbox {
-    private static final String FILE_PATH = "resources/BreadFish.wav";
+    private static final String FILE_PATH = "resources/audiocheck.net_sweep_10Hz_20000Hz_-3dBFS_4s.wav";
     
     public static void main(String[] args) throws IOException {
         WaveFile waveFile = new WaveFile(new File(FILE_PATH));
@@ -21,9 +21,9 @@ public class AudioSandbox {
         System.out.println(waveFile);
         AudioDisplay display = new AudioDisplay();
         
-        int chunkSize = 1024;
         int height = 1000;
-        VisualEffect freqNumEffect = new LagFreqEffect(waveFile,chunkSize,height,CHANNEL.one);
+        int segments = 200;
+        VisualEffect freqNumEffect = new LagFreqEffect(waveFile,height,CHANNEL.one,segments);
         
         display.queue(freqNumEffect);
         display.play();

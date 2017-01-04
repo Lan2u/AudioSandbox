@@ -27,10 +27,16 @@ public class LagFreqEffect extends VisualEffect {
      *
      * @param file The file that becomes stored (encapsulated) in and used for the visual effect
      */
-    public LagFreqEffect(AudioFile file, int chunkSize, int height, CHANNEL channel) {
+    public LagFreqEffect(AudioFile file, int height, CHANNEL channel, int segments) {
         super(file);
-        this.chunk_size = chunkSize;
-        calcPrimaryFreqs(file,chunkSize,channel);
+        this.SEGMENTS =segments;
+        // Bin size = sampleRate / chunkSize
+        // sampleRate / 2 * bin size = chunk size
+        // bin size = sampleRate / segments
+        // sampleRate = bin size * segments = sampleRate * segments / chunkSize
+        // sampleRate * segments / sampleRate = chunkSize
+        chunk_size = 1024;
+        calcPrimaryFreqs(file,channel);
         minimumNanoPerFrame = calcMinNanoPerFrame(file);
         minNanoPerFrequencyUpdate = 1000000000L * chunk_size /file.getSampleRate(); // Same as usual
         stringSegmentDeflection = new double[SEGMENTS];
@@ -43,8 +49,8 @@ public class LagFreqEffect extends VisualEffect {
         return 1000000000L/ MAX_FPS;
     }
     
-    private void calcPrimaryFreqs(AudioFile file, int chunkSize, CHANNEL channel) {
-        int chunkCount = file.getNumberOfSamples()/chunkSize;
+    private void calcPrimaryFreqs(AudioFile file, CHANNEL channel) {
+        int chunkCount = file.getNumberOfSamples()/chunk_size;
         maxFrequencies = new int[chunkCount];
         for (int i = 0; i < chunkCount; i++) {
             int[] chunk = file.getChunk(chunk_size, channel.getInt());
