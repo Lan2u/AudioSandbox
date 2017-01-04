@@ -9,6 +9,11 @@ import java.awt.*;
  * Created by Paul Lancaster on 03/01/2017
  */
 public class StringFreqEffect extends VisualEffect {
+    private static final int SEGMENT_EFFECT_RANGE = 10; // The number of segments effected either side of the point in the "string" where the force is applied
+    private static final double SEGMENT_EFFECT_DROPOFF = 0.004; // for each index away from the point where the force was applied the amount that the force on the neighbouring segments is decreased by
+    private static final double DEFLECT_FORCE = 1.0;
+    private static final double DEFLECTION_RATIO = 0.999999999999 / 100000000.0; // The amount that the deflection should change per nanosecond
+    
     private int chunk_size;
     private int[] maxFrequencies;
     private int pos;
@@ -19,7 +24,6 @@ public class StringFreqEffect extends VisualEffect {
     // 1 deflection = top of page
     // -1 deflection = bottom of page
     // 0.5 deflection = 3 quarters up the page
-    private double BASE_Y;
     
     /**
      * Loads the visual effect using details from the given LoadedFile and encapsulates that file
@@ -32,7 +36,6 @@ public class StringFreqEffect extends VisualEffect {
         calcPrimaryFreqs(file,chunkSize,channel);
         minimumNanoPerFrame = calcMinNanoPerFrame(file);
         minNanoPerFrequencyUpdate = 1000000000L * chunk_size /file.getSampleRate(); // Same as usual
-        BASE_Y = 0.5;
         stringSegmentDeflection = new double[segments];
         pos=0;
     }
@@ -52,7 +55,7 @@ public class StringFreqEffect extends VisualEffect {
         }
     }
     
-    long dTSinceLastFrequency = 0;
+    private long dTSinceLastFrequency = 0;
     @Override
     protected void drawEffect(Graphics2D g2d, int width, int height, long deltaT) {
         settleSegments(deltaT);
@@ -61,7 +64,7 @@ public class StringFreqEffect extends VisualEffect {
             int freq = maxFrequencies[pos]; // Frequency
             double freqPerSegment = (audioFile.getSampleRate()/2.0)/segments; // The amount of frequency values (integer) per segment
             int band = (int)(freq/freqPerSegment); // The band that the frequency falls under
-            deflectSegment(band, 1.0); // Deflect the string
+            deflectSegment(band, DEFLECT_FORCE); // Deflect the string
             dTSinceLastFrequency = 0;
             pos++;
         }else{
@@ -84,6 +87,20 @@ public class StringFreqEffect extends VisualEffect {
      */
     private void deflectSegment(int segmentIndex, double force){
         stringSegmentDeflection[segmentIndex] = stringSegmentDeflection[segmentIndex] + force;
+        for (int i = 1; i < SEGMENT_EFFECT_RANGE; i++) { // Starting at the segment in front of the forced segment apply a force to all the other segments (within range SEGMENT_EFFECT_RANGE) but of a smaller and smaller amount
+            int index = segmentIndex + i;
+            if (index < stringSegmentDeflection.length){ // Stop it being out of range (of the array) on the high end
+                stringSegmentDeflection[index] = stringSegmentDeflection[index] + force * SEGMENT_EFFECT_DROPOFF * i;
+            }
+        }
+        
+        for (int i = -1; i > segmentIndex-SEGMENT_EFFECT_RANGE; i--) { // Starting at the segment behind the forced segment (segmentIndex) apply a gradually decreasing force (decreasing by SEGMENT_EFFECT_DROPOFF each time) to all the segment behind it that are in range of the original (SEGMENT_EFFECT_RANGE)
+            int index = segmentIndex + i;
+            if (index >= 0) { // Stop it being out of range (of the array) on the low end
+                stringSegmentDeflection[index] = stringSegmentDeflection[index] + force * SEGMENT_EFFECT_DROPOFF * -i;
+            }
+        }
+        
         if (stringSegmentDeflection[segmentIndex] > 1.0) stringSegmentDeflection[segmentIndex] = 1.0;
         if (stringSegmentDeflection[segmentIndex] < -1.0) stringSegmentDeflection[segmentIndex] = -1.0;
     }
@@ -93,7 +110,6 @@ public class StringFreqEffect extends VisualEffect {
      * @param deltaT The change in time in nano seconds since the last frame
      */
     private void settleSegments(long deltaT){
-        double DEFLECTION_RATIO = 0.8 / 100000000.0; // The amount that the deflection should change per nanosecond
         for (int i = 0; i < stringSegmentDeflection.length; i++) {
             stringSegmentDeflection[i] = stringSegmentDeflection[i] * DEFLECTION_RATIO * deltaT;
         }
