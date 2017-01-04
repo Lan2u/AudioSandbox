@@ -1,6 +1,6 @@
 package display;
 
-import audio.effects.VisualEffect;
+import effects.VisualEffect;
 
 import javax.swing.*;
 import java.awt.*;

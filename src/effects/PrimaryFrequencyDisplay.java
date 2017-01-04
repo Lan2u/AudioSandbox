@@ -1,4 +1,4 @@
-package audio.effects;
+package effects;
 
 import audio.file.AudioFile;
 import calculate.FreqCalculator;

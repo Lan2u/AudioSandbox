@@ -1,4 +1,4 @@
-package audio.effects;
+package effects;
 
 import audio.file.AudioFile;
 
@@ -15,11 +15,11 @@ public abstract class VisualEffect{
      * just be the minimum because if the next frame takes longer to load then the time each frame
      * is displayed for will increase (and FPS will decrease))
      */
-    protected long minimumNanoPerFrame = 0;
+    long minimumNanoPerFrame = 0;
     /**
      * The audio file that is used within the visual effect
      */
-    protected AudioFile audioFile;
+    AudioFile audioFile;
     
     // This should be the only public method for drawing frames the other methods are internal
     public boolean drawNextFrame(Graphics2D g2d, int width, int height, long deltaT){

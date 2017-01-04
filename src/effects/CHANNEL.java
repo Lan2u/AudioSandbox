@@ -1,4 +1,4 @@
-package audio.effects;
+package effects;
 
 /**
  * Represents audio channels in cases where you might want to specify to use both channels rather than just 1

@@ -1,4 +1,4 @@
-package audio.effects;
+package effects;
 
 import audio.file.AudioFile;
 import calculate.FreqCalculator;
@@ -9,9 +9,9 @@ import java.awt.*;
  * Created by Paul Lancaster on 03/01/2017
  */
 public class FrequencyLog10PowerSpectrumPlotEffect extends VisualEffect {
-    int chunk_size;
-    int[][] powerSpectrums;
-    int pos;
+    private int chunk_size;
+    private int[][] powerSpectrums;
+    private int pos;
     
     /**
      * Loads the visual effect using details from the given LoadedFile and encapsulates that file

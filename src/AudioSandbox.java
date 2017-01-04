@@ -1,8 +1,8 @@
-import audio.effects.CHANNEL;
-import audio.effects.PrimaryFrequencyDisplay;
-import audio.effects.VisualEffect;
 import audio.file.WaveFile;
 import display.AudioDisplay;
+import effects.CHANNEL;
+import effects.StringFreqEffect;
+import effects.VisualEffect;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +22,8 @@ public class AudioSandbox {
         AudioDisplay display = new AudioDisplay();
         
         int chunkSize = 1024;
-        VisualEffect freqNumEffect = new PrimaryFrequencyDisplay(waveFile,chunkSize, CHANNEL.one);
+        int height = 1000;
+        VisualEffect freqNumEffect = new StringFreqEffect(waveFile,chunkSize,height,CHANNEL.one);
         
         display.queue(freqNumEffect);
         display.play();
