@@ -14,9 +14,13 @@ public class LagFreqEffect extends VisualEffect {
     private int chunk_size;
     private int[] maxFrequencies;
     private int pos;
-    private int segments = 200;
+    private int SEGMENTS = 50;
+    private int SEGMENT_WIDTH = 20;
     private long minNanoPerFrequencyUpdate; // The minimum number of nano seconds between each time the frequency of a chunk is used to effect the string
     private double[] stringSegmentDeflection; // The deflection of the points from the center ranging from +- 1
+    private long dTSinceLastFrequency = 0;
+    private double DEFLECT_AMOUNT = 0.5;
+    private double DEFLECTION_RATIO = 9e-9; // The amount that the deflection should change per nanosecond
     
     /**
      * Loads the visual effect using details from the given LoadedFile and encapsulates that file
@@ -29,7 +33,7 @@ public class LagFreqEffect extends VisualEffect {
         calcPrimaryFreqs(file,chunkSize,channel);
         minimumNanoPerFrame = calcMinNanoPerFrame(file);
         minNanoPerFrequencyUpdate = 1000000000L * chunk_size /file.getSampleRate(); // Same as usual
-        stringSegmentDeflection = new double[segments];
+        stringSegmentDeflection = new double[SEGMENTS];
         pos=0;
     }
     
@@ -48,28 +52,28 @@ public class LagFreqEffect extends VisualEffect {
         }
     }
     
-    long dTSinceLastFrequency = 0;
+    
     @Override
     protected void drawEffect(Graphics2D g2d, int width, int height, long deltaT) {
         settleSegments(deltaT);
         
         if (dTSinceLastFrequency >= minNanoPerFrequencyUpdate){
             int freq = maxFrequencies[pos]; // Frequency
-            double freqPerSegment = (audioFile.getSampleRate()/2.0)/segments; // The amount of frequency values (integer) per segment
+            double freqPerSegment = (audioFile.getSampleRate()/2.0)/ SEGMENTS; // The amount of frequency values (integer) per segment
             int band = (int)(freq/freqPerSegment); // The band that the frequency falls under
-            deflectSegment(band, 1.0); // Deflect the string
+            deflectSegment(band, DEFLECT_AMOUNT); // Deflect the string
             dTSinceLastFrequency = 0;
             pos++;
         }else{
             dTSinceLastFrequency = dTSinceLastFrequency + deltaT;
         }
         
-        int SEGMENT_SPACING = 5;
         for (int i = 0; i < stringSegmentDeflection.length; i++) {
-            int x = i*SEGMENT_SPACING;
+            int x = i*SEGMENT_WIDTH;
             double amplitude = height/2.0;
-            int y = (int)(amplitude - stringSegmentDeflection[i] * amplitude);
-            g2d.drawRect(x,y,1,1);
+           // int y = (int)(amplitude - );
+            int bandHeight = (int)(stringSegmentDeflection[i] * amplitude);
+            g2d.drawRect(x,(int)amplitude - bandHeight,SEGMENT_WIDTH,bandHeight);
         }
     }
     
@@ -89,7 +93,6 @@ public class LagFreqEffect extends VisualEffect {
      * @param deltaT The change in time in nano seconds since the last frame
      */
     private void settleSegments(long deltaT){
-        double DEFLECTION_RATIO = 0.8 / 100000000.0; // The amount that the deflection should change per nanosecond
         for (int i = 0; i < stringSegmentDeflection.length; i++) {
             stringSegmentDeflection[i] = stringSegmentDeflection[i] * DEFLECTION_RATIO * deltaT;
         }
@@ -102,7 +105,7 @@ public class LagFreqEffect extends VisualEffect {
     
     @Override
     public String getName() {
-        return "Frequency Log10 Power Spectrum Plot";
+        return "Frequency lag bar";
     }
     
     @Override

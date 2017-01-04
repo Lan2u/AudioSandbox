@@ -1,7 +1,7 @@
 import audio.file.WaveFile;
 import display.AudioDisplay;
 import effects.CHANNEL;
-import effects.StringFreqEffect;
+import effects.LagFreqEffect;
 import effects.VisualEffect;
 
 import java.io.File;
@@ -13,7 +13,7 @@ import java.io.IOException;
 
     
 public class AudioSandbox {
-    private static final String FILE_PATH = "resources/440HzTo20KHzLinear.wav";
+    private static final String FILE_PATH = "resources/BreadFish.wav";
     
     public static void main(String[] args) throws IOException {
         WaveFile waveFile = new WaveFile(new File(FILE_PATH));
@@ -23,7 +23,7 @@ public class AudioSandbox {
         
         int chunkSize = 1024;
         int height = 1000;
-        VisualEffect freqNumEffect = new StringFreqEffect(waveFile,chunkSize,height,CHANNEL.one);
+        VisualEffect freqNumEffect = new LagFreqEffect(waveFile,chunkSize,height,CHANNEL.one);
         
         display.queue(freqNumEffect);
         display.play();
