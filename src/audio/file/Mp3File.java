@@ -1,14 +1,42 @@
 package audio.file;
 
+import audio.data.AudioData;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.File;
+import java.io.IOException;
+
 /**
  * Created by Paul Lancaster on 04/01/2017
  */
 public class Mp3File implements AudioFile {
+    AudioHeader header;
+    AudioData data;
+    
+    
     // TODO Access the mp3 and read in a chunk of data
     // TODO Read the headers of this data and use this to get information about each frame in the data chunk
     // TODO extract the audio data from the data section
     // TODO convert the data to samples and store theses
     
+    public Mp3File(File file) throws IOException, UnsupportedAudioFileException {
+        header = new AudioHeader();
+        loadData(file);
+    }
+    // http://www.programcreek.com/java-api-examples/index.php?api=javax.sound.sampled.AudioInputStream
+    public void loadData(File file) throws IOException, UnsupportedAudioFileException {
+        AudioInputStream audioIn = AudioSystem.getAudioInputStream(file);
+        AudioFormat audioFormat = audioIn.getFormat();
+        int CHUNK_SIZE = audioFormat.getFrameSize();
+        byte[] b;
+        while (audioIn.read(b = new byte[CHUNK_SIZE]) > -1){
+            
+        }
+        
+    }
     
     @Override
     public double getLength() {

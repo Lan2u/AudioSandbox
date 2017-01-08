@@ -8,6 +8,9 @@ import java.awt.*;
 /**
  * Created by Paul Lancaster on 03/01/2017
  */
+
+// https://dzone.com/articles/exploring-html5-web-audio
+    // TODO Change it so that the number of displayed bars directly corresponds to the bin size from the FFT so that the FFT doesn't have to be larger than necessary
 public class FrequencyLog10PowerSpectrumPlotEffect extends VisualEffect {
     private int chunk_size;
     private int[][] powerSpectrums;

@@ -1,9 +1,6 @@
-import audio.file.WaveFile;
-import display.AudioDisplay;
-import effects.CHANNEL;
-import effects.LagFreqEffect;
-import effects.VisualEffect;
+import audio.file.Mp3File;
 
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
 
@@ -15,18 +12,9 @@ import java.io.IOException;
 public class AudioSandbox {
     private static final String FILE_PATH = "resources/audiocheck.net_sweep_10Hz_20000Hz_-3dBFS_4s.wav";
     
-    public static void main(String[] args) throws IOException {
-        WaveFile waveFile = new WaveFile(new File(FILE_PATH));
+    public static void main(String[] args) throws IOException, UnsupportedAudioFileException {
+        Mp3File file = new Mp3File(new File(FILE_PATH));
         
-        System.out.println(waveFile);
-        AudioDisplay display = new AudioDisplay();
-        
-        int height = 1000;
-        int segments = 200;
-        VisualEffect freqNumEffect = new LagFreqEffect(waveFile,height,CHANNEL.one,segments);
-        
-        display.queue(freqNumEffect);
-        display.play();
     }
     
     /* Correct usage of the visual effects with a audio file using amplitude number effect as an example
