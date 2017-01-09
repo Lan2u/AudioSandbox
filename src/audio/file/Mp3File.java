@@ -33,7 +33,7 @@ public class Mp3File implements AudioFile {
         int CHUNK_SIZE = audioFormat.getFrameSize();
         byte[] b;
         while (audioIn.read(b = new byte[CHUNK_SIZE]) > -1){
-            
+            System.out.println(  );
         }
         
     }
