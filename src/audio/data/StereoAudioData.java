@@ -1,5 +1,6 @@
 package audio.data;
 
+import javax.sound.sampled.AudioInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -157,15 +158,20 @@ public class StereoAudioData extends AudioData{
         for (int i = 0; i < (data_ch1.length/bytesPerSample); i++) {
             byte[] sampleData = new byte[bytesPerSample];
             System.arraycopy(data_ch1,i*bytesPerSample, sampleData, 0, bytesPerSample);
-            sample_ch1[i] = (short) getAmplitude(sampleData);
+            sample_ch1[i] = (short) convertToSample(sampleData);
         }
         
         // Sample_ch2
         for (int i = 0; i < (data_ch2.length/bytesPerSample); i++) {
             byte[] sampleData = new byte[bytesPerSample];
             System.arraycopy(data_ch2,i*bytesPerSample, sampleData, 0, bytesPerSample);
-            sample_ch2[i] = (short) getAmplitude(sampleData);
+            sample_ch2[i] = (short) convertToSample(sampleData);
         }
+    }
+    
+    @Override
+    public void readData(AudioInputStream in) throws IOException {
+        
     }
     
     @Override

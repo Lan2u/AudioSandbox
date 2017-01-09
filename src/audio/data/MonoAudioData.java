@@ -1,5 +1,6 @@
 package audio.data;
 
+import javax.sound.sampled.AudioInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -19,7 +20,7 @@ public class MonoAudioData extends AudioData{
     }
     
     public boolean hasNextSample(int channel) {
-        return pos_ch1 < data_ch1.length;
+        return pos_ch1 < sample_ch1.length;
     }
     
     @Override
@@ -72,10 +73,25 @@ public class MonoAudioData extends AudioData{
         System.out.println(in.read(data_ch1) + " Bytes of mono audio data read into memory");
         // Sample_ch1
         sample_ch1 = new int[(int)Math.ceil(data_ch1.length/bytesPerSample)];
-        for (int i = 0; i < (data_ch1.length/bytesPerSample); i++) {
+        for (int i = 0; i < sample_ch1.length; i++) {
             byte[] sampleData = new byte[bytesPerSample];
             System.arraycopy(data_ch1,i*bytesPerSample, sampleData, 0, bytesPerSample);
-            sample_ch1[i] = (short) getAmplitude(sampleData);
+            sample_ch1[i] = (short) convertToSample(sampleData);
+        }
+    }
+    
+    @Override
+    public void readData(AudioInputStream in) throws IOException {
+        System.out.println(in.read(data_ch1) + " Bytes of mono audio data read into memory");
+        
+        int bytesPerSample = in.getFormat().getSampleSizeInBits()/8; // FIXME this will have errors if the number of bits per sample isn't a multiple of 8
+        int SAMPLE_ARRAY_SIZE = (int)Math.ceil(data_ch1.length/bytesPerSample);
+        sample_ch1 = new int[SAMPLE_ARRAY_SIZE];
+        
+        for (int i = 0; i < sample_ch1.length; i++) {
+            byte[] sampleData = new byte[bytesPerSample];
+            System.arraycopy(data_ch1,i*bytesPerSample, sampleData, 0, bytesPerSample);
+            sample_ch1[i] = (short) convertToSample(sampleData);
         }
     }
     

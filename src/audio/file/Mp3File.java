@@ -30,12 +30,19 @@ public class Mp3File implements AudioFile {
     public void loadData(File file) throws IOException, UnsupportedAudioFileException {
         AudioInputStream audioIn = AudioSystem.getAudioInputStream(file);
         AudioFormat audioFormat = audioIn.getFormat();
-        int CHUNK_SIZE = audioFormat.getFrameSize();
-        byte[] b;
-        while (audioIn.read(b = new byte[CHUNK_SIZE]) > -1){
-            System.out.println(  );
-        }
+        // http://www.javazoom.net/mp3spi/documents.html
         
+        AudioFormat decodeFormat = new AudioFormat(
+                AudioFormat.Encoding.PCM_SIGNED,
+                audioFormat.getSampleRate(),
+                16,
+                audioFormat.getChannels(),
+                audioFormat.getChannels()*2,
+                audioFormat.getSampleRate(),
+                false);
+        
+        AudioInputStream decodedIn = AudioSystem.getAudioInputStream(decodeFormat, audioIn);
+        data.readData(decodedIn);
     }
     
     @Override

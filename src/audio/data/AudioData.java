@@ -1,5 +1,6 @@
 package audio.data;
 
+import javax.sound.sampled.AudioInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -21,14 +22,21 @@ public abstract class AudioData {
     
     public abstract void readData(FileInputStream in, int bytesPerSample) throws IOException;
     
+    public abstract void readData(AudioInputStream in) throws IOException;
+    
     protected int getSample(byte[] bytes) {
-        return getAmplitude(bytes);
+        return convertToSample(bytes);
     }
     
-    int getAmplitude(byte[] sample){
+    /**
+     * Coverts the byte array (of length 2 maximum at this point) into a sample and returns it
+     * @param sample The byte array with data on the sample
+     * @return The sample
+     */
+    int convertToSample(byte[] sample){
         // FIXME this only supports 2 bytes per sample
         if (sample.length >2){
-            throw new IllegalArgumentException("AudioData#getAmplitude doesn't support more than 2 bytes per sample");
+            throw new IllegalArgumentException("AudioData#convertToSample doesn't support more than 2 bytes per sample");
         }
         return (sample[1] << 8 | sample[0] & 0xFF);
     }
