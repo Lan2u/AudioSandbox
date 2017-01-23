@@ -9,7 +9,7 @@ import java.util.ArrayList;
 /**
  * Created by Paul Lancaster on 28/11/2016
  */
-public class AudioDisplay extends JFrame {
+public class EffectDisplay extends JFrame {
     private AudioDisplayPanel panel;
     private ArrayList<VisualEffect> queue = new ArrayList<>();
     private int CHUNK_SIZE = 100; // Samples per chunk
@@ -17,11 +17,11 @@ public class AudioDisplay extends JFrame {
     /*
         Load the data for the visuals before and then just translate that to something visual as each frame plays
     */
-    public AudioDisplay(){
+    public EffectDisplay(){
         this(1000,1000);
     }
     
-    private AudioDisplay(int width, int height){
+    private EffectDisplay(int width, int height){
         setSize(width, height);
         setMaximumSize(new Dimension(width+1,height));
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

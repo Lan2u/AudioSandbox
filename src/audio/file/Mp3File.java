@@ -41,7 +41,9 @@ public class Mp3File implements AudioFile {
                 audioFormat.getSampleRate(),
                 false);
         
+        
         AudioInputStream decodedIn = AudioSystem.getAudioInputStream(decodeFormat, audioIn);
+        data = AudioData.getData(decodedIn.available(),audioFormat.getChannels());
         data.readData(decodedIn);
     }
     
@@ -118,5 +120,10 @@ public class Mp3File implements AudioFile {
     @Override
     public boolean hasNextSamples(int number, int channel) {
         return false;
+    }
+    
+    @Override
+    public String toString(){
+        return header.toString();
     }
 }

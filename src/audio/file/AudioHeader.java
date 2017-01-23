@@ -129,8 +129,13 @@ class AudioHeader { // Store audio header data
      * Calculate the length in seconds of the audio file
      */
     private void calcLength(){
-        length = dataSize / (sampleRate * bytesPerSample);
-        length = length/numberOfChannels;
+        double val = (sampleRate * bytesPerSample);
+        if (val == 0)
+            length = 0;
+        else {
+            length = dataSize / val;
+            length = length / numberOfChannels;
+        }
     }
     
     /* Setters and Getters */
