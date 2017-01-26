@@ -22,7 +22,7 @@ public class CircularEffect extends VisualEffect{
     private final int MAX_DIAMETER;
     private final int BAND_SIZE;
     
-    private ArrayList<DisplayCircle> displayCircles = new ArrayList<>();
+    private DisplayCircle[] displayCircles;
     
     private int channel = 1;
     
@@ -43,8 +43,7 @@ public class CircularEffect extends VisualEffect{
         MAX_DIAMETER = maxDiameter;
         BAND_SIZE = file.getSampleRate() / (rows * cols);
         CHUNKSIZE = calcChunkSize( rows, cols, file.getSampleRate());
-        
-        calculateCirclePositions(rows, cols);
+        calculateCirclePositions(rows, cols, file.getSampleRate());
     }
     
     private int calcChunkSize(int rows, int cols, int sampleRate) {
@@ -52,12 +51,22 @@ public class CircularEffect extends VisualEffect{
     }
     
     
-    private void calculateCirclePositions(int rows, int columns) {
+    private void calculateCirclePositions(int rows, int columns, int sampleRate) {
         /* Example of circle layout with 3 rows and 4 columns
-            *   *   *   *
-            *   *   *   *
-            *   *   *   *
+            1*   2*   3*   4*
+            5*   6*   7*   8*
+            9*  10*  11*  12*
          */
+        final int NUMBER_OF_CIRCLES = rows * columns;
+        displayCircles = new DisplayCircle[NUMBER_OF_CIRCLES];
+        
+        int FREQ_BAND_SIZE = sampleRate / NUMBER_OF_CIRCLES; // The amount of frequencies covered by each circle
+        
+        /*
+        For FFT
+        
+         */
+        
         // TODO next thing for this effect is to calculate and store circle positions
         // TODO and the upper and lower limits of the frequency bands that each circle covers
         

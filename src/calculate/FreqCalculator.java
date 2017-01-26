@@ -12,8 +12,7 @@ import java.awt.image.BufferedImage;
 http://stackoverflow.com/questions/3058236/how-to-extract-frequency-information-from-samples-from-portaudio-using-fftw-in-c
 
  */
-
-//TODO test this, this algorithm isn't working correctly
+    
 
 public abstract class FreqCalculator {
     
