@@ -16,10 +16,11 @@ import java.util.*;
  * @author Paul Lancaster
  */
 public class CircularEffect extends VisualEffect{
+    private static final double SETTLE_RATE = 0.5;
     private final int CHUNKSIZE;
     private final int PADDING; // Minimum space between circles at any point (even if the 2 circles are fully expanded)
-    private final int MIN_DIAMETER;
-    private final int MAX_DIAMETER;
+    private final int MIN_RADIUS;
+    private final int MAX_RADIUS;
     private final int BAND_SIZE;
     
     private DisplayCircle[] displayCircles;
@@ -36,17 +37,27 @@ public class CircularEffect extends VisualEffect{
      * @param rows The number of rows of circles (rows * cols = number of circles displayed)
      *
      */
-    public CircularEffect(AudioFile file, int rows, int cols, int padding, int minDiameter, int maxDiameter) {
+    public CircularEffect(AudioFile file, int rows, int cols, int padding, int minRadius, int maxRadius) {
         super(file);
         PADDING = padding;
-        MIN_DIAMETER = minDiameter;
-        MAX_DIAMETER = maxDiameter;
+        MIN_RADIUS = minRadius;
+        MAX_RADIUS = maxRadius;
         BAND_SIZE = file.getSampleRate() / (rows * cols);
         CHUNKSIZE = calcChunkSize( rows, cols, file.getSampleRate());
         calculateCirclePositions(rows, cols, file.getSampleRate());
     }
     
+    
     private int calcChunkSize(int rows, int cols, int sampleRate) {
+        /*
+        For FFT
+        http://electronics.stackexchange.com/questions/12407/what-is-the-relation-between-fft-length-and-frequency-resolution
+        
+        FFT resolution = sampleRate / chunkSize
+        
+        So if the FFT resolution == FREQ_BAND_SIZE then
+        sampleRate / FFT resolution = ChunkSize
+         */
         return sampleRate / (rows * cols);
     }
     
@@ -60,16 +71,21 @@ public class CircularEffect extends VisualEffect{
         final int NUMBER_OF_CIRCLES = rows * columns;
         displayCircles = new DisplayCircle[NUMBER_OF_CIRCLES];
         
-        int FREQ_BAND_SIZE = sampleRate / NUMBER_OF_CIRCLES; // The amount of frequencies covered by each circle
-        
-        /*
-        For FFT
-        
-         */
-        
-        // TODO next thing for this effect is to calculate and store circle positions
-        // TODO and the upper and lower limits of the frequency bands that each circle covers
-        
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < columns; col++) {
+                // Distance = (n+1) * P + (2*n+1) * R
+                // Where n is the circle in the row starting at 0
+                // P is the padding (the space between circles
+                // R is the radius of the circles
+                int x = (col+1)*PADDING + (col*2 + 1) * MAX_RADIUS;
+                int y = (row+1) * (MAX_RADIUS + PADDING);
+                
+                int circleNumber = row* columns + col + 1; // The circles number (Ranging from 1 to NUMBER_OF_CIRCLES inclusive)
+                int lowerFreq = BAND_SIZE * (circleNumber-1); // The lowest freq (inclusive covered by this circle)
+                int upperFreq = BAND_SIZE * circleNumber; // The highest freq (inclusive covered by this circle)
+                displayCircles[row * columns + col] = new DisplayCircle(x,y,MIN_RADIUS,MAX_RADIUS,lowerFreq,upperFreq,SETTLE_RATE);
+            }
+        }
     }
     
     @Override
@@ -133,7 +149,7 @@ class DisplayCircle {
     private final int MAX_RADIUS; // The maximum radius of the circle
     private final int LOWER_FREQ; // The lower value of the freq range (inclusive)
     private final int UPPER_FREQ; // The upper value of the freq range (inclusive)
-    private final float SETTLE_RATE; /*
+    private final double SETTLE_RATE; /*
     * The amount to change the radius of the circle when it isn't pulsing each
     * second must be less than 1 and greater than 0 otherwise the circle wouldn't decrease
     */
@@ -150,7 +166,7 @@ class DisplayCircle {
      * @param UPPER_FREQ The maximum frequency that this circle should cover (the upper limit of this circles frequency band)
      * @param settleRate The rate in percentage per second that the circle should decrease after it has pulsed every second
      */
-    DisplayCircle(int x, int y, int MIN_RADIUS, int MAX_RADIUS, int LOWER_FREQ, int UPPER_FREQ, int settleRate){
+    DisplayCircle(int x, int y, int MIN_RADIUS, int MAX_RADIUS, int LOWER_FREQ, int UPPER_FREQ, double settleRate){
         this.MIN_RADIUS = MIN_RADIUS;
         this.MAX_RADIUS = MAX_RADIUS;
         this.SETTLE_RATE = settleRate;
