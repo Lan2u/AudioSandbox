@@ -37,6 +37,11 @@ public class CircularEffect extends VisualEffect{
      * @param rows The number of rows of circles (rows * cols = number of circles displayed)
      *
      */
+    
+    // FIXME The issue with this whole thing is that since the chunks are being taken in at only approximately the right time the effect will
+    // very quickly end up running behind and so deltaT needs to be used when updating to make sure the correct number of chunks are taken in
+    // the file.getSamples(seconds) should be able to help with this by using chunk = file.getSamples(deltaT);
+    
     public CircularEffect(AudioFile file, int rows, int cols, int padding, int minRadius, int maxRadius) {
         super(file);
         PADDING = padding;
