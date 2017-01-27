@@ -27,7 +27,7 @@ public class AudioSandbox {
         WaveFile file = new WaveFile(new File("resources/high_risk.wav"));
         System.out.println(file);
         EffectDisplay display = new EffectDisplay();
-        VisualEffect effect = new CircularEffect(file);
+        VisualEffect effect = new CircularEffect(file, 3, 4, 10,10,50);
         display.queue(effect);
         display.play();
         

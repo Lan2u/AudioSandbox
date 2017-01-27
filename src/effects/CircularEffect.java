@@ -41,6 +41,8 @@ public class CircularEffect extends VisualEffect{
     // FIXME The issue with this whole thing is that since the chunks are being taken in at only approximately the right time the effect will
     // very quickly end up running behind and so deltaT needs to be used when updating to make sure the correct number of chunks are taken in
     // the file.getSamples(seconds) should be able to help with this by using chunk = file.getSamples(deltaT);
+    // Fix for this has been attempted
+    
     
     public CircularEffect(AudioFile file, int rows, int cols, int padding, int minRadius, int maxRadius) {
         super(file);
@@ -105,14 +107,47 @@ public class CircularEffect extends VisualEffect{
     @Override
     protected void drawEffect(Graphics2D g2d, int width, int height, long deltaT) {
         if (dTSinceLastFrequency >= MIN_NANO_PER_EFFECT_UPDATE){
-            int[] chunk = audioFile.getChunk(CHUNK_SIZE, channel);
-            
-            
+            int[] chunk = audioFile.getSamples(nanoToSeconds(deltaT),channel);
+            updateCircles(displayCircles, chunk, audioFile.getSampleRate());
             drawCircles(g2d, displayCircles);
             dTSinceLastFrequency = 0;
         }else{
             dTSinceLastFrequency = dTSinceLastFrequency + deltaT;
         }
+    }
+    
+    private void updateCircles(DisplayCircle[] displayCircles, int[] chunk, int sampleRate) {
+        int freq = FreqCalculator.getPrimaryFreqOfChunk(chunk, sampleRate);
+        double amplitude = getAvg(chunk);
+        double ampPercentage = getAsPercentage(amplitude);
+        
+        for (DisplayCircle circle: displayCircles){
+            if (circle.freqInRange(freq)){
+                circle.pulse((float)ampPercentage);
+                break;
+            }
+        }
+    }
+    
+    private double getAsPercentage(double amplitude) {
+        double MAX_AMP = Short.MAX_VALUE;
+        return (amplitude/MAX_AMP);
+    }
+    
+    private double getAvg(int[] array) {
+        return ((double)sumArray(array)/array.length);
+    }
+    
+    private int sumArray(int[] array) {
+        int total = 0;
+        for (int n: array){
+            total = total + n;
+        }
+        return total;
+    }
+    
+    private double nanoToSeconds(long deltaT) {
+        return (deltaT / 1000000000.0);
     }
     
     private void drawCircles(Graphics2D g2d, DisplayCircle[] displayCircles) {
