@@ -17,7 +17,7 @@ import java.util.*;
  */
 public class CircularEffect extends VisualEffect{
     private static final double SETTLE_RATE = 0.5;
-    private final int CHUNKSIZE;
+    private final int CHUNK_SIZE;
     private final int PADDING; // Minimum space between circles at any point (even if the 2 circles are fully expanded)
     private final int MIN_RADIUS;
     private final int MAX_RADIUS;
@@ -28,7 +28,7 @@ public class CircularEffect extends VisualEffect{
     private int channel = 1;
     
     private long dTSinceLastFrequency = 0;
-    private long minNanoPerFrequencyUpdate;
+    private final long MIN_NANO_PER_EFFECT_UPDATE;
     
     /**
      * Loads the visual effect using details from the given LoadedFile and encapsulates that file
@@ -43,8 +43,17 @@ public class CircularEffect extends VisualEffect{
         MIN_RADIUS = minRadius;
         MAX_RADIUS = maxRadius;
         BAND_SIZE = file.getSampleRate() / (rows * cols);
-        CHUNKSIZE = calcChunkSize( rows, cols, file.getSampleRate());
+        CHUNK_SIZE = calcChunkSize( rows, cols, file.getSampleRate());
+        MIN_NANO_PER_EFFECT_UPDATE = calcMinNanoPerEffectUpdate(CHUNK_SIZE, file.getSampleRate());
         calculateCirclePositions(rows, cols, file.getSampleRate());
+    }
+    
+    private long calcMinNanoPerEffectUpdate(int chunkSize, int sampleRate) {
+        /*
+        double samplesPerSecond = (1.0/sampleRate);
+        double secondsPerChunk = chunkSize * samplesPerSecond;
+        return secondsPerChunk * 1e9; */
+        return (long)((chunkSize * (1.0/sampleRate)) * 1000000000);
     }
     
     
@@ -90,16 +99,20 @@ public class CircularEffect extends VisualEffect{
     
     @Override
     protected void drawEffect(Graphics2D g2d, int width, int height, long deltaT) {
-        if (dTSinceLastFrequency >= minNanoPerFrequencyUpdate){
-            int x = (int)(width /2.0);
-            int y = (int)(height/2.0);
-            int[] chunk = audioFile.getChunk(CHUNKSIZE, channel);
+        if (dTSinceLastFrequency >= MIN_NANO_PER_EFFECT_UPDATE){
+            int[] chunk = audioFile.getChunk(CHUNK_SIZE, channel);
             
             
-            
+            drawCircles(g2d, displayCircles);
             dTSinceLastFrequency = 0;
         }else{
             dTSinceLastFrequency = dTSinceLastFrequency + deltaT;
+        }
+    }
+    
+    private void drawCircles(Graphics2D g2d, DisplayCircle[] displayCircles) {
+        for (DisplayCircle circle : displayCircles) {
+            g2d.fillOval(circle.getX(), circle.getY(), circle.getDiameter(), circle.getDiameter());
         }
     }
     
@@ -111,7 +124,7 @@ public class CircularEffect extends VisualEffect{
 
     @Override
     public boolean hasNextFrame() {
-        return audioFile.hasNextSamples(CHUNKSIZE, channel);
+        return audioFile.hasNextSamples(CHUNK_SIZE, channel);
     }
 
     @Override
@@ -244,5 +257,9 @@ class DisplayCircle {
     
     public int getY() {
         return y;
+    }
+    
+    public int getDiameter() {
+        return radius * 2;
     }
 }
