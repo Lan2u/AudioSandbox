@@ -1,5 +1,6 @@
 package calculate;
 
+import org.jetbrains.annotations.Contract;
 import org.jtransforms.fft.DoubleFFT_1D;
 
 /**
@@ -100,12 +101,38 @@ public abstract class FreqCalculator {
         return calcPrimaryFreq(magnitude, sampleRate);
     }
     
+    /**
+     * Calculate the primary frequency of a FFT magnitude output
+     *
+     * @param magnitude  The FFT magnitude output
+     * @param sampleRate The sampleRate of the audio file that was used with the FFT
+     * @return The primary frequency rounded to the nearest integer
+     */
     private static int calcPrimaryFreq(double[] magnitude, int sampleRate) {
-        
+        int index = getMaxIndex(magnitude);
+        double binSize = sampleRate / magnitude.length;
+        return (int) Math.round(index * binSize);
     }
     
-    // The array is changed to a double array with values newArray[i] = (SCALE_VALUE / array)
+    private static int getMaxIndex(double[] array) {
+        double max = array[0];
+        int maxI = 0;
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] > max) {
+                max = array[i];
+                maxI = i;
+            }
+        }
+        return maxI;
+    }
     
+    /**
+     * Turn an int array into a double array maintaining the int values
+     *
+     * @param array The int array to convert
+     * @return The double conversion
+     */
+    @Contract(pure = true)
     private static double[] intToDoubleNoScale(int[] array) {
         double[] temp = new double[array.length];
         for (int i = 0; i < array.length; i++) {
