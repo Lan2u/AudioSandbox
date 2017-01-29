@@ -1,7 +1,7 @@
 package effects;
 
 import audio.file.AudioFile;
-import calculate.oldFreqCalculator;
+import calculate.FreqCalculator;
 
 import java.awt.*;
 
@@ -54,7 +54,7 @@ public class LagFreqEffect extends VisualEffect {
         maxFrequencies = new int[chunkCount];
         for (int i = 0; i < chunkCount; i++) {
             int[] chunk = file.getChunk(chunk_size, channel.getInt());
-            maxFrequencies[i] = oldFreqCalculator.getPrimaryFreqOfChunk(chunk, file.getSampleRate());
+            maxFrequencies[i] = FreqCalculator.getPrimaryFreqOfChunk(chunk, file.getSampleRate());
         }
     }
     

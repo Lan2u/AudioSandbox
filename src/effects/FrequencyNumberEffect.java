@@ -1,7 +1,7 @@
 package effects;
 
 import audio.file.AudioFile;
-import calculate.oldFreqCalculator;
+import calculate.FreqCalculator;
 
 import java.awt.*;
 
@@ -35,12 +35,12 @@ public class FrequencyNumberEffect extends VisualEffect{
             case 2:
                 freq_ch2 = new int[chunkCount];
                 for (int i = 0; i < chunkCount; i++) {
-                    freq_ch2[i] = oldFreqCalculator.getPrimaryFreqOfChunk(file.getChunk(chunk_size,2),file.getSampleRate());
+                    freq_ch2[i] = FreqCalculator.getPrimaryFreqOfChunk(file.getChunk(chunk_size,2),file.getSampleRate());
                 }
             case 1:
                 freq_ch1 = new int[chunkCount];
                 for (int i = 0; i < chunkCount; i++) {
-                    freq_ch1[i] = oldFreqCalculator.getPrimaryFreqOfChunk(file.getChunk(chunk_size,1), file.getSampleRate());
+                    freq_ch1[i] = FreqCalculator.getPrimaryFreqOfChunk(file.getChunk(chunk_size,1), file.getSampleRate());
                 }
                 break;
         }

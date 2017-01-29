@@ -361,11 +361,9 @@ public abstract class FreqCalculator {
         return samples;
     }
     
-    /*
+    
     public static double[] getMagPowerSpectrum(int[] chunk) {
-        double[] magnitude = new double[chunk.length/2];
-        performFFT(chunk, new double[chunk.length/2],new double[chunk.length/2], magnitude);
-        return magnitude;
+        return performFFT(chunk);
     }
-    */
+    
 }
