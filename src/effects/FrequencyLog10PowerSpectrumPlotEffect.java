@@ -29,6 +29,23 @@ public class FrequencyLog10PowerSpectrumPlotEffect extends VisualEffect {
     }
     
     /**
+     * Returns the index of the highest magnitude value in the array (ignoring the sign of the value so -2 is greater than 1 in this case)
+     * @param data The array of data to scan for the highest magnitude value
+     * @return The index of the highest magnitude value regardless of sign
+     */
+    private static int getMaxAmpIndex(int[] data) {
+        int max = data[0];
+        int maxIndex = 0;
+        for (int i = 1; i < data.length; i++) {
+            if (max < Math.abs(data[i])){
+                maxIndex = i;
+                max = Math.abs(data[i]);
+            }
+        }
+        return maxIndex;
+    }
+    
+    /**
      * Calculate the minimum amount of nano seconds that a frame should be displayed for
      * @param file The file containing the information used to calculate the value
      * @return The calculated minimum amount of nano seconds that a frame should be displayed for
@@ -101,23 +118,6 @@ public class FrequencyLog10PowerSpectrumPlotEffect extends VisualEffect {
             g2d.drawLine(x,CENTER_Y,x,y);
         }
         pos++;
-    }
-    
-    /**
-     * Returns the index of the highest magnitude value in the array (ignoring the sign of the value so -2 is greater than 1 in this case)
-     * @param data The array of data to scan for the highest magnitude value
-     * @return The index of the highest magnitude value regardless of sign
-     */
-    private static int getMaxAmpIndex(int[] data) {
-        int max = data[0];
-        int maxIndex = 0;
-        for (int i = 1; i < data.length; i++) {
-            if (max < Math.abs(data[i])){
-                maxIndex = i;
-                max = Math.abs(data[i]);
-            }
-        }
-        return maxIndex;
     }
     
     @Override

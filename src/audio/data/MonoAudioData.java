@@ -19,46 +19,6 @@ public class MonoAudioData extends AudioData{
         data_ch1 = new byte[dataSize];
     }
     
-    public boolean hasNextSample(int channel) {
-        return pos_ch1 < sample_ch1.length;
-    }
-    
-    @Override
-    public int[] getChunk(int samples, int channel) {
-        int[] chunk  = new int[samples];
-        for (int i = 0; i < samples; i++) {
-            chunk[i] = nextSample();
-            if (chunk[i] == Integer.MAX_VALUE){
-                break;
-            }
-        }
-        return chunk;
-    }
-    
-    @Override
-    public int[] getSamples(double seconds, int sampleRate, int channel, double length) {
-        switch (channel){
-            case 1:
-                double secondsLeft = length - ((double)pos_ch1/(double)sampleRate);
-                int samplesToRead;
-                if (seconds < secondsLeft){
-                    samplesToRead = (int)(seconds * sampleRate);
-                }else{
-                    samplesToRead =  (int)(secondsLeft * sampleRate);
-                }
-            
-                if (samplesToRead == 0) return new int[0];
-                
-                int[] samples = new int[samplesToRead];
-                for (int i = 0; i < samples.length; i++) {
-                    samples[i] = nextSample();
-                }
-                return samples;
-            default:
-                throw new IllegalArgumentException("Channel out of range ("+channel+")");
-        }
-    }
-    
     private int nextSample() {
         if (pos_ch1 >= (sample_ch1.length-1)){
             System.out.println("Position out of range (mono audio) : " + pos_ch1);
@@ -98,6 +58,46 @@ public class MonoAudioData extends AudioData{
     @Override
     public int getNumberOfSamples(){
         return sample_ch1.length;
+    }
+    
+    public boolean hasNextSample(int channel) {
+        return pos_ch1 < sample_ch1.length;
+    }
+    
+    @Override
+    public int[] getChunk(int samples, int channel) {
+        int[] chunk  = new int[samples];
+        for (int i = 0; i < samples; i++) {
+            chunk[i] = nextSample();
+            if (chunk[i] == Integer.MAX_VALUE){
+                break;
+            }
+        }
+        return chunk;
+    }
+    
+    @Override
+    public int[] getSamples(double seconds, int sampleRate, int channel, double length) {
+        switch (channel){
+            case 1:
+                double secondsLeft = length - ((double)pos_ch1/(double)sampleRate);
+                int samplesToRead;
+                if (seconds < secondsLeft){
+                    samplesToRead = (int)(seconds * sampleRate);
+                }else{
+                    samplesToRead =  (int)(secondsLeft * sampleRate);
+                }
+            
+                if (samplesToRead == 0) return new int[0];
+                
+                int[] samples = new int[samplesToRead];
+                for (int i = 0; i < samples.length; i++) {
+                    samples[i] = nextSample();
+                }
+                return samples;
+            default:
+                throw new IllegalArgumentException("Channel out of range ("+channel+")");
+        }
     }
     
     @Override

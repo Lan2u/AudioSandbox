@@ -10,7 +10,7 @@ import java.io.*;
  * Created by Paul Lancaster on 30/10/2016
  */
 
-    
+
 public class AudioSandbox {
     private static final String FILE_PATH = "resources/TutTutChild-Monstercat-TheBestof2013-24Hummingbird(feat.AugustusGhost).mp3";
     
@@ -27,7 +27,7 @@ public class AudioSandbox {
         WaveFile file = new WaveFile(new File("resources/high_risk.wav"));
         System.out.println(file);
         EffectDisplay display = new EffectDisplay();
-        VisualEffect effect = new CircularEffect(file, 3, 4, 10,10,50);
+        VisualEffect effect = new CircularEffect(file, 3, 4, 10, 10, 50);
         display.queue(effect);
         display.play();
         

@@ -148,28 +148,12 @@ class AudioHeader { // Store audio header data
             this.format = format;
         }
     
-    private void setAudioFormat(int audioFormat) {
-        this.audioFormat = audioFormat;
-    }
-    
     private void setFileSize(int fileSize) {
         this.fileSize = fileSize;
     }
     
-    private void setNumberOfChannels(int numberOfChannels) {
-        this.numberOfChannels = numberOfChannels;
-    }
-    
-    private void setSampleRate(int sampleRate) {
-        this.sampleRate = sampleRate;
-    }
-    
-    private void setByteRate(int byteRate) {
-        this.byteRate = byteRate;
-    }
-    
-    private void setBlockAlign(int blockAlign) {
-        this.blockAlign = blockAlign;
+    int getBitsPerSample() {
+        return bitsPerSample;
     }
     
     private void setBitsPerSample(int bitsPerSample) {
@@ -177,28 +161,44 @@ class AudioHeader { // Store audio header data
         this.bitsPerSample = bitsPerSample;
     }
     
-    int getBitsPerSample() {
-        return bitsPerSample;
-    }
-    
     int getSampleRate() {
         return sampleRate;
+    }
+    
+    private void setSampleRate(int sampleRate) {
+        this.sampleRate = sampleRate;
     }
     
     int getNumberOfChannels() {
         return numberOfChannels;
     }
     
+    private void setNumberOfChannels(int numberOfChannels) {
+        this.numberOfChannels = numberOfChannels;
+    }
+    
     int getAudioFormat() {
         return audioFormat;
+    }
+    
+    private void setAudioFormat(int audioFormat) {
+        this.audioFormat = audioFormat;
     }
     
     int getByteRate() {
         return byteRate;
     }
     
+    private void setByteRate(int byteRate) {
+        this.byteRate = byteRate;
+    }
+    
     int getBlockAlign() {
         return blockAlign;
+    }
+    
+    private void setBlockAlign(int blockAlign) {
+        this.blockAlign = blockAlign;
     }
 
     int getBytesPerSample() {
@@ -209,11 +209,11 @@ class AudioHeader { // Store audio header data
         this.subChunkStart = subChunkStart;
     }
     
-    private void setDataSize(int dataSize) {
-        this.dataSize = dataSize;
-    }
-    
     int getDataSize() {
         return dataSize;
+    }
+    
+    private void setDataSize(int dataSize) {
+        this.dataSize = dataSize;
     }
 }

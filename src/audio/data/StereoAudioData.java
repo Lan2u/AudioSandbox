@@ -22,6 +22,72 @@ public class StereoAudioData extends AudioData{
         this.dataSize = dataSize;
     }
     
+    private int nextSample(int channel) {
+        switch(channel){
+            case 1:
+                if (pos_ch1 >= (sample_ch1.length -1)){
+                    System.out.println("Sample (ch1) out of range");
+                    return 0;
+                }else {
+                    pos_ch1++;
+                    return sample_ch1[pos_ch1];
+                }
+            case 2:
+                pos_ch2++;
+                if (pos_ch2 >= (sample_ch2.length-1)){
+                    System.out.println("Sample (ch2) out of range");
+                    return 0;
+                }else {
+                    return sample_ch2[pos_ch2];
+                }
+            default:
+                throw new IllegalArgumentException("Channel out of range");
+        }
+    }
+    
+    @Override
+    public void readData(FileInputStream in, int bytesPerSample) throws IOException {
+        byte[] data = new byte[dataSize*2];
+        
+        in.read(data);
+    
+        byte[] data_ch1 = new byte[dataSize]; // Channel 1 bytes
+        byte[] data_ch2 = new byte[dataSize]; // Channel 2 bytes
+        
+        // Data_ch1 and data_ch2
+        for (int k = 0; k < dataSize; k++) {
+            data_ch1[k] = data[k*2];
+            data_ch2[k] = data[k*2+1];
+        }
+        
+        sample_ch1 = new int[(int)Math.ceil(dataSize/bytesPerSample)];
+        sample_ch2 = new int[(int)Math.ceil(dataSize/bytesPerSample)];
+        
+        // Sample_ch1
+        for (int i = 0; i < (data_ch1.length/bytesPerSample); i++) {
+            byte[] sampleData = new byte[bytesPerSample];
+            System.arraycopy(data_ch1,i*bytesPerSample, sampleData, 0, bytesPerSample);
+            sample_ch1[i] = (short) convertToSample(sampleData);
+        }
+        
+        // Sample_ch2
+        for (int i = 0; i < (data_ch2.length/bytesPerSample); i++) {
+            byte[] sampleData = new byte[bytesPerSample];
+            System.arraycopy(data_ch2,i*bytesPerSample, sampleData, 0, bytesPerSample);
+            sample_ch2[i] = (short) convertToSample(sampleData);
+        }
+    }
+    
+    @Override
+    public void readData(AudioInputStream in) throws IOException {
+        
+    }
+    
+    @Override
+    public int getNumberOfSamples(){
+        return sample_ch1.length;
+    }
+    
     public boolean hasNextSample(int channel) {
         switch(channel){
             case 1:
@@ -111,72 +177,6 @@ public class StereoAudioData extends AudioData{
             default:
                 return false;
         }
-    }
-    
-    private int nextSample(int channel) {
-        switch(channel){
-            case 1:
-                if (pos_ch1 >= (sample_ch1.length -1)){
-                    System.out.println("Sample (ch1) out of range");
-                    return 0;
-                }else {
-                    pos_ch1++;
-                    return sample_ch1[pos_ch1];
-                }
-            case 2:
-                pos_ch2++;
-                if (pos_ch2 >= (sample_ch2.length-1)){
-                    System.out.println("Sample (ch2) out of range");
-                    return 0;
-                }else {
-                    return sample_ch2[pos_ch2];
-                }
-            default:
-                throw new IllegalArgumentException("Channel out of range");
-        }
-    }
-    
-    @Override
-    public void readData(FileInputStream in, int bytesPerSample) throws IOException {
-        byte[] data = new byte[dataSize*2];
-        
-        in.read(data);
-    
-        byte[] data_ch1 = new byte[dataSize]; // Channel 1 bytes
-        byte[] data_ch2 = new byte[dataSize]; // Channel 2 bytes
-        
-        // Data_ch1 and data_ch2
-        for (int k = 0; k < dataSize; k++) {
-            data_ch1[k] = data[k*2];
-            data_ch2[k] = data[k*2+1];
-        }
-        
-        sample_ch1 = new int[(int)Math.ceil(dataSize/bytesPerSample)];
-        sample_ch2 = new int[(int)Math.ceil(dataSize/bytesPerSample)];
-        
-        // Sample_ch1
-        for (int i = 0; i < (data_ch1.length/bytesPerSample); i++) {
-            byte[] sampleData = new byte[bytesPerSample];
-            System.arraycopy(data_ch1,i*bytesPerSample, sampleData, 0, bytesPerSample);
-            sample_ch1[i] = (short) convertToSample(sampleData);
-        }
-        
-        // Sample_ch2
-        for (int i = 0; i < (data_ch2.length/bytesPerSample); i++) {
-            byte[] sampleData = new byte[bytesPerSample];
-            System.arraycopy(data_ch2,i*bytesPerSample, sampleData, 0, bytesPerSample);
-            sample_ch2[i] = (short) convertToSample(sampleData);
-        }
-    }
-    
-    @Override
-    public void readData(AudioInputStream in) throws IOException {
-        
-    }
-    
-    @Override
-    public int getNumberOfSamples(){
-        return sample_ch1.length;
     }
     
     @Override

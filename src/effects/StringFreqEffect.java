@@ -24,6 +24,7 @@ public class StringFreqEffect extends VisualEffect {
     // 1 deflection = top of page
     // -1 deflection = bottom of page
     // 0.5 deflection = 3 quarters up the page
+    private long dTSinceLastFrequency = 0;
     
     /**
      * Loads the visual effect using details from the given LoadedFile and encapsulates that file
@@ -54,8 +55,7 @@ public class StringFreqEffect extends VisualEffect {
             maxFrequencies[i] = FreqCalculator.getPrimaryFreqOfChunk(chunk, file.getSampleRate());
         }
     }
-    
-    private long dTSinceLastFrequency = 0;
+
     @Override
     protected void drawEffect(Graphics2D g2d, int width, int height, long deltaT) {
         settleSegments(deltaT);
@@ -78,6 +78,22 @@ public class StringFreqEffect extends VisualEffect {
             int y = (int)(amplitude - stringSegmentDeflection[i] * amplitude);
             g2d.drawRect(x,y,1,1);
         }
+    }
+    
+    @Override
+    public boolean hasNextFrame() {
+        return pos < maxFrequencies.length;
+    }
+    
+    @Override
+    public String getName() {
+        return "Frequency Log10 Power Spectrum Plot";
+    }
+    
+    @Override
+    public void finish() {
+        audioFile.resetPos();
+        System.out.println(getName() + " effect has finished");
     }
     
     /**
@@ -113,21 +129,5 @@ public class StringFreqEffect extends VisualEffect {
         for (int i = 0; i < stringSegmentDeflection.length; i++) {
             stringSegmentDeflection[i] = stringSegmentDeflection[i] * DEFLECTION_RATIO * deltaT;
         }
-    }
-    
-    @Override
-    public boolean hasNextFrame() {
-        return pos < maxFrequencies.length;
-    }
-    
-    @Override
-    public String getName() {
-        return "Frequency Log10 Power Spectrum Plot";
-    }
-    
-    @Override
-    public void finish() {
-        audioFile.resetPos();
-        System.out.println(getName() + " effect has finished");
     }
 }

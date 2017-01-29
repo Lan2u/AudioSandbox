@@ -41,7 +41,7 @@ public class Test {
         file.resetPos();
         int[] chunk = file.getChunk(N, 1);
         
-        System.out.println("Calculated primary frequency of chunk: " + oldFreqCalculator.getPrimaryFreqOfChunk(chunk, SAMPLE_RATE) + "Hz");
+        System.out.println("Calculated primary frequency of chunk: " + FreqCalculator.getPrimaryFreqOfChunk(chunk, SAMPLE_RATE) + "Hz");
         System.out.println("Test finished " + Calendar.getInstance().getTime());
     }
     

@@ -21,6 +21,15 @@ public abstract class VisualEffect{
      */
     AudioFile audioFile;
     
+    /**
+     * Loads the visual effect using details from the given LoadedFile and encapsulates that file
+     * @param file The file that becomes stored (encapsulated) in and used for the visual effect
+     */
+    VisualEffect(AudioFile file) {
+        this.audioFile = file;
+        file.resetPos();
+    }
+    
     // This should be the only public method for drawing frames the other methods are internal
     public boolean drawNextFrame(Graphics2D g2d, int width, int height, long deltaT){
         if (deltaT > minimumNanoPerFrame){
@@ -30,7 +39,7 @@ public abstract class VisualEffect{
             return false;
         }
     }
-    
+        
     /**
      * The method that the effect is actually drawn in and is called each frame
      * @param g2d The Graphics2D object to actually draw the effect on
@@ -39,15 +48,6 @@ public abstract class VisualEffect{
      * @param deltaT The time difference since the last frame was displayed
      */
     protected abstract void drawEffect(Graphics2D g2d, int width, int height, long deltaT);
-        
-    /**
-     * Loads the visual effect using details from the given LoadedFile and encapsulates that file
-     * @param file The file that becomes stored (encapsulated) in and used for the visual effect
-     */
-    VisualEffect(AudioFile file) {
-        this.audioFile = file;
-        file.resetPos();
-    }
     
     /**
      * Checks if there is another frame of the effect left to display

@@ -19,12 +19,16 @@ http://stackoverflow.com/questions/3058236/how-to-extract-frequency-information-
 
 public abstract class FreqCalculator {
     
+    /* Old classes used (other implementation used before) */
+    private static final int MIN_DATA_CHUNK_SIZE = 2;
+    
     /**
      * Perform FFT on the chunk of amplitudes passed in and return an array of the FFT output (magnitude)
      * Magnitude = sqrt(real * real + im * im)
+     *
      * @param chunk The input chunk of amplitudes
      */
-    private static double[] performFFT(int[] chunk){
+    private static double[] performFFT(int[] chunk) {
         double[] decimalChunk = intToDoubleNoScale(chunk);
         
         // Build and apply window
@@ -40,6 +44,7 @@ public abstract class FreqCalculator {
      * (with the output being passed in as a decimal chunk of the structure below)
      * If the chunk is even length the real values are at even index's (and 0) with last value located at 0
      * If the chunk is odd length then the real values are
+     *
      * @param decimalChunk The output from the FFT
      * @return An array representing the magnitude output of the FFT
      */
@@ -48,39 +53,40 @@ public abstract class FreqCalculator {
         double[] real;
         double[] im;
         
-        if (isEven(N)){ // TODO condense this to minimize array accesses
-            real = new double[N/2];
-            im = new double[N/2];
-            for (int k = 0; k < (N/2); k++) { // Real
-                real[k] = decimalChunk[2*k];
+        if (isEven(N)) { // TODO condense this to minimize array accesses
+            real = new double[N / 2];
+            im = new double[N / 2];
+            for (int k = 0; k < (N / 2); k++) { // Real
+                real[k] = decimalChunk[2 * k];
             }
-            for (int k = 1; k < N/2; k++) { // Imaginary
-                im[k] = decimalChunk[2*k + 1];
+            for (int k = 1; k < N / 2; k++) { // Imaginary
+                im[k] = decimalChunk[2 * k + 1];
             }
-            real[N/2 - 1] = decimalChunk[1];
-        }else{ // Odd
-            real = new double[(N+1)/2];
-            im = new double[(N-1)/2 + 1];
-            for (int k = 0; k < (N+1)/2; k++) { // Real
-                real[k] = decimalChunk[2*k];
+            real[N / 2 - 1] = decimalChunk[1];
+        } else { // Odd
+            real = new double[(N + 1) / 2];
+            im = new double[(N - 1) / 2 + 1];
+            for (int k = 0; k < (N + 1) / 2; k++) { // Real
+                real[k] = decimalChunk[2 * k];
             }
-            for (int k = 0; k < (N-1)/2; k++) { // Imaginary
-                im[k] = decimalChunk[2*k +1];
+            for (int k = 0; k < (N - 1) / 2; k++) { // Imaginary
+                im[k] = decimalChunk[2 * k + 1];
             }
-            im[(N-1)/2] = decimalChunk[1];
+            im[(N - 1) / 2] = decimalChunk[1];
         }
-        return getMagnitudeArray(real,im);
+        return getMagnitudeArray(real, im);
     }
     
     /**
      * Get the magnitude of 2 arrays
      * Magnitude[k] = sqrt(array1[k]^2 + array2[k]^2)
+     *
      * @param array1 The first array must have same length as array 2
      * @param array2 The second array must have same length as array 1
      * @return The magnitude values of the 2 arrays
      */
-    private static double[] getMagnitudeArray(double[] array1, double[] array2){
-        if ( array1.length != array2.length ) {
+    private static double[] getMagnitudeArray(double[] array1, double[] array2) {
+        if (array1.length != array2.length) {
             throw new IllegalArgumentException(
                     "Length of array 1(" + array1.length + ") isn't equal to length of array 2(" + array2.length + ")");
         }
@@ -96,9 +102,9 @@ public abstract class FreqCalculator {
     }
     
     // Chunk should be of length N (FFT SIZE)
-    public static int getPrimaryFreqOfChunk(int[] chunk, int sampleRate){
+    public static int getPrimaryFreqOfChunk(int[] chunk, int sampleRate) {
         double[] magnitude = performFFT(chunk);
-        return calcPrimaryFreq(magnitude,sampleRate);
+        return calcPrimaryFreq(magnitude, sampleRate);
     }
     
     private static int calcPrimaryFreq(double[] magnitude, int sampleRate) {
@@ -107,32 +113,33 @@ public abstract class FreqCalculator {
     
     /**
      * Separate out the real and imaginary components from the FFT output and calculate the magnitude of each component
+     *
      * @param decimalChunk The FFT output array
-     * @param real The array to store the real values (must have size >= decimalChunk.length/2)
-     * @param im The array to store the imaginary values (must have size >= decimalChunk.length/2)
-     * @param magnitude The array to store the magnitudes of each component (must have size >= decimalChunk.length/2)
+     * @param real         The array to store the real values (must have size >= decimalChunk.length/2)
+     * @param im           The array to store the imaginary values (must have size >= decimalChunk.length/2)
+     * @param magnitude    The array to store the magnitudes of each component (must have size >= decimalChunk.length/2)
      */
     @Deprecated
     private static void splitIntoParts(double[] decimalChunk, double[] real, double[] im, double[] magnitude) {
         int N = decimalChunk.length; // Used to improve readability
         
-        if (decimalChunk.length % 2 == 0){ // Even
-            for (int k = 0; k < (N/2); k++) { // Real
-                real[k] = decimalChunk[2*k];
+        if (decimalChunk.length % 2 == 0) { // Even
+            for (int k = 0; k < (N / 2); k++) { // Real
+                real[k] = decimalChunk[2 * k];
             }
-            for (int k = 1; k < N/2; k++) { // Imaginary
-                im[k] = decimalChunk[2*k + 1];
+            for (int k = 1; k < N / 2; k++) { // Imaginary
+                im[k] = decimalChunk[2 * k + 1];
             }
-            real[N/2 - 1] = decimalChunk[1];
-        
-        }else{ // Odd
-            for (int k = 0; k < (N+1)/2; k++) { // Real
-                real[k] = decimalChunk[2*k];
+            real[N / 2 - 1] = decimalChunk[1];
+            
+        } else { // Odd
+            for (int k = 0; k < (N + 1) / 2; k++) { // Real
+                real[k] = decimalChunk[2 * k];
             }
-            for (int k = 0; k < (N-1)/2; k++) { // Imaginary
-                im[k] = decimalChunk[2*k +1];
+            for (int k = 0; k < (N - 1) / 2; k++) { // Imaginary
+                im[k] = decimalChunk[2 * k + 1];
             }
-            im[(N-1)/2] = decimalChunk[1];
+            im[(N - 1) / 2] = decimalChunk[1];
         }
         
         for (int i = 0; i < magnitude.length; i++) {
@@ -143,8 +150,9 @@ public abstract class FreqCalculator {
     /**
      * This method is used to plot data on a graph with a center line and negative values below and
      * positive values above. The graph is as wide as the amount of data so care is needed not to have too large a data array
+     *
      * @param height The height of the graph ( values are scaled to fit so use a bigger height for more obvious separation)
-     * @param data The data to be plotted (suggest considering using a log function on the data if the range is high else it may not display)
+     * @param data   The data to be plotted (suggest considering using a log function on the data if the range is high else it may not display)
      * @return The ploted graph
      */
     private static BufferedImage plotDataOnGraph(int height, double[] data) {
@@ -154,16 +162,16 @@ public abstract class FreqCalculator {
         // The height must be even so this adds a pixel to ensure that
         if ((height % 2) != 0) height++;
         
-        int CENTER_Y = height/2;
+        int CENTER_Y = height / 2;
         BufferedImage plot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = plot.createGraphics();
-        g2d.drawLine(0,height/2, width,height/2);
+        g2d.drawLine(0, height / 2, width, height / 2);
         
-        int maxAmplitude = (int)Math.ceil(data[getMaxAmpIndex(data)]);
+        int maxAmplitude = (int) Math.ceil(data[getMaxAmpIndex(data)]);
         double scaleFactor;
-        if (maxAmplitude == 0){
+        if (maxAmplitude == 0) {
             scaleFactor = 1;
-        }else {
+        } else {
             scaleFactor = (height - PADDING * 2) / (2 * maxAmplitude);
         }
         
@@ -171,13 +179,13 @@ public abstract class FreqCalculator {
         int maxY = Integer.MIN_VALUE;
         for (int x = 0; x < data.length; x++) {
             int y = (int) Math.abs((data[x] * scaleFactor)); // Scale the values down
-            if (y > maxY){
+            if (y > maxY) {
                 maxY = y;
                 xOfMaxY = x;
             }
             y = height - y; // Inverse the display so peaks are peaks rather than troughs
-            y = y - height/2; // Bring into center
-            g2d.drawLine(x,CENTER_Y,x,y);
+            y = y - height / 2; // Bring into center
+            g2d.drawLine(x, CENTER_Y, x, y);
         }
         System.out.println("Maximum y value found at x value = " + xOfMaxY);
         
@@ -192,18 +200,12 @@ public abstract class FreqCalculator {
         double max = data[0];
         int maxIndex = 0;
         for (int i = 1; i < data.length; i++) {
-            if (max < Math.abs(data[i])){
+            if (max < Math.abs(data[i])) {
                 maxIndex = i;
                 max = Math.abs(data[i]);
             }
         }
         return maxIndex;
-    }
-    @Deprecated
-    private static int calcPrimaryFreq(double[] real, int N, int sampleRate) {
-        int index = getMaxIndex(real);
-        double binSize = sampleRate/N;
-        return (int)Math.round(index * binSize);
     }
     
     /*
@@ -214,11 +216,18 @@ public abstract class FreqCalculator {
     }
     */
     
+    @Deprecated
+    private static int calcPrimaryFreq(double[] real, int N, int sampleRate) {
+        int index = getMaxIndex(real);
+        double binSize = sampleRate / N;
+        return (int) Math.round(index * binSize);
+    }
+    
     private static int getMaxIndex(double[] array) {
         double max = array[0];
         int maxI = 0;
         for (int i = 1; i < array.length; i++) {
-            if (array[i] > max){
+            if (array[i] > max) {
                 max = array[i];
                 maxI = i;
             }
@@ -226,7 +235,9 @@ public abstract class FreqCalculator {
         return maxI;
     }
     
-    private static double[] intToDoubleNoScale(int[] array){
+    // The array is changed to a double array with values newArray[i] = (SCALE_VALUE / array)
+    
+    private static double[] intToDoubleNoScale(int[] array) {
         double[] temp = new double[array.length];
         for (int i = 0; i < array.length; i++) {
             temp[i] = array[i];
@@ -234,29 +245,23 @@ public abstract class FreqCalculator {
         return temp;
     }
     
-    // The array is changed to a double array with values newArray[i] = (SCALE_VALUE / array)
-    
-    
-    /* Old classes used (other implementation used before) */
-    private static final int MIN_DATA_CHUNK_SIZE = 2;
-    
-    private static BufferedImage getFreqDistributionPlot(int[] chunk, DOMAIN domain, int height){
+    private static BufferedImage getFreqDistributionPlot(int[] chunk, DOMAIN domain, int height) {
         double[] decimalChunk = intToDoubleNoScale(chunk);
         
         DoubleFFT_1D dFF = new DoubleFFT_1D(chunk.length);
         dFF.realForward(decimalChunk);
         
-        final int ARRAY_LENGTH = decimalChunk.length/2;
+        final int ARRAY_LENGTH = decimalChunk.length / 2;
         double[] real = new double[ARRAY_LENGTH];
         double[] im = new double[ARRAY_LENGTH];
-        double[] magnitude = new double[ARRAY_LENGTH/2 + 1];
+        double[] magnitude = new double[ARRAY_LENGTH / 2 + 1];
         splitIntoParts(decimalChunk, real, im, magnitude);
         
-        switch(domain){
+        switch (domain) {
             case REAL:
-                return plotDataOnGraph(height,real);
+                return plotDataOnGraph(height, real);
             case IMAGINARY:
-                return plotDataOnGraph(height,im);
+                return plotDataOnGraph(height, im);
             default:
                 return plotDataOnGraph(height, magnitude);
         }
@@ -273,13 +278,14 @@ public abstract class FreqCalculator {
     private static double[] shortToDouble(short[] array) {
         double[] temp = new double[array.length];
         for (int i = 0; i < array.length; i++) {
-            if (array[i] == 0){
+            if (array[i] == 0) {
                 temp[i] = 0;
             } else {
-                temp[i] = (Short.MAX_VALUE*2 / array[i]);
+                temp[i] = (Short.MAX_VALUE * 2 / array[i]);
             }
             
-            if(temp[i] > 1) System.out.println("ERROR DOUBLE VALUE GREATER THAN 1 : " + temp[i]); // Means that the amplitude was out of range
+            if (temp[i] > 1)
+                System.out.println("ERROR DOUBLE VALUE GREATER THAN 1 : " + temp[i]); // Means that the amplitude was out of range
         }
         return temp;
     }
@@ -296,32 +302,22 @@ public abstract class FreqCalculator {
         return temp;
     }
     
-    private void drawBands(Graphics2D g2d, double[] bandAmplitudes, Color colour, int BAND_WIDTH, int BASE_Y, int BAND_MAX_HEIGHT) {
-        g2d.setColor(colour);
-        for (int band = 0; band < bandAmplitudes.length; band++) {
-            int x = band * BAND_WIDTH;
-            int BAND_HEIGHT = (int) (BAND_MAX_HEIGHT * (bandAmplitudes[band] / 33000.0));
-            int y = BASE_Y - BAND_HEIGHT;
-            g2d.drawRect(x, y, BAND_WIDTH, BAND_HEIGHT);
-        }
-    }
-    
-    private static int getMaxIndex(int[] array){
+    private static int getMaxIndex(int[] array) {
         return getMaxIndex(intToDoubleNoScale(array));
     }
     
-    private static void PerformFFT(ComplexNumber[] data, int N){
+    private static void PerformFFT(ComplexNumber[] data, int N) {
         
     }
     
-    public static ComplexNumber DDT(short[] data, int sampleRate){
+    public static ComplexNumber DDT(short[] data, int sampleRate) {
         // https://en.wikipedia.org/wiki/Discrete_Fourier_transform
         // http://www.librow.com/articles/article-10
         int N = data.length;
         double totalSum = 0.0;
-        for (int n = 0; n <= N-1; n++){
+        for (int n = 0; n <= N - 1; n++) {
             int xn = data[n];
-            for (int k =0; k <= sampleRate/2; k++){
+            for (int k = 0; k <= sampleRate / 2; k++) {
                 // k = frequency being considered
                 // See the wikipedia page
             }
@@ -338,7 +334,7 @@ public abstract class FreqCalculator {
         short lastSample = chunkSamples[0];
         filterOutput[0] = chunkSamples[0];
         for (int i = 1; i < chunkSamples.length; i++) {
-            filterOutput[i] = (short)((chunkSamples[i] + lastSample)/2);
+            filterOutput[i] = (short) ((chunkSamples[i] + lastSample) / 2);
             lastSample = filterOutput[i];
         }
         return filterOutput;
@@ -347,12 +343,12 @@ public abstract class FreqCalculator {
     //TODO testing
     private static double[] buildHannWindow(int size) {
         double[] window = new double[size];
-        for (int i = 0; i <size; i++) {
-            window[i] = 0.5 * (1 - Math.cos(2 * Math.PI * i/ (size - 1.0)));
+        for (int i = 0; i < size; i++) {
+            window[i] = 0.5 * (1 - Math.cos(2 * Math.PI * i / (size - 1.0)));
         }
         return window;
     }
-
+    
     //TODO testing
     private static double[] applyWindow(double[] window, double[] samples) {
         for (int i = 0; i < samples.length; i++) {
@@ -361,9 +357,18 @@ public abstract class FreqCalculator {
         return samples;
     }
     
-    
     public static double[] getMagPowerSpectrum(int[] chunk) {
         return performFFT(chunk);
+    }
+    
+    private void drawBands(Graphics2D g2d, double[] bandAmplitudes, Color colour, int BAND_WIDTH, int BASE_Y, int BAND_MAX_HEIGHT) {
+        g2d.setColor(colour);
+        for (int band = 0; band < bandAmplitudes.length; band++) {
+            int x = band * BAND_WIDTH;
+            int BAND_HEIGHT = (int) (BAND_MAX_HEIGHT * (bandAmplitudes[band] / 33000.0));
+            int y = BASE_Y - BAND_HEIGHT;
+            g2d.drawRect(x, y, BAND_WIDTH, BAND_HEIGHT);
+        }
     }
     
 }

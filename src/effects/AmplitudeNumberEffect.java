@@ -47,18 +47,6 @@ public class AmplitudeNumberEffect extends VisualEffect{
     }
     
     /**
-     * @param array The int array to average
-     * @return The average of the values in the array
-     */
-    private double getArrayAverage(int[] array) {
-        long total = 0L;
-        for (int n: array){
-            total = total + n;
-        }
-        return (total/array.length);
-    }
-    
-    /**
      * Check if there is another frame left in the effect
      * @return True if there is another frame left in the effect (on the effect channel) and false if there isn't
      */
@@ -76,7 +64,6 @@ public class AmplitudeNumberEffect extends VisualEffect{
         }
     }
     
-    
     @Override
     public String getName() {
         return "Amplitude number display";
@@ -86,5 +73,17 @@ public class AmplitudeNumberEffect extends VisualEffect{
     public void finish() {
         audioFile.resetPos();
         System.out.println(getName() + " finished playing");
+    }
+    
+    /**
+     * @param array The int array to average
+     * @return The average of the values in the array
+     */
+    private double getArrayAverage(int[] array) {
+        long total = 0L;
+        for (int n: array){
+            total = total + n;
+        }
+        return (total/array.length);
     }
 }

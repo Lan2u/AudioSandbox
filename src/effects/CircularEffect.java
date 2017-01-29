@@ -2,7 +2,6 @@ package effects;
 
 import audio.file.AudioFile;
 import calculate.FreqCalculator;
-import calculate.oldFreqCalculator;
 
 import java.awt.*;
 import java.awt.List;
@@ -23,13 +22,10 @@ public class CircularEffect extends VisualEffect{
     private final int MIN_RADIUS;
     private final int MAX_RADIUS;
     private final int BAND_SIZE;
-    
-    private DisplayCircle[] displayCircles;
-    
-    private int channel = 1;
-    
-    private long dTSinceLastFrequency = 0;
     private final long MIN_NANO_PER_EFFECT_UPDATE;
+    private DisplayCircle[] displayCircles;
+    private int channel = 1;
+    private long dTSinceLastFrequency = 0;
     
     /**
      * Loads the visual effect using details from the given LoadedFile and encapsulates that file
@@ -117,6 +113,21 @@ public class CircularEffect extends VisualEffect{
         }
     }
     
+    @Override
+    public boolean hasNextFrame() {
+        return audioFile.hasNextSamples(CHUNK_SIZE, channel);
+    }
+
+    @Override
+    public String getName() {
+        return "Circle Effect";
+    }
+    
+    @Override
+    public void finish() {
+
+    }
+    
     private void updateCircles(DisplayCircle[] displayCircles, int[] chunk, int sampleRate) {
         int freq = FreqCalculator.getPrimaryFreqOfChunk(chunk, sampleRate);
         double amplitude = getAvg(chunk);
@@ -129,6 +140,7 @@ public class CircularEffect extends VisualEffect{
             }
         }
     }
+    
     private double getAsPercentage(double amplitude) {
         double MAX_AMP = Short.MAX_VALUE;
         return (amplitude/MAX_AMP);
@@ -145,36 +157,21 @@ public class CircularEffect extends VisualEffect{
         }
         return total;
     }
-    
+
     private double nanoToSeconds(long deltaT) {
         return (deltaT / 1000000000.0);
     }
-    
+
     private void drawCircles(Graphics2D g2d, DisplayCircle[] displayCircles) {
         for (DisplayCircle circle : displayCircles) {
             g2d.fillOval(circle.getX(), circle.getY(), circle.getDiameter(), circle.getDiameter());
         }
     }
-    
+
     @Deprecated
     private void calcDiameter(int[] chunk, int sampleRate) {
-        int freq = oldFreqCalculator.getPrimaryFreqOfChunk(chunk,sampleRate);
+        int freq = FreqCalculator.getPrimaryFreqOfChunk(chunk,sampleRate);
         int freqLog10 = (int) Math.round( Math.log10(freq) );
-    }
-
-    @Override
-    public boolean hasNextFrame() {
-        return audioFile.hasNextSamples(CHUNK_SIZE, channel);
-    }
-
-    @Override
-    public String getName() {
-        return "Circle Effect";
-    }
-
-    @Override
-    public void finish() {
-
     }
 
     public void collectionsExamples(){
@@ -233,23 +230,8 @@ class DisplayCircle {
     }
     
     /**
-     * @param circleColour The colour to change the colour of this circle too
-     */
-    public void setColor(Color circleColour){
-        this.circleColour = circleColour;
-    }
     
-    /**
-     * Check if the specified frequency is within range of this circles frequency band (inclusive)
-     * @param freq The frequency to check
-     * @return true if the frequency is in range (inclusive) or false if it isn't
-     */
-    public boolean freqInRange(int freq){
-        return freq >= LOWER_FREQ && freq <= UPPER_FREQ;
-    }
-    
-    /**
-     * Draw to the provided graphics a filled circle which has a centerpoint x and y and the specified radius
+ * Draw to the provided graphics a filled circle which has a centerpoint x and y and the specified radius
      * @param g2d The graphics to draw the circle to
      * @param x The x coordinate of the center of the circle
      * @param y The y coordinate of the center of the circle
@@ -262,7 +244,26 @@ class DisplayCircle {
     }
     
     /**
-     * Draws the circle to the provided graphics at the predetermined x and y in the colour of this circle
+    
+ * @param circleColour The colour to change the colour of this circle too
+     */
+    public void setColor(Color circleColour){
+        this.circleColour = circleColour;
+    }
+    
+    /**
+    
+ * Check if the specified frequency is within range of this circles frequency band (inclusive)
+     * @param freq The frequency to check
+     * @return true if the frequency is in range (inclusive) or false if it isn't
+     */
+    public boolean freqInRange(int freq){
+        return freq >= LOWER_FREQ && freq <= UPPER_FREQ;
+    }
+    
+    /**
+    
+ * Draws the circle to the provided graphics at the predetermined x and y in the colour of this circle
      * @param g2d The graphics to draw the circle to
      */
     public void drawThis(Graphics2D g2d){

@@ -83,6 +83,22 @@ public class LagFreqEffect extends VisualEffect {
         }
     }
     
+    @Override
+    public boolean hasNextFrame() {
+        return pos < maxFrequencies.length;
+    }
+    
+    @Override
+    public String getName() {
+        return "Frequency lag bar";
+    }
+    
+    @Override
+    public void finish() {
+        audioFile.resetPos();
+        System.out.println(getName() + " effect has finished");
+    }
+    
     /**
      * Deflect a segment by a certain amount
      * @param segmentIndex The index of the segment to apply the "force" to
@@ -102,21 +118,5 @@ public class LagFreqEffect extends VisualEffect {
         for (int i = 0; i < stringSegmentDeflection.length; i++) {
             stringSegmentDeflection[i] = stringSegmentDeflection[i] * DEFLECTION_RATIO * deltaT;
         }
-    }
-    
-    @Override
-    public boolean hasNextFrame() {
-        return pos < maxFrequencies.length;
-    }
-    
-    @Override
-    public String getName() {
-        return "Frequency lag bar";
-    }
-    
-    @Override
-    public void finish() {
-        audioFile.resetPos();
-        System.out.println(getName() + " effect has finished");
     }
 }

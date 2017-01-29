@@ -31,6 +31,44 @@ public class WaveFile implements AudioFile{
     }
     
     @Override
+    public double getLength() {
+        return header.getLength();
+    }
+    
+    @Override
+    public int getSampleRate() {
+        return header.getSampleRate();
+    }
+    
+    @Override
+    public int getChannels() {
+        if (data instanceof MonoAudioData){
+            return 1;
+        }
+        else if (data instanceof StereoAudioData){
+            return 2;
+        }
+        else{
+            return 0; // Unknown number of channels
+        }
+    }
+    
+    @Override
+    public int getNumberOfSamples() {
+        return data.getNumberOfSamples();
+    }
+    
+    @Override
+    public int[] getAllSamples(int channel) {
+        return data.getSamples(getLength(),header.getSampleRate(),channel,header.getLength());
+    }
+    
+    @Override
+    public int[] getChunk(int samples, int channel) {
+        return data.getChunk(samples, channel);
+    }
+    
+    @Override
     public int[] getSamples(double seconds, int channel) {
         return data.getSamples(seconds,header.getSampleRate(),channel,header.getLength());
     }
@@ -53,44 +91,6 @@ public class WaveFile implements AudioFile{
     @Override
     public boolean hasNextSamples(int chunkSize, int channel) {
         return data.hasNextSamples(chunkSize,channel);
-    }
-    
-    @Override
-    public int getSampleRate() {
-        return header.getSampleRate();
-    }
-    
-    @Override
-    public int getChannels() {
-        if (data instanceof MonoAudioData){
-            return 1;
-        }
-        else if (data instanceof StereoAudioData){
-            return 2;
-        }
-        else{
-            return 0; // Unknown number of channels
-        }
-    }
-    
-    @Override
-    public double getLength() {
-        return header.getLength();
-    }
-    
-    @Override
-    public int[] getAllSamples(int channel) {
-        return data.getSamples(getLength(),header.getSampleRate(),channel,header.getLength());
-    }
-    
-    @Override
-    public int getNumberOfSamples() {
-        return data.getNumberOfSamples();
-    }
-    
-    @Override
-    public int[] getChunk(int samples, int channel) {
-        return data.getChunk(samples, channel);
     }
     
     @Override
