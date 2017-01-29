@@ -26,6 +26,7 @@ public class Mp3File implements AudioFile {
         header = new AudioHeader();
         loadData(file);
     }
+    
     // http://www.programcreek.com/java-api-examples/index.php?api=javax.sound.sampled.AudioInputStream
     private void loadData(File file) throws IOException, UnsupportedAudioFileException {
         AudioInputStream audioIn = AudioSystem.getAudioInputStream(file);
@@ -37,13 +38,13 @@ public class Mp3File implements AudioFile {
                 audioFormat.getSampleRate(),
                 16,
                 audioFormat.getChannels(),
-                audioFormat.getChannels()*2,
+                audioFormat.getChannels() * 2,
                 audioFormat.getSampleRate(),
                 false);
         
         
         AudioInputStream decodedIn = AudioSystem.getAudioInputStream(decodeFormat, audioIn);
-        data = AudioData.getData(decodedIn.available(),audioFormat.getChannels());
+        data = AudioData.getData(decodedIn.available(), audioFormat.getChannels());
         data.readData(decodedIn);
     }
     
@@ -123,7 +124,7 @@ public class Mp3File implements AudioFile {
     }
     
     @Override
-    public String toString(){
+    public String toString() {
         return header.toString();
     }
 }

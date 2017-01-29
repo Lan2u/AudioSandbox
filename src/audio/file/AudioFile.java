@@ -5,17 +5,23 @@ package audio.file;
  */
 public interface AudioFile {
     double getLength();
+    
     int getSampleRate();
+    
     int getChannels();
+    
     int getNumberOfSamples();
     
     /**
      * Return all the samples in that channel ( this moves the position marker up)
+     *
      * @param channel The channel
      * @return The samples
      */
     int[] getAllSamples(int channel);
-    int[] getChunk(int samples,int channel);
+    
+    int[] getChunk(int samples, int channel);
+    
     int[] getSamples(double seconds, int channel);
     
     
@@ -26,6 +32,7 @@ public interface AudioFile {
     
     /**
      * Checks if there is another sample left in the specified channel
+     *
      * @param channel The channel to check
      * @return true if there is another sample and false if there isn't
      */
@@ -39,7 +46,8 @@ public interface AudioFile {
     
     /**
      * Checks if there are at least that number of samples left in the specified channel
-     * @param number The number of samples
+     *
+     * @param number  The number of samples
      * @param channel The channel to check
      * @return True if there are that many samples left and false if there isn't
      */
