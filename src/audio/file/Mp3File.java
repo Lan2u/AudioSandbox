@@ -13,8 +13,8 @@ import java.io.IOException;
  * Created by Paul Lancaster on 04/01/2017
  */
 public class Mp3File implements AudioFile {
-    AudioHeader header;
-    AudioData data;
+    private AudioHeader header;
+    private AudioData data;
     
     
     // TODO Access the mp3 and read in a chunk of data
@@ -27,7 +27,7 @@ public class Mp3File implements AudioFile {
         loadData(file);
     }
     // http://www.programcreek.com/java-api-examples/index.php?api=javax.sound.sampled.AudioInputStream
-    public void loadData(File file) throws IOException, UnsupportedAudioFileException {
+    private void loadData(File file) throws IOException, UnsupportedAudioFileException {
         AudioInputStream audioIn = AudioSystem.getAudioInputStream(file);
         AudioFormat audioFormat = audioIn.getFormat();
         // http://www.javazoom.net/mp3spi/documents.html

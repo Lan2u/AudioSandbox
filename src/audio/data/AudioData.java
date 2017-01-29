@@ -24,10 +24,6 @@ public abstract class AudioData {
     
     public abstract void readData(AudioInputStream in) throws IOException;
     
-    protected int getSample(byte[] bytes) {
-        return convertToSample(bytes);
-    }
-    
     /**
      * Coverts the byte array (of length 2 maximum at this point) into a sample and returns it
      * @param sample The byte array with data on the sample

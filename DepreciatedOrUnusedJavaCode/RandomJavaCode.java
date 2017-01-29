@@ -1,6 +1,10 @@
 package RandomJavaCode;
 
 import audio.files.AudioFile;
+import calculate.FreqCalculator;
+
+import java.awt.*;
+import java.util.*;
 
 /**
  * Created by Paul Lancaster on 13/12/2016
@@ -51,5 +55,57 @@ public class RandomJavaCode {
             // TODO understand why we get negative values and how to handle them
         }
         return frequencies;
+    }
+    
+    @Deprecated
+    private void calcDiameter(int[] chunk, int sampleRate) {
+        int freq = FreqCalculator.getPrimaryFreqOfChunk(chunk,sampleRate);
+        int freqLog10 = (int) Math.round( Math.log10(freq) );
+    }
+    
+    public void collectionsExamples(){
+        ArrayList<Integer> arrayList;
+        List simpleList = new List();
+        Vector<Integer> vector; // Old array from early java
+        LinkedList linkedList;
+        
+        Set<Integer> mySet = new TreeSet<>();
+        
+        Map<String,Integer> myMap = new HashMap<>();
+        myMap.put("Key",20);
+    }
+    
+    private static int getMinValue(int[] array){
+        int MIN = Integer.MAX_VALUE;
+        for(int n: array){
+            if (n < MIN) MIN = n;
+        }
+        return MIN;
+    }
+    
+    private static int getMaxValue(int[] array) {
+        int MAX = Integer.MIN_VALUE;
+        for(int n: array){
+            if (n > MAX) MAX = n;
+        }
+        return MAX;
+    }
+    
+    public static void printArray(int[] array, String identifier){
+        for (int i = 0; i < array.length; i++) {
+            System.out.println(identifier+"["+i+"] : " +array[i]);
+        }
+    }
+    
+    public static void printArray(short[] array, String identifier){
+        for (int i = 0; i < array.length; i++) {
+            System.out.println(identifier+"["+i+"] : " +array[i]);
+        }
+    }
+    
+    public static void printArray(double[] array, String identifier){
+        for (int i = 0; i < array.length; i++) {
+            System.out.println(identifier+"["+i+"] : " +array[i]);
+        }
     }
 }

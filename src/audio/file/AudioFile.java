@@ -8,6 +8,12 @@ public interface AudioFile {
     int getSampleRate();
     int getChannels();
     int getNumberOfSamples();
+    
+    /**
+     * Return all the samples in that channel ( this moves the position marker up)
+     * @param channel The channel
+     * @return The samples
+     */
     int[] getAllSamples(int channel);
     int[] getChunk(int samples,int channel);
     int[] getSamples(double seconds, int channel);
