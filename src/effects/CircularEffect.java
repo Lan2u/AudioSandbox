@@ -45,7 +45,7 @@ public class CircularEffect extends VisualEffect {
         BAND_SIZE = file.getSampleRate() / (rows * cols);
         CHUNK_SIZE = calcChunkSize(rows, cols, file.getSampleRate());
         MIN_NANO_PER_EFFECT_UPDATE = calcMinNanoPerEffectUpdate(CHUNK_SIZE, file.getSampleRate());
-        calculateCirclePositions(rows, cols, file.getSampleRate());
+        calculateCirclePositions(rows, cols);
     }
     
     private long calcMinNanoPerEffectUpdate(int chunkSize, int sampleRate) {
@@ -71,7 +71,7 @@ public class CircularEffect extends VisualEffect {
     }
     
     
-    private void calculateCirclePositions(int rows, int columns, int sampleRate) {
+    private void calculateCirclePositions(int rows, int columns) {
         /* Example of circle layout with 3 rows and 4 columns
             1*   2*   3*   4*
             5*   6*   7*   8*
@@ -241,7 +241,7 @@ class DisplayCircle {
      * @param freq The frequency to check
      * @return true if the frequency is in range (inclusive) or false if it isn't
      */
-    public boolean freqInRange(int freq) {
+    boolean freqInRange(int freq) {
         return freq >= LOWER_FREQ && freq <= UPPER_FREQ;
     }
     
@@ -250,7 +250,7 @@ class DisplayCircle {
      *
      * @param g2d The graphics to draw the circle to
      */
-    public void drawThis(Graphics2D g2d) {
+    void drawThis(Graphics2D g2d) {
         g2d.setColor(circleColour);
         fillCircle(g2d, x, y, radius);
     }
@@ -260,7 +260,7 @@ class DisplayCircle {
      *
      * @param deltaT The amount of time in seconds that has passed since the last frame
      */
-    public void settle(double deltaT) {
+    void settle(double deltaT) {
         if (radius > MIN_RADIUS) {
             radius = (int) (radius * SETTLE_RATE * deltaT);
         }
@@ -275,7 +275,7 @@ class DisplayCircle {
      * @param percentageAmount The amount to pulse by as a percentage of the way with 0 being the base radius and
      *                         1 being the max radius. This value must be >= 0 and <= 1;
      */
-    public void pulse(float percentageAmount) {
+    void pulse(float percentageAmount) {
         if (percentageAmount > 1 || percentageAmount < 0) {
             throw new IllegalArgumentException("Percentage amount out of range(0-1) : " + percentageAmount);
         }

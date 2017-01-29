@@ -35,15 +35,15 @@ public class StringFreqEffect extends VisualEffect {
         super(file);
         this.chunk_size = chunkSize;
         calcPrimaryFreqs(file,chunkSize,channel);
-        minimumNanoPerFrame = calcMinNanoPerFrame(file);
+        int fps = 30;
+        minimumNanoPerFrame = calcMinNanoPerFrame(fps);
         minNanoPerFrequencyUpdate = 1000000000L * chunk_size /file.getSampleRate(); // Same as usual
         stringSegmentDeflection = new double[segments];
         pos=0;
     }
     
-    private long calcMinNanoPerFrame(AudioFile file) {
+    private long calcMinNanoPerFrame(int MAX_FPS) {
         // Update quicker than the frequency data so that the string can move
-        int MAX_FPS = 30;
         return 1000000000L/ MAX_FPS;
     }
     
