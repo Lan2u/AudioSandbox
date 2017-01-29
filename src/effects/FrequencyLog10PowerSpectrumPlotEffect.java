@@ -1,7 +1,7 @@
 package effects;
 
 import audio.file.AudioFile;
-import calculate.FreqCalculator;
+import calculate.oldFreqCalculator;
 
 import java.awt.*;
 
@@ -57,8 +57,8 @@ public class FrequencyLog10PowerSpectrumPlotEffect extends VisualEffect {
      * @return The power spectrum (magnitude) of the chunk
      */
     private int[] getPowerSpectrum(int[] chunk){
-        double[] magnitude = FreqCalculator.getMagPowerSpectrum(chunk);
-        magnitude = FreqCalculator.log10Array(magnitude);
+        double[] magnitude = oldFreqCalculator.getMagPowerSpectrum(chunk);
+        magnitude = oldFreqCalculator.log10Array(magnitude);
         return doubleToInt(magnitude);
     }
     

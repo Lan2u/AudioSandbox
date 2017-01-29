@@ -4,8 +4,7 @@ import effects.CircularEffect;
 import effects.VisualEffect;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by Paul Lancaster on 30/10/2016
@@ -23,7 +22,8 @@ public class AudioSandbox {
         VisualEffect effect = new LagFreqEffect(file, 1000, CHANNEL.one,100);
         display.queue(effect);
         display.play();*/
-    
+        
+        
         WaveFile file = new WaveFile(new File("resources/high_risk.wav"));
         System.out.println(file);
         EffectDisplay display = new EffectDisplay();

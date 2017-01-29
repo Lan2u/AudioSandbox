@@ -1,7 +1,7 @@
 package effects;
 
 import audio.file.AudioFile;
-import calculate.FreqCalculator;
+import calculate.oldFreqCalculator;
 
 import java.awt.*;
 
@@ -35,7 +35,7 @@ public class PrimaryFrequencyDisplay extends VisualEffect {
         maxFrequencies = new int[chunkCount];
         for (int i = 0; i < chunkCount; i++) {
             int[] chunk = file.getChunk(chunk_size, channel.getInt());
-            maxFrequencies[i] = FreqCalculator.getPrimaryFreqOfChunk(chunk, file.getSampleRate());
+            maxFrequencies[i] = oldFreqCalculator.getPrimaryFreqOfChunk(chunk, file.getSampleRate());
         }
     }
     

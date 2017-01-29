@@ -2,6 +2,7 @@ package effects;
 
 import audio.file.AudioFile;
 import calculate.FreqCalculator;
+import calculate.oldFreqCalculator;
 
 import java.awt.*;
 import java.awt.List;
@@ -119,7 +120,7 @@ public class CircularEffect extends VisualEffect{
     private void updateCircles(DisplayCircle[] displayCircles, int[] chunk, int sampleRate) {
         int freq = FreqCalculator.getPrimaryFreqOfChunk(chunk, sampleRate);
         double amplitude = getAvg(chunk);
-        double ampPercentage = getAsPercentage(amplitude);
+        double ampPercentage = Math.abs(getAsPercentage(amplitude));
         
         for (DisplayCircle circle: displayCircles){
             if (circle.freqInRange(freq)){
@@ -128,7 +129,6 @@ public class CircularEffect extends VisualEffect{
             }
         }
     }
-    
     private double getAsPercentage(double amplitude) {
         double MAX_AMP = Short.MAX_VALUE;
         return (amplitude/MAX_AMP);
@@ -158,7 +158,7 @@ public class CircularEffect extends VisualEffect{
     
     @Deprecated
     private void calcDiameter(int[] chunk, int sampleRate) {
-        int freq = FreqCalculator.getPrimaryFreqOfChunk(chunk,sampleRate);
+        int freq = oldFreqCalculator.getPrimaryFreqOfChunk(chunk,sampleRate);
         int freqLog10 = (int) Math.round( Math.log10(freq) );
     }
 
@@ -223,6 +223,7 @@ class DisplayCircle {
         this.MIN_RADIUS = MIN_RADIUS;
         this.MAX_RADIUS = MAX_RADIUS;
         this.SETTLE_RATE = settleRate;
+        this.radius = MIN_RADIUS;
         
         this.LOWER_FREQ = LOWER_FREQ;
         this.UPPER_FREQ = UPPER_FREQ;

@@ -14,17 +14,20 @@ http://stackoverflow.com/questions/3058236/how-to-extract-frequency-information-
  */
     
 /*
-    Same as old freq calculator except doesn't store the real or imaginary parts of the FFT and just the magnitude
+    New Freq calculator being made which is essentially the same but doesn't store the real and imaginary components and just the magnitude
  */
-
-public abstract class FreqCalculator {
+@Deprecated
+public abstract class oldFreqCalculator {
     
     /**
-     * Perform FFT on the chunk of amplitudes passed in and return an array of the FFT output (magnitude)
-     * Magnitude = sqrt(real * real + im * im)
+     * Perform FFT on the chunk of amplitudes passed in and then store the results in the 3 arrays
      * @param chunk The input chunk of amplitudes
+     * @param real The output real component of the FFT on chunk
+     * @param im The output imaginary component of the FFT on chunk
+     * @param magnitude The magnitude of each component
      */
-    private static double[] performFFT(int[] chunk){
+    private static void performFFT(int[] chunk, double[] real, double[] im, double[] magnitude){
+        // TODO decide if we actually need to calculate and store the magnitude and imaginary components of the FFT out since the real is only used
         double[] decimalChunk = intToDoubleNoScale(chunk);
         
         // Build and apply window
@@ -32,77 +35,17 @@ public abstract class FreqCalculator {
         // decimalChunk = applyWindow(decimalChunk,decimalChunk);
         
         new DoubleFFT_1D(chunk.length).realForward(decimalChunk);
-        return getMagnitudes(decimalChunk);
-    }
-    
-    /**
-     * Return the magnitude of output of the FFT
-     * (with the output being passed in as a decimal chunk of the structure below)
-     * If the chunk is even length the real values are at even index's (and 0) with last value located at 0
-     * If the chunk is odd length then the real values are
-     * @param decimalChunk The output from the FFT
-     * @return An array representing the magnitude output of the FFT
-     */
-    private static double[] getMagnitudes(double[] decimalChunk) {
-        int N = decimalChunk.length; // Used to improve readability
-        double[] real;
-        double[] im;
-        
-        if (isEven(N)){ // TODO condense this to minimize array accesses
-            real = new double[N/2];
-            im = new double[N/2];
-            for (int k = 0; k < (N/2); k++) { // Real
-                real[k] = decimalChunk[2*k];
-            }
-            for (int k = 1; k < N/2; k++) { // Imaginary
-                im[k] = decimalChunk[2*k + 1];
-            }
-            real[N/2 - 1] = decimalChunk[1];
-        }else{ // Odd
-            real = new double[(N+1)/2];
-            im = new double[(N-1)/2 + 1];
-            for (int k = 0; k < (N+1)/2; k++) { // Real
-                real[k] = decimalChunk[2*k];
-            }
-            for (int k = 0; k < (N-1)/2; k++) { // Imaginary
-                im[k] = decimalChunk[2*k +1];
-            }
-            im[(N-1)/2] = decimalChunk[1];
-        }
-        return getMagnitudeArray(real,im);
-    }
-    
-    /**
-     * Get the magnitude of 2 arrays
-     * Magnitude[k] = sqrt(array1[k]^2 + array2[k]^2)
-     * @param array1 The first array must have same length as array 2
-     * @param array2 The second array must have same length as array 1
-     * @return The magnitude values of the 2 arrays
-     */
-    private static double[] getMagnitudeArray(double[] array1, double[] array2){
-        if ( array1.length != array2.length ) {
-            throw new IllegalArgumentException(
-                    "Length of array 1(" + array1.length + ") isn't equal to length of array 2(" + array2.length + ")");
-        }
-        double[] mag = new double[array1.length];
-        for (int i = 0; i < mag.length; i++) {
-            mag[i] = Math.sqrt(array1[i] * array1[i] + array2[i] * array2[i]);
-        }
-        return mag;
-    }
-    
-    private static boolean isEven(int n) {
-        return n % 2 == 0;
+        splitIntoParts(decimalChunk, real, im, magnitude);
     }
     
     // Chunk should be of length N (FFT SIZE)
     public static int getPrimaryFreqOfChunk(int[] chunk, int sampleRate){
-        double[] magnitude = performFFT(chunk);
-        return calcPrimaryFreq(magnitude,sampleRate);
-    }
-    
-    private static int calcPrimaryFreq(double[] magnitude, int sampleRate) {
-        return 0;
+        final int ARRAY_LENGTH = chunk.length/2;
+        double[] real = new double[ARRAY_LENGTH];
+        double[] im = new double[ARRAY_LENGTH];
+        double[] magnitude = new double[ARRAY_LENGTH/2 + 1];
+        performFFT(chunk,real,im,magnitude);
+        return calcPrimaryFreq(real, chunk.length, sampleRate);
     }
     
     /**
@@ -112,7 +55,6 @@ public abstract class FreqCalculator {
      * @param im The array to store the imaginary values (must have size >= decimalChunk.length/2)
      * @param magnitude The array to store the magnitudes of each component (must have size >= decimalChunk.length/2)
      */
-    @Deprecated
     private static void splitIntoParts(double[] decimalChunk, double[] real, double[] im, double[] magnitude) {
         int N = decimalChunk.length; // Used to improve readability
         
@@ -199,20 +141,18 @@ public abstract class FreqCalculator {
         }
         return maxIndex;
     }
-    @Deprecated
+    
     private static int calcPrimaryFreq(double[] real, int N, int sampleRate) {
         int index = getMaxIndex(real);
         double binSize = sampleRate/N;
         return (int)Math.round(index * binSize);
     }
     
-    /*
     public static double[] getRealPowerSpectrum(int[] chunk) {
         double[] real = new double[chunk.length/2];
         performFFT(chunk,real, new double[chunk.length/2],new double[chunk.length/2]);
         return real;
     }
-    */
     
     private static int getMaxIndex(double[] array) {
         double max = array[0];
@@ -361,11 +301,9 @@ public abstract class FreqCalculator {
         return samples;
     }
     
-    /*
     public static double[] getMagPowerSpectrum(int[] chunk) {
         double[] magnitude = new double[chunk.length/2];
         performFFT(chunk, new double[chunk.length/2],new double[chunk.length/2], magnitude);
         return magnitude;
     }
-    */
 }
