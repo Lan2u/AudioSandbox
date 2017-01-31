@@ -1,19 +1,24 @@
 package display;
 
 import effects.VisualEffect;
+import javafx.scene.canvas.*;
+import javafx.scene.canvas.Canvas;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 /**
  * Created by Paul Lancaster on 28/11/2016
+ *
+ * For displaying visualizer effects
  */
 
-public class AudioDisplayPanel extends JPanel{
+public class VisualizerCanvas extends Canvas{
     private BufferedImage frame; // Display frame
     
-    AudioDisplayPanel(int width, int height) {
+    VisualizerCanvas(int width, int height) {
         frame = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
         setSize(width, height);
     }
@@ -38,14 +43,28 @@ public class AudioDisplayPanel extends JPanel{
         }
         effect.finish();
     }
-    
-    @Override
+
     public void paintComponent(Graphics g){
-        super.paintComponent(g);
         g.drawImage(frame,0,0,Color.PINK, this);
     }
-    
-    
+
+    private ArrayList<VisualEffect> queue = new ArrayList<>();
+
+    // Plays current song queue, plays nothing if the queue is empty
+    public void play(){
+        // This could be done better to link the effect and queue together
+        for (VisualEffect aQueue : queue) {
+            play(aQueue);
+        }
+        queue.clear();
+    }
+
+
+    public boolean queue(VisualEffect effect){
+        queue.add(effect);
+        return true; // Queued successfully
+    }
+
     //    1   So the image updates continously between 10 and 30 times a second
     //    2   The chunk size is a factor of sample rate * time of each frame(seconds)
     //    3   so at 10fps and sample rate 44100
