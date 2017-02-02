@@ -9,38 +9,18 @@ import javafx.scene.canvas.Canvas;
  * For displaying visualizer effects
  */
 
-public class VisualizerCanvas extends Canvas{
-   // private BufferedImage frame; // Display frame
+class VisualizerCanvas extends Canvas {
     
     VisualizerCanvas(int width, int height) {
-        super(width,height);
-       // frame = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
-       // setSize(width, height);
+        super(width, height);
     }
     
-    void play(VisualEffect effect){
-        
-        
-        long timeSinceLastFrame = 0;
-        long lastTime = System.nanoTime();
-    
-        while (effect.hasNextFrame()){
-            long currentTime = System.nanoTime();
-            timeSinceLastFrame += Math.abs(currentTime - lastTime);
-            frameUpdate(timeSinceLastFrame, effect);
-            lastTime = currentTime;
-        }
-        
+    void play(VisualEffect effect) {
+        effect.play(this.getGraphicsContext2D());
         effect.finish();
+        
     }
-    
-    /**
-     * Where the frame is updated (called from the game loop);
-     */
-    private void frameUpdate(long deltaT, VisualEffect effect) {
-        effect.drawNextFrame(this.getGraphicsContext2D(), deltaT);
-    }
-    
+}
     /*
      * This is where the effect is actually triggered from this is the "game loop" while the effect is playing
      * @param effect to play
@@ -95,4 +75,4 @@ public class VisualizerCanvas extends Canvas{
     //    9   This will update each frame as the song moves along.
     //   10   For now just channel 1 will be displayed but channel 2 will be added later and displayed in a different colour
     */
-}
+

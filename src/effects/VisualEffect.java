@@ -66,4 +66,5 @@ public abstract class VisualEffect extends AnimationTimer{
     @Override
     public abstract void handle(long now);
     
+    public abstract void play(GraphicsContext gc);
 }
