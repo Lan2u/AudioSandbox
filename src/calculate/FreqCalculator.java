@@ -160,7 +160,29 @@ public abstract class FreqCalculator {
         return Math.round(seconds * 1000000000.0);
     }
     
-    public static void getPrimaryFrequencies(int[] chunk, int freqCount) {
+    /**
+     * Get the top <freqCount> most powerful frequencies in the chunk and return an array of them in order ([0] = most powerful)
+     * @param chunk The chunk to FFT and get the frequencies
+     * @param freqCount The number of frequencies to get
+     * @return The frequencies in order of power/prevalence ( the [0] index is the most and the [length-1] index is the least)
+     */
+    public static double[] getPrimaryFrequencies(int[] chunk, int freqCount) {
+        double[] frequencies = new double[freqCount];
+        double[] magnitude = performFFT(chunk);
+    
+        int[] indexes = getMaxIndexes(magnitude, freqCount);
+    }
+    
+    /**
+     * Get the <indexCount> number of indexs each representing a value in the array with index = 0 being the highest
+     * value and index = 1 the second highest and so forth for index = n being the nth highest value
+     *
+     * @param array The array to scan
+     * @param indexCount The number of indexes to return in the array
+     * @return An array of the indexes in order
+     */
+    private static int[] getMaxIndexes(double[] array, int indexCount) {
+        if (array.length < indexCount) throw new IllegalArgumentException("Array length (" + array.length + ") is less than the index count (" + indexCount + ")");
         
     }
 }

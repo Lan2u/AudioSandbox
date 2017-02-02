@@ -82,7 +82,7 @@ public class TurbineEffect extends VisualEffect{
      */
     @Override
     public boolean hasNextFrame() {
-        return false;
+        return audioFile.hasNextSamples(APPROXIMATE_CHUNK_SIZE, CHANNEL);
     }
     
     /**
@@ -94,7 +94,8 @@ public class TurbineEffect extends VisualEffect{
     @Override
     void drawEffect(GraphicsContext gc2d, long deltaT) {
         int[] chunk = audioFile.getSamples(FreqCalculator.nanoToSeconds(deltaT), CHANNEL);
-        FreqCalculator.getPrimaryFrequencies(chunk,FREQ_COUNT);
+        double[] frequencies = FreqCalculator.getPrimaryFrequencies(chunk,FREQ_COUNT);
+        
         
     }
     
