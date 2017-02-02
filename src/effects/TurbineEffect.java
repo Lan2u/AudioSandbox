@@ -1,12 +1,15 @@
 package effects;
 
 import audio.file.AudioFile;
+import calculate.FreqCalculator;
 import javafx.scene.canvas.GraphicsContext;
 
 /**
  * Created by Paul Lancaster on 02/02/2017
  */
 public class TurbineEffect extends VisualEffect{
+    int channel = 1; // TODO placeholder value
+    
     /**
      * Loads the visual effect using details from the given LoadedFile and encapsulates that file
      *
@@ -25,6 +28,8 @@ public class TurbineEffect extends VisualEffect{
      */
     @Override
     void drawEffect(GraphicsContext gc2d, long deltaT) {
+        int[] chunk = audioFile.getSamples(FreqCalculator.nanoToSeconds(deltaT), channel);
+        // TODO possibly add a method to pad the chunk (or remove values) so that the length of the chunk is easier to FFT (more efficient/faster)
         
     }
     

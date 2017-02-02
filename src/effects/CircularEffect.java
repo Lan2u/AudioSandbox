@@ -155,10 +155,6 @@ public class CircularEffect extends VisualEffect {
         return total;
     }
     
-    private double nanoToSeconds(long deltaT) {
-        return (deltaT / 1000000000.0);
-    }
-    
     private void drawCircles(Graphics2D g2d, DisplayCircle[] displayCircles) {
         for (DisplayCircle circle : displayCircles) {
             circle.drawThis(g2d);
