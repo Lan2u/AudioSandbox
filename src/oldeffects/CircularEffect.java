@@ -1,7 +1,8 @@
-package effects;
+package oldeffects;
 
 import audio.file.AudioFile;
 import calculate.FreqCalculator;
+import effects.VisualEffect;
 
 import java.awt.*;
 

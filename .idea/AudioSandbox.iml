@@ -12,6 +12,7 @@
       <excludeFolder url="file://$MODULE_DIR$/src/old/graphic" />
       <excludeFolder url="file://$MODULE_DIR$/src/old/notInUse" />
       <excludeFolder url="file://$MODULE_DIR$/src/old/transforms" />
+      <excludeFolder url="file://$MODULE_DIR$/src/oldeffects" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

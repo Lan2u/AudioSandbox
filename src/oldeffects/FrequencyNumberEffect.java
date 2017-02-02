@@ -1,14 +1,15 @@
-package effects;
+package oldeffects;
 
 import audio.file.AudioFile;
 import calculate.FreqCalculator;
+import effects.VisualEffect;
 
 import java.awt.*;
 
 /**
  * Created by Paul Lancaster on 02/01/2017
  */
-public class FrequencyNumberEffect extends VisualEffect{
+public class FrequencyNumberEffect extends VisualEffect {
     private int chunk_size;
     private int[] freq_ch1;
     private int[] freq_ch2;

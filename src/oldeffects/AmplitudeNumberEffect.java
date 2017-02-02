@@ -1,13 +1,14 @@
-package effects;
+package oldeffects;
 
 import audio.file.AudioFile;
+import effects.VisualEffect;
 
 import java.awt.*;
 
 /**
  * Created by Paul Lancaster on 31/12/2016
  */
-public class AmplitudeNumberEffect extends VisualEffect{
+public class AmplitudeNumberEffect extends VisualEffect {
     private int chunkSize; // The number of amplitude values to average and display (There would be well too many if each individual value was displayed)
     private CHANNEL channel;
     

@@ -1,14 +1,12 @@
 package effects;
 
 import audio.file.AudioFile;
-import calculate.FreqCalculator;
 import javafx.scene.canvas.GraphicsContext;
 
 /**
  * Created by Paul Lancaster on 02/02/2017
  */
 public class TurbineEffect extends VisualEffect{
-    int channel = 1; // TODO placeholder value
     
     /**
      * Loads the visual effect using details from the given LoadedFile and encapsulates that file
@@ -21,15 +19,26 @@ public class TurbineEffect extends VisualEffect{
     }
     
     /**
-     * The method that the effect is actually drawn in and is called each frame
+     * Calculate the minimum number of nano seconds required before a frame change
+     * This method gets called in the constructor to change the nanoSeconds required field
+     * <p>
+     * If this method returns 0 then the effect will update as fast as possible (likely not very useful)
      *
-     * @param gc2d   The graphics context to draw the effect too
-     * @param deltaT The time difference since the last frame was displayed
+     * @param file The audio file which is behind the effect
+     * @return The minimum number of nanoseconds per frame
      */
     @Override
-    void drawEffect(GraphicsContext gc2d, long deltaT) {
-        int[] chunk = audioFile.getSamples(FreqCalculator.nanoToSeconds(deltaT), channel);
-        // TODO possibly add a method to pad the chunk (or remove values) so that the length of the chunk is easier to FFT (more efficient/faster)
+    long calcMinNanoPerFrame(AudioFile file) {
+        return 0;
+    }
+    
+    /**
+     * Called when the effect is started
+     *
+     * @see VisualEffect#play(GraphicsContext gc)
+     */
+    @Override
+    public void start() {
         
     }
     
@@ -44,28 +53,23 @@ public class TurbineEffect extends VisualEffect{
     }
     
     /**
-     * @return The english name of the effect
+     * Draw the effect
+     *
+     * @param gc2d   The graphics context to draw the effect to (this gets passed back up to the canvas)
+     * @param deltaT the time in nano seconds since the last frame was played
      */
     @Override
-    public String getName() {
-        return null;
+    void drawEffect(GraphicsContext gc2d, long deltaT) {
+        
     }
     
     /**
-     * Called when the effect finishes
+     * Called when the effect is finished or stopped
+     *
+     * @see VisualEffect#finish()
      */
     @Override
-    public void finish() {
-        
-    }
-    
-    @Override
-    public void handle(long now) {
-        
-    }
-    
-    @Override
-    public void play(GraphicsContext gc) {
+    public void stop() {
         
     }
 }
