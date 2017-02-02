@@ -1,21 +1,33 @@
 package effects;
 
 import audio.file.AudioFile;
+import calculate.FreqCalculator;
 import javafx.scene.canvas.GraphicsContext;
 
 /**
  * Created by Paul Lancaster on 02/02/2017
  */
 public class TurbineEffect extends VisualEffect{
+    private final int CHANNEL; // Audio channel
+    private final int APPROXIMATE_CHUNK_SIZE; // In samples
+    // The chunksize that this effect is going to attempt to use
+    // (the minimum nanoseconds per frame is calculated off of this)
+    // This is approximate because the chunksize depends on deltaT and
+    // that can only be controlled so that it is more than a certain value
+    // but not less
     
     /**
      * Loads the visual effect using details from the given LoadedFile and encapsulates that file
      *
      * @param file The file that becomes stored (encapsulated) in and used for the visual effect
      */
-    TurbineEffect(AudioFile file) {
+    TurbineEffect(AudioFile file, int chunkSize, int channel) {
         super(file);
-        
+        this.APPROXIMATE_CHUNK_SIZE = chunkSize;
+        if (file.getChannels() < channel){
+            throw new IllegalArgumentException("Invalid channel for " + toString() + " : " + channel);
+        }
+        this.CHANNEL = channel;
     }
     
     /**
@@ -29,7 +41,8 @@ public class TurbineEffect extends VisualEffect{
      */
     @Override
     long calcMinNanoPerFrame(AudioFile file) {
-        return 0;
+        double seconds = ((double)file.getSampleRate()/APPROXIMATE_CHUNK_SIZE);
+        return FreqCalculator.secondsToNano(seconds);
     }
     
     /**
@@ -60,6 +73,8 @@ public class TurbineEffect extends VisualEffect{
      */
     @Override
     void drawEffect(GraphicsContext gc2d, long deltaT) {
+        int[] chunk = audioFile.getSamples(FreqCalculator.nanoToSeconds(deltaT), CHANNEL);
+        
         
     }
     
@@ -71,5 +86,10 @@ public class TurbineEffect extends VisualEffect{
     @Override
     public void stop() {
         
+    }
+    
+    @Override
+    public String toString(){
+        return "Turbine effect";
     }
 }

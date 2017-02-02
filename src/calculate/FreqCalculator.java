@@ -114,8 +114,8 @@ public abstract class FreqCalculator {
         return (int) Math.round(index * binSize);
     }
     
-    public static double nanoToSeconds(long deltaT) {
-        return (deltaT / 1000000000.0);
+    public static double nanoToSeconds(long nano) {
+        return (nano / 1000000000.0);
     }
     
     private static int getMaxIndex(double[] array) {
@@ -156,4 +156,7 @@ public abstract class FreqCalculator {
         return performFFT(chunk);
     }
     
+    public static long secondsToNano(double seconds) {
+        return Math.round(seconds * 1000000000.0);
+    }
 }
