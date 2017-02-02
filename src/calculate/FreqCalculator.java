@@ -159,4 +159,8 @@ public abstract class FreqCalculator {
     public static long secondsToNano(double seconds) {
         return Math.round(seconds * 1000000000.0);
     }
+    
+    public static void getPrimaryFrequencies(int[] chunk, int freqCount) {
+        
+    }
 }
