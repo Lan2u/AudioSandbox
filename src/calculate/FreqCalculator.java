@@ -171,6 +171,8 @@ public abstract class FreqCalculator {
         double[] magnitude = performFFT(chunk);
     
         int[] indexes = getMaxIndexes(magnitude, freqCount);
+        
+        // TODO this method
     }
     
     /**
@@ -183,6 +185,6 @@ public abstract class FreqCalculator {
      */
     private static int[] getMaxIndexes(double[] array, int indexCount) {
         if (array.length < indexCount) throw new IllegalArgumentException("Array length (" + array.length + ") is less than the index count (" + indexCount + ")");
-        
+        // TODO this method
     }
 }
