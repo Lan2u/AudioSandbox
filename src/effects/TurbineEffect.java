@@ -96,6 +96,7 @@ public class TurbineEffect extends VisualEffect{
         int[] chunk = audioFile.getSamples(FreqCalculator.nanoToSeconds(deltaT), CHANNEL);
         double[] frequencies = FreqCalculator.getPrimaryFrequencies(chunk,FREQ_COUNT);
         
+        // TODO DRAW EFFECT
         
     }
     
