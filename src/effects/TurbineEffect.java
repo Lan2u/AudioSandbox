@@ -4,6 +4,8 @@ import audio.file.AudioFile;
 import calculate.FreqCalculator;
 import javafx.scene.canvas.GraphicsContext;
 
+import java.util.TreeMap;
+
 /**
  * Created by Paul Lancaster on 02/02/2017
  */
@@ -14,6 +16,7 @@ public class TurbineEffect extends VisualEffect{
     
     private final int CHANNEL; // Audio channel
     private final int APPROXIMATE_CHUNK_SIZE; // In samples
+    private final double SAMPLE_RATE;
     // The chunksize that this effect is going to attempt to use
     // (the minimum nanoseconds per frame is calculated off of this)
     // This is approximate because the chunksize depends on deltaT and
@@ -25,7 +28,7 @@ public class TurbineEffect extends VisualEffect{
      *
      * @param file The file that becomes stored (encapsulated) in and used for the visual effect
      */
-    TurbineEffect(AudioFile file, int chunkSize, int channel, int freqCount) {
+    TurbineEffect(AudioFile file, int chunkSize, int channel, int freqCount, int sampleRate) {
         super(file);
         
         checkInputsValid(file, chunkSize,channel,freqCount); // Throws illegal argument exception if they aren't
@@ -33,6 +36,7 @@ public class TurbineEffect extends VisualEffect{
         this.APPROXIMATE_CHUNK_SIZE = chunkSize;
         this.CHANNEL = channel;
         this.FREQ_COUNT = freqCount;
+        this.SAMPLE_RATE = sampleRate;
     }
     
     private boolean checkInputsValid(AudioFile file , int chunkSize, int channel, int freqCount){
@@ -94,10 +98,34 @@ public class TurbineEffect extends VisualEffect{
     @Override
     void drawEffect(GraphicsContext gc2d, long deltaT) {
         int[] chunk = audioFile.getSamples(FreqCalculator.nanoToSeconds(deltaT), CHANNEL);
-        double[] frequencies = FreqCalculator.getPrimaryFrequencies(chunk,FREQ_COUNT);
         
-        // TODO DRAW EFFECT
+        TreeMap<Integer,Double> frequencies = FreqCalculator.getChunkFrequencies(chunk, SAMPLE_RATE);
         
+        double barWidth = 10.0;
+        
+        int BASE_Y =
+        
+        for (int i = 0; i < frequencies.size(); i++) {
+            int x = (int)(barWidth * i);
+            
+        }
+        
+        
+        
+    }
+    
+    /**
+     * Fills a rectange but the x is the position of the bottom left corner
+     *
+     * @param gc2d
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     */
+    private void fillRectangle(GraphicsContext gc2d, double x, double y, double w, double h){
+        y = y + h;
+        gc2d.fillRect(x,y,w,h);
     }
     
     /**

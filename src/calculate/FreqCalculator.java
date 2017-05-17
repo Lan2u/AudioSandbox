@@ -1,7 +1,10 @@
 package calculate;
 
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jtransforms.fft.DoubleFFT_1D;
+
+import java.util.TreeMap;
 
 /**
  * Created by Paul Lancaster on 14/12/2016
@@ -157,7 +160,7 @@ public abstract class FreqCalculator {
     }
     
     public static long secondsToNano(double seconds) {
-        return Math.round(seconds * 1000000000.0);
+        return Math.round(seconds * 1.0E09);
     }
     
     /**
@@ -165,26 +168,81 @@ public abstract class FreqCalculator {
      * @param chunk The chunk to FFT and get the frequencies
      * @param freqCount The number of frequencies to get
      * @return The frequencies in order of power/prevalence ( the [0] index is the most and the [length-1] index is the least)
-     */
+     *
     public static double[] getPrimaryFrequencies(int[] chunk, int freqCount) {
         double[] frequencies = new double[freqCount];
         double[] magnitude = performFFT(chunk);
-    
-        int[] indexes = getMaxIndexes(magnitude, freqCount);
         
-        // TODO this method
+        ArrayList<Double> magnitudes = new ArrayList<>();
+        for (int i = 0; i < magnitude.length; i++) {
+            magnitudes.add(magnitude[i]);
+        }
+        
+        for (int i = 0; i < frequencies.length; i++) {
+            frequencies[i] = magnitude[indexes[i]];
+        }
+        
+        return frequencies;
     }
+    */
     
     /**
      * Get the <indexCount> number of indexs each representing a value in the array with index = 0 being the highest
      * value and index = 1 the second highest and so forth for index = n being the nth highest value
      *
-     * @param array The array to scan
-     * @param indexCount The number of indexes to return in the array
+     * The array to scan
+     * indexCount The number of indexes to return in the array
      * @return An array of the indexes in order
-     */
-    private static int[] getMaxIndexes(double[] array, int indexCount) {
+     *
+    private static int[] getMaxIndexes(ArrayList<Double> array, int indexCount) {
         if (array.length < indexCount) throw new IllegalArgumentException("Array length (" + array.length + ") is less than the index count (" + indexCount + ")");
         // TODO this method
+        Collections.sort(array);
+        return
     }
+    */
+    
+    /**
+     * Returns a treemap containing all the frequencies as part of these chunk as the keys and the magnitude of the
+     * frequencies as the value
+     *
+     * @param chunk
+     * @param sampleRate
+     * @return
+     */
+    public static TreeMap<Integer, Double> getChunkFrequencies(int[] chunk, double sampleRate){
+        double[] magnitudes = performFFT(chunk);
+        return getFrequencies(magnitudes, sampleRate);
+    }
+    
+    /**
+     *
+     * @param magnitudes
+     * @param sampleRate
+     * @return A treemap of the values with the frequency as the key and the magnitude as the value.
+     * Sorted by frequency.
+     */
+    private static TreeMap<Integer, Double> getFrequencies(double[] magnitudes, double sampleRate) {
+        
+        TreeMap<Integer,Double> frequencies = new TreeMap<>();
+    
+        double binSize = calcBinSize(sampleRate, magnitudes.length);
+        
+        for (int i = 0; i < magnitudes.length; i++) {
+            Integer freq = calcFreq(i, binSize);
+            frequencies.put(freq, magnitudes[i]);
+        }
+        
+        return frequencies;
+    }
+    
+    private static double calcBinSize(double sampleRate, int length) {
+       return sampleRate / length;
+    }
+    
+    @NotNull
+    private static Integer calcFreq(int index, double binSize) {
+        return (int) Math.round(index * binSize);
+    }
+    
 }
