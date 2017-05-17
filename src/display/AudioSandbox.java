@@ -22,9 +22,11 @@ public class AudioSandbox extends Application {
         int visWidth = 500;
         int visHeight = 500;
         Canvas visualizerCanvas = new VisualizerCanvas(visWidth,visHeight);
-
-
+        
+        root.getChildren().add(visualizerCanvas);
+        
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
+        
     }
 }

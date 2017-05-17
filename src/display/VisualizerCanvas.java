@@ -3,6 +3,8 @@ package display;
 import effects.VisualEffect;
 import javafx.scene.canvas.Canvas;
 
+import java.awt.*;
+
 /**
  * Created by Paul Lancaster on 28/11/2016
  *
@@ -16,7 +18,9 @@ class VisualizerCanvas extends Canvas {
     }
     
     void play(VisualEffect effect) {
-        effect.play(this.getGraphicsContext2D());
+        Dimension dimension = new Dimension((int)getWidth(), (int)getHeight());
+        
+        effect.play(this.getGraphicsContext2D(), dimension);
         effect.finish();
         
     }

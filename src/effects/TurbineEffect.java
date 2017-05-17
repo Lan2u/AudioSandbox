@@ -4,7 +4,8 @@ import audio.file.AudioFile;
 import calculate.FreqCalculator;
 import javafx.scene.canvas.GraphicsContext;
 
-import java.util.TreeMap;
+import java.awt.*;
+import java.util.*;
 
 /**
  * Created by Paul Lancaster on 02/02/2017
@@ -17,6 +18,7 @@ public class TurbineEffect extends VisualEffect{
     private final int CHANNEL; // Audio channel
     private final int APPROXIMATE_CHUNK_SIZE; // In samples
     private final double SAMPLE_RATE;
+    private double MAX_BAR_HEIGHT = 400; // TODO make this dynamic (not set statically)
     // The chunksize that this effect is going to attempt to use
     // (the minimum nanoseconds per frame is calculated off of this)
     // This is approximate because the chunksize depends on deltaT and
@@ -101,17 +103,31 @@ public class TurbineEffect extends VisualEffect{
         
         TreeMap<Integer,Double> frequencies = FreqCalculator.getChunkFrequencies(chunk, SAMPLE_RATE);
         
-        double barWidth = 10.0;
+        Double maxFreq = getMax(frequencies.values());
         
-        int BASE_Y =
+        Dimension dimensions = this.getDimensions();
+        
+        double barWidth = dimensions.getWidth()/frequencies.size();
+        
+        System.out.println("Dimensions : " + dimensions.toString());
+        System.out.println("Bar Width : " + barWidth);
+        
+        int y = 20; // Base y taken from the bottom
         
         for (int i = 0; i < frequencies.size(); i++) {
             int x = (int)(barWidth * i);
-            
+            int h = (int)(MAX_BAR_HEIGHT*(frequencies.get(i) / maxFreq));
+            fillRectangle(gc2d, x, y, barWidth, h);
         }
-        
-        
-        
+    }
+    
+    private Double getMax(Collection<Double> collection) {
+        Optional<Double> d = collection.stream().max(Double::compareTo);
+        if (d.isPresent()){
+            return d.get();
+        }else{
+            throw new ValueNotFoundException("The max value of the given collection couldn't be found");
+        }
     }
     
     /**

@@ -1,5 +1,5 @@
-import javazoom.spi.mpeg.sampled.file.PropertiesTest;
 import javazoom.spi.mpeg.sampled.file.MpegAudioFileReaderTest;
+import javazoom.spi.mpeg.sampled.file.PropertiesTest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 

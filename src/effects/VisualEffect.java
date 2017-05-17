@@ -4,6 +4,8 @@ import audio.file.AudioFile;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.GraphicsContext;
 
+import java.awt.*;
+
 /**
  * Created by Paul Lancaster on 31/12/2016 01:32
  * <p>
@@ -20,6 +22,8 @@ public abstract class VisualEffect extends AnimationTimer {
     private long lastFrame = Long.MIN_VALUE; // Used so that the very first time the timer runs it is clear
     
     private GraphicsContext graphicsContext;
+    private Dimension dimensions;
+    
     
     /**
      * The audio file that is used within the visual effect
@@ -37,8 +41,9 @@ public abstract class VisualEffect extends AnimationTimer {
         file.resetPos();
     }
     
-    public final void play(GraphicsContext gc) {
+    public final void play(GraphicsContext gc, Dimension dimensions) {
         graphicsContext = gc;
+        this.dimensions = dimensions;
         start();
     }
     
@@ -114,4 +119,8 @@ public abstract class VisualEffect extends AnimationTimer {
      */
     @Override
     public abstract void stop();
+    
+    protected Dimension getDimensions() {
+        return dimensions;
+    }
 }
