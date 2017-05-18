@@ -88,13 +88,7 @@ public abstract class VisualEffect extends AnimationTimer {
      */
     abstract long calcMinNanoPerFrame(AudioFile file);
     
-    /**
-     * Called when the effect is started
-     *
-     * @see VisualEffect#play(GraphicsContext gc)
-     */
-    @Override
-    public abstract void start();
+    public abstract void begin();
     
     /**
      * Checks if there is another frame of the effect left to display

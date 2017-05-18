@@ -19,7 +19,6 @@
 import javazoom.spi.PropertiesContainer;
 import junit.framework.TestCase;
 
-import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;

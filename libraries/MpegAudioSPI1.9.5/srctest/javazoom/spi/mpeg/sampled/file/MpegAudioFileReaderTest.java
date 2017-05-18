@@ -20,8 +20,6 @@ package javazoom.spi.mpeg.sampled.file;
 
 import junit.framework.TestCase;
 
-import javax.sound.sampled.*;
-import java.io.*;
 import java.net.URL;
 import java.util.Properties;
 

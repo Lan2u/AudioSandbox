@@ -30,7 +30,7 @@ public class TurbineEffect extends VisualEffect{
      *
      * @param file The file that becomes stored (encapsulated) in and used for the visual effect
      */
-    TurbineEffect(AudioFile file, int chunkSize, int channel, int freqCount, int sampleRate) {
+    public TurbineEffect(AudioFile file, int chunkSize, int channel, int freqCount) {
         super(file);
         
         checkInputsValid(file, chunkSize,channel,freqCount); // Throws illegal argument exception if they aren't
@@ -38,7 +38,7 @@ public class TurbineEffect extends VisualEffect{
         this.APPROXIMATE_CHUNK_SIZE = chunkSize;
         this.CHANNEL = channel;
         this.FREQ_COUNT = freqCount;
-        this.SAMPLE_RATE = sampleRate;
+        this.SAMPLE_RATE = file.getSampleRate();
     }
     
     private boolean checkInputsValid(AudioFile file , int chunkSize, int channel, int freqCount){
@@ -77,8 +77,9 @@ public class TurbineEffect extends VisualEffect{
      * @see VisualEffect#play(GraphicsContext gc)
      */
     @Override
-    public void start() {
+    public void begin(){
         audioFile.resetPos(); // Reset the audio file to the start
+        start();
     }
     
     /**
