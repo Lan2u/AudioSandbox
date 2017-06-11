@@ -21,7 +21,7 @@ class VisualizerCanvas extends Canvas {
         Dimension dimension = new Dimension((int)getWidth(), (int)getHeight());
         
         effect.play(this.getGraphicsContext2D(), dimension);
-        effect.finish();
+       // effect.finish();
         
     }
 }

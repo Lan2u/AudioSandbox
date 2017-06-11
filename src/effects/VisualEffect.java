@@ -17,13 +17,11 @@ public abstract class VisualEffect extends AnimationTimer {
      * just be the minimum because if the next frame takes longer to load then the time each frame
      * is displayed for will increase (and FPS will decrease))
      */
-    private final long minimumNanoPerFrame;
-    private long timeSinceLastFrame = 0;
-    private long lastFrame = Long.MIN_VALUE; // Used so that the very first time the timer runs it is clear
+    private long lastFrame = -1L;
+    protected long timeSinceLastFrame = 0;
     
     private GraphicsContext graphicsContext;
     private Dimension dimensions;
-    
     
     /**
      * The audio file that is used within the visual effect
@@ -37,34 +35,26 @@ public abstract class VisualEffect extends AnimationTimer {
      */
     VisualEffect(AudioFile file) {
         this.audioFile = file;
-        minimumNanoPerFrame = calcMinNanoPerFrame(file);
         file.resetPos();
     }
     
     public final void play(GraphicsContext gc, Dimension dimensions) {
         graphicsContext = gc;
         this.dimensions = dimensions;
-        start();
+        this.start();
     }
     
-    private boolean nextFrameReady(long deltaT) {
-        timeSinceLastFrame = timeSinceLastFrame + deltaT;
-        if (timeSinceLastFrame >= minimumNanoPerFrame) {
-            timeSinceLastFrame = 0;
-            return true;
-        } else {
-            return false;
-        }
-    }
+    abstract boolean nextFrameReady(long deltaT);
     
     @Override
     public final void handle(long now) {
-        if (lastFrame == Long.MIN_VALUE) { // Handle the first time the handle method is ran
+        if (lastFrame == -1) { // Handle the first time the handle method is ran
             lastFrame = now;
         }
-        long deltaT = now - lastFrame;
-        if (nextFrameReady(deltaT)) {
+        
+        if (nextFrameReady(Math.abs(now - lastFrame))) {
             drawEffect(graphicsContext, timeSinceLastFrame);
+            timeSinceLastFrame = 0;
         }
         
         lastFrame = now;
@@ -76,17 +66,6 @@ public abstract class VisualEffect extends AnimationTimer {
     public final void finish() {
         stop();
     }
-    
-    /**
-     * Calculate the minimum number of nano seconds required before a frame change
-     * This method gets called in the constructor to change the nanoSeconds required field
-     * <p>
-     * If this method returns 0 then the effect will update as fast as possible (likely not very useful)
-     *
-     * @param file The audio file which is behind the effect
-     * @return The minimum number of nanoseconds per frame
-     */
-    abstract long calcMinNanoPerFrame(AudioFile file);
     
     public abstract void begin();
     

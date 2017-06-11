@@ -12,6 +12,8 @@ import java.util.*;
  */
 public class TurbineEffect extends VisualEffect{
     private final int FREQ_COUNT;
+    private long minimumNanoPerFrame;
+    
     // The number of frequencies from each chunk to register.
     // The bigger the value the more frequencies detected and included (reduces the filter)
     
@@ -30,7 +32,7 @@ public class TurbineEffect extends VisualEffect{
      *
      * @param file The file that becomes stored (encapsulated) in and used for the visual effect
      */
-    public TurbineEffect(AudioFile file, int chunkSize, int channel, int freqCount) {
+    public TurbineEffect(AudioFile file, int chunkSize, int channel, int freqCount){
         super(file);
         
         checkInputsValid(file, chunkSize,channel,freqCount); // Throws illegal argument exception if they aren't
@@ -39,6 +41,7 @@ public class TurbineEffect extends VisualEffect{
         this.CHANNEL = channel;
         this.FREQ_COUNT = freqCount;
         this.SAMPLE_RATE = file.getSampleRate();
+        this.minimumNanoPerFrame = calcMinNanoPerFrame(file, chunkSize);
     }
     
     private boolean checkInputsValid(AudioFile file , int chunkSize, int channel, int freqCount){
@@ -56,6 +59,16 @@ public class TurbineEffect extends VisualEffect{
         return true;
     }
     
+    @Override
+    boolean nextFrameReady(long deltaT) {
+        timeSinceLastFrame = timeSinceLastFrame + deltaT;
+        if (timeSinceLastFrame >= minimumNanoPerFrame) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     /**
      * Calculate the minimum number of nano seconds required before a frame change
      * This method gets called in the constructor to change the nanoSeconds required field
@@ -65,16 +78,18 @@ public class TurbineEffect extends VisualEffect{
      * @param file The audio file which is behind the effect
      * @return The minimum number of nanoseconds per frame
      */
-    @Override
-    long calcMinNanoPerFrame(AudioFile file) {
-        double seconds = ((double)file.getSampleRate()/APPROXIMATE_CHUNK_SIZE);
+    long calcMinNanoPerFrame(AudioFile file, int chunkSize) {
+        if (chunkSize <= 0){
+            throw new IllegalArgumentException("The chunk size is less than 0 cannot play!");
+        }
+        double seconds = 1.0 / ((double)file.getSampleRate()/chunkSize);
         return FreqCalculator.secondsToNano(seconds);
     }
     
     /**
      * Called when the effect is started
      *
-     * @see VisualEffect#play(GraphicsContext gc)
+     *
      */
     @Override
     public void begin(){
@@ -100,6 +115,7 @@ public class TurbineEffect extends VisualEffect{
      */
     @Override
     void drawEffect(GraphicsContext gc2d, long deltaT) {
+        
         int[] chunk = audioFile.getSamples(FreqCalculator.nanoToSeconds(deltaT), CHANNEL);
         
         TreeMap<Integer,Double> frequencies = FreqCalculator.getChunkFrequencies(chunk, SAMPLE_RATE);
@@ -132,7 +148,7 @@ public class TurbineEffect extends VisualEffect{
     }
     
     /**
-     * Fills a rectange but the x is the position of the bottom left corner
+     * Fills a rectangle but the x is the position of the bottom left corner
      *
      * @param gc2d
      * @param x
